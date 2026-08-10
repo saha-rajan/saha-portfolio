@@ -19,7 +19,10 @@ export function Header() {
     { name: "Studio", href: "/#studio" },
     { name: "Write", href: "/#write" },
     { name: "Cinematics", href: "/#cinematics" },
+    { name: "Recommendations", href: "/#recommendations" },
   ];
+
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Handle scroll direction
   useEffect(() => {
@@ -34,6 +37,7 @@ export function Header() {
       }
       
       setLastScrollY(currentScrollY);
+      setIsScrolled(currentScrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -95,7 +99,13 @@ export function Header() {
       initial={{ y: 0 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 text-white ${isOpen ? "" : "mix-blend-difference"}`}
+      className={`fixed top-0 left-0 right-0 z-50 text-white transition-colors duration-300 ${
+        isOpen 
+          ? "" 
+          : isScrolled
+            ? "bg-[#0a0a0c]/80 backdrop-blur-md border-b border-white/5"
+            : "mix-blend-difference"
+      }`}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-8 flex items-center justify-between">
         <Link to="/" className="w-[34px] h-[34px]">
@@ -124,7 +134,7 @@ export function Header() {
             About
           </Link>
           <a
-            href="https://drive.google.com/file/d/1JDhaaLvqdLfzoauxizh59JTeRxB81L54/view?usp=sharing"
+            href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium hover:text-gray-400 transition-colors"
@@ -191,7 +201,7 @@ export function Header() {
               About
             </Link>
             <a
-              href="https://drive.google.com/file/d/1JDhaaLvqdLfzoauxizh59JTeRxB81L54/view?usp=sharing"
+              href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="block text-sm font-medium hover:text-gray-400 transition-colors"

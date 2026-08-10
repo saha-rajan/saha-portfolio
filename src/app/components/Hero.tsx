@@ -7,35 +7,34 @@ import image_9eba4ef78c719ff307dfa84e927ac719277023fb from 'figma:asset/9eba4ef7
 import image_ee6ac64eaea5a8ed9bbd18190233110cc58ff789 from 'figma:asset/ee6ac64eaea5a8ed9bbd18190233110cc58ff789.png';
 import zylkerImage from 'figma:asset/4cb3156685ec7ae6186027b783c567811e64a2ad.png';
 import arizonaYogaImage from 'figma:asset/2345e114a306f984d586277a1cbc1eaa58f13532.png';
-import starlinkImage from 'figma:asset/b534122beb0de4373737f1c97acf9e37d252bf5c.png';
 
 const projects = [
   {
     id: "fintech-dashboard",
     title: "Chemotherapy education platform",
-    category: "In collaboration with Mayo Clinic",
+    category: "UX Case Study",
     image: image_ee6ac64eaea5a8ed9bbd18190233110cc58ff789,
-    size: "col-span-1 md:col-span-1 md:row-span-2",
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     id: "arizona-yoga-studio",
     title: "Arizona Yoga Studio",
-    category: "UX / UI Design",
+    category: "Coming Soon",
     image: arizonaYogaImage,
-    size: "col-span-1 md:col-span-2 md:row-span-1",
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     id: "zylker",
     title: "Zylker form builder",
-    category: "2Days Design Challenge",
+    category: "UX Research",
     image: zylkerImage,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
-    id: "art-gallery",
-    title: "Starlink",
-    category: "UX",
-    image: starlinkImage,
+    id: "aisle",
+    title: "Aisle",
+    category: "Product Design",
+    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop",
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
 ];
@@ -43,7 +42,6 @@ const projects = [
 export function Hero() {
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
-  const [starlinkTextPosition, setStarlinkTextPosition] = useState({ x: 0, y: 0 });
   const { setHideCursor, setIsTextCursor, setCursorText } = useCursor();
 
   const greetings = [
@@ -84,23 +82,7 @@ export function Hero() {
     setTextPosition({ x: 0, y: 0 });
   };
 
-  const handleStarlinkMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    
-    // Limit movement to a reasonable range (e.g., 30% of button size)
-    const maxMove = 8;
-    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.15));
-    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.15));
-    
-    setStarlinkTextPosition({ x: clampedX, y: clampedY });
-  };
 
-  const handleStarlinkMouseLeave = () => {
-    setStarlinkTextPosition({ x: 0, y: 0 });
-  };
 
   return (
     <section className="relative min-h-screen bg-black overflow-hidden pb-16">
@@ -228,95 +210,67 @@ export function Hero() {
         </motion.div>
 
         {/* Works Grid */}
-        <div id="works" className="grid grid-cols-1 md:grid-cols-3 gap-2 auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+        <div id="works" className="grid grid-cols-1 md:grid-cols-4 gap-2 auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
           {projects.map((project, index) => {
-            // Starlink card doesn't navigate
-            const isStarlink = index === 3;
-            
             const cardContent = (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
-                className={`relative group cursor-pointer overflow-hidden ${index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'} h-full w-full ${index === 2 ? 'rounded-lg' : index === 0 ? 'rounded-tr-lg rounded-br-lg' : (index === 1 || index === 3) ? 'rounded-tl-lg rounded-bl-lg' : ''}`}
-                onMouseMove={isStarlink ? handleStarlinkMouseMove : undefined}
-                onMouseEnter={isStarlink ? () => setCursorText('Coming Soon') : undefined}
-                onMouseLeave={isStarlink ? () => {
-                  setCursorText('');
-                  handleStarlinkMouseLeave();
-                } : undefined}
+                className={`relative group cursor-pointer overflow-hidden ${index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'} h-full w-full ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}
               >
                 <img
                   src={project.image}
                   alt={project.title}
-                  className={`w-full h-full transition-transform duration-700 group-hover:scale-105 ${isStarlink ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'} ${index === 2 ? 'object-cover' : 'object-cover'}`}
+                  className="w-full h-full transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 object-cover"
                 />
                 
-                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl ${index === 2 ? 'bg-black/60' : 'bg-black/30'} ${index === 0 ? 'rounded-tr-lg rounded-br-lg' : (index === 1 || index === 3) ? 'rounded-tl-lg rounded-bl-lg' : ''}`}>
-                  {isStarlink && (
-                    <motion.div
-                      className="text-xl font-medium mb-1 text-white text-center"
-                      animate={{ x: starlinkTextPosition.x, y: starlinkTextPosition.y }}
-                      transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl ${index === 2 ? 'bg-black/60' : 'bg-black/30'} ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}>
+                  <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
+                  {index === 0 && (
+                    <motion.div 
+                      className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
+                      animate={{ 
+                        boxShadow: [
+                          '0 0 10px rgba(250, 204, 21, 0.3)',
+                          '0 0 20px rgba(250, 204, 21, 0.5)',
+                          '0 0 10px rgba(250, 204, 21, 0.3)'
+                        ]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
                     >
-                      <h3>{project.title}</h3>
-                      <p className={`text-xs uppercase tracking-wider text-center ${index === 2 ? 'text-[#D0D0D0]' : 'text-[#A7A7A7]'}`}>{project.category}</p>
+                      <motion.div
+                        animate={{ 
+                          rotate: [0, 10, -10, 10, 0],
+                          scale: [1, 1.1, 1]
+                        }}
+                        transition={{ 
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <Trophy size={16} className="text-yellow-400" />
+                      </motion.div>
+                      <p 
+                        className="text-xs font-medium relative overflow-hidden"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
+                      >
+                        <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
+                          Mayo Clinic Observership Awardee
+                        </span>
+                      </p>
                     </motion.div>
-                  )}
-                  {!isStarlink && (
-                    <>
-                      <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
-                      <p className={`text-xs uppercase tracking-wider text-center mb-2 ${index === 0 ? 'text-white/90' : index === 2 ? 'text-[#D0D0D0]' : 'text-[#A7A7A7]'}`}>{project.category}</p>
-                      {index === 0 && (
-                        <motion.div 
-                          className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
-                          animate={{ 
-                            boxShadow: [
-                              '0 0 10px rgba(250, 204, 21, 0.3)',
-                              '0 0 20px rgba(250, 204, 21, 0.5)',
-                              '0 0 10px rgba(250, 204, 21, 0.3)'
-                            ]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                        >
-                          <motion.div
-                            animate={{ 
-                              rotate: [0, 10, -10, 10, 0],
-                              scale: [1, 1.1, 1]
-                            }}
-                            transition={{ 
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "easeInOut"
-                            }}
-                          >
-                            <Trophy size={16} className="text-yellow-400" />
-                          </motion.div>
-                          <p 
-                            className="text-xs font-medium relative overflow-hidden"
-                            style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
-                          >
-                            <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-                              Mayo Clinic Observership Awardee
-                            </span>
-                          </p>
-                        </motion.div>
-                      )}
-                    </>
                   )}
                 </div>
               </motion.div>
             );
 
-            return isStarlink ? (
-              <div key={index} className={`${project.size}`}>
-                {cardContent}
-              </div>
-            ) : (
+            return (
               <Link to={`/works/${project.id}`} key={index} className={`${project.size} block`}>
                 {cardContent}
               </Link>

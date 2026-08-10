@@ -9,10 +9,11 @@ import image_da7b297ce73182028f4f1661a78bfc061d68c793 from 'figma:asset/da7b297c
 import image_73be314deac034d00b65d7a9d4bb46c5f3c0272f from 'figma:asset/73be314deac034d00b65d7a9d4bb46c5f3c0272f.png';
 import image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b from 'figma:asset/5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b.png';
 import image_2b8bffd76f419f68be1a74616b439c493c27366f from 'figma:asset/2b8bffd76f419f68be1a74616b439c493c27366f.png';
-import image_056f058b598dbb5ba9ed90f94b8880797dac30da from 'figma:asset/056f058b598dbb5ba9ed90f94b8880797dac30da.png';
+import image_056f058b598dbb5ba9ed90f94b8880797dac30da from '../../assets/chemobuddy_command_center_dashboard.png';
+import image_hero_bento_dashboard from '../../assets/hero_bento_dashboard.png';
 import image_fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe from 'figma:asset/fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe.png';
 import image_d43ea63d788cb45c53fb10f7153ed33027f96302 from 'figma:asset/d43ea63d788cb45c53fb10f7153ed33027f96302.png';
-import image_59d13c8214ad12598c9d2470478d8fa2004aad78 from 'figma:asset/59d13c8214ad12598c9d2470478d8fa2004aad78.png';
+import image_59d13c8214ad12598c9d2470478d8fa2004aad78 from '../../assets/chemobuddy_3d_symptom_tracker.png';
 import image_90b9edf0c86b7bb53f8dc13f95bc4fb12e3a38e5 from 'figma:asset/90b9edf0c86b7bb53f8dc13f95bc4fb12e3a38e5.png';
 import image_3c59f1c9e46af029ca5aefd48dc5e476b36bb7dc from 'figma:asset/3c59f1c9e46af029ca5aefd48dc5e476b36bb7dc.png';
 import image_a94bd21b6f1c22749e15c23a41adb43efddf8d21 from 'figma:asset/a94bd21b6f1c22749e15c23a41adb43efddf8d21.png';
@@ -53,12 +54,15 @@ import image_b16062226f3bb2066b289a790fbad2e44621e2c7 from 'figma:asset/b1606222
 import image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5 from 'figma:asset/69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5.png';
 import image_7185839779b789cbfbfd75fdfef3c494ccafb053 from 'figma:asset/7185839779b789cbfbfd75fdfef3c494ccafb053.png';
 import image_872548eb54e3a9a24e2d9fe1ba3961431a895775 from 'figma:asset/872548eb54e3a9a24e2d9fe1ba3961431a895775.png';
+import image_1fe6da1fb24e994dedf5f88213c048966d32519a from 'figma:asset/1fe6da1fb24e994dedf5f88213c048966d32519a.png';
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, useInView, useMotionValue, useSpring } from "motion/react";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, Trophy } from "lucide-react";
+import { motion, useInView, useMotionValue, useSpring, AnimatePresence } from "motion/react";
+import { ArrowLeft, ArrowRight, X, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, ChevronDown, Trophy, Monitor } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useCursor } from "../contexts/CursorContext";
+import { literatureReviewData, ResearchPaper } from '../../data/research/literatureReview';
+import { competitiveAnalysisData, CompetitiveProduct } from '../../data/research/competitiveAnalysis';
 import Frame69 from "../../imports/Frame69";
 import Frame1686557570 from "../../imports/Frame1686557570";
 import CompetetiveAnalysis from "../../imports/CompetetiveAnalysis";
@@ -88,6 +92,484 @@ function AnimatedCounter({ value, decimals = 0 }: { value: number; decimals?: nu
   return <span ref={ref}>{displayValue.toFixed(decimals)}</span>;
 }
 
+
+// --- Phase 2A Lightbox Components ---
+const ImageLightbox = ({ isOpen, onClose, imageSrc, imageAlt }) => {
+  if (!isOpen) return null;
+  return (
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+      >
+        <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-white">
+          <X size={32} />
+        </button>
+        <motion.img 
+          initial={{ scale: 0.98 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.2 }}
+          src={imageSrc} 
+          alt={imageAlt} 
+          className="max-w-[90vw] max-h-[88vh] object-contain rounded-lg border border-white/10"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// Research Database Row
+const ResearchTableRow = ({ row }: { row: ResearchPaper }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  if (!row) return null;
+
+  return (
+    <>
+      <tr 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="border-b border-white/5 hover:bg-white/[0.02] cursor-pointer transition-colors group"
+      >
+        <td className="p-6 align-top w-[15%] border-r border-white/5">
+          <div className="text-white font-medium mb-2 pr-4">{row.paperTitle}</div>
+        </td>
+        <td className="p-6 align-top text-[#A7A7A7] w-[15%] text-sm leading-relaxed border-r border-white/5">
+          <div className="line-clamp-3">{row.studyAim}</div>
+        </td>
+        <td className="p-6 align-top text-[#A7A7A7] w-[10%] text-sm leading-relaxed border-r border-white/5">
+          <div className="line-clamp-3">{row.method}</div>
+        </td>
+        <td className="p-6 align-top text-white w-[20%] text-sm leading-relaxed border-r border-white/5">
+          <div className="line-clamp-3">{row.keyLearning}</div>
+        </td>
+        <td className="p-6 align-top text-[#A7A7A7] w-[20%] text-sm leading-relaxed border-r border-white/5">
+          <div className="line-clamp-3">{row.researchGap}</div>
+        </td>
+        <td className="p-6 align-top text-[#5A5A5A] w-[20%] text-sm leading-relaxed relative pr-10">
+          <span className="opacity-70 italic">{row.designRelevance}</span>
+          <div className="absolute top-6 right-6 opacity-50 group-hover:opacity-100 transition-opacity">
+            {isExpanded ? <ChevronUp size={16} className="text-[#1CB4F5]" /> : <ChevronDown size={16} className="text-[#1CB4F5]" />}
+          </div>
+        </td>
+      </tr>
+      
+      {/* Expanded State Drawer */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.tr
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="border-b border-white/5 bg-[#121217]"
+          >
+            <td colSpan={6} className="p-0">
+              <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="flex flex-col gap-6">
+                  <div>
+                    <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">PAPER / STUDY</div>
+                    <div className="text-white text-sm leading-relaxed">{row.paperTitle}</div>
+                  </div>
+                  <div>
+                    <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">AUTHORS / RESEARCHERS</div>
+                    <div className="text-[#A7A7A7] text-sm leading-relaxed">{row.authors}</div>
+                  </div>
+                </div>
+                <div className="md:col-span-2 flex flex-col gap-6">
+                  <div>
+                    <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">FULL CONCLUSION</div>
+                    <div className="text-[#A7A7A7] text-sm leading-relaxed">{row.conclusion}</div>
+                  </div>
+                  {row.url && row.url !== '-' && (
+                    <div>
+                      <a href={row.url} target="_blank" rel="noopener noreferrer" className="case-meta text-[#1CB4F5] hover:text-white transition-colors flex items-center gap-1 w-max">
+                        View original source <ArrowUpRight size={14} />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </td>
+          </motion.tr>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+const TableLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Research database</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar bg-[#0a0a0c]">
+              <table className="w-full text-left border-collapse min-w-[1000px]">
+                <thead className="sticky top-0 bg-[#0a0a0c] z-10 shadow-[0_1px_0_0_rgba(255,255,255,0.1)]">
+                  <tr>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[15%] bg-[#0a0a0c]">PAPER / STUDY</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[15%] bg-[#0a0a0c]">STUDY AIM</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[10%] bg-[#0a0a0c]">METHOD</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[20%] bg-[#0a0a0c]">KEY LEARNING</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[20%] bg-[#0a0a0c]">RESEARCH GAP</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[20%] bg-[#0a0a0c]">DESIGN RELEVANCE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {literatureReviewData.map((paper) => (
+                    <ResearchTableRow key={paper.id} row={paper} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Competitive Analysis Database Modal
+const CompetitiveAnalysisLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Product landscape</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar bg-[#0a0a0c]">
+              <table className="w-full text-left border-collapse min-w-[1350px]">
+                <thead className="sticky top-0 bg-[#0a0a0c] z-10 shadow-[0_1px_0_0_rgba(255,255,255,0.1)]">
+                  <tr>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[12%] bg-[#0a0a0c]">APP / PLATFORM</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[12%] bg-[#0a0a0c]">PRIMARY FOCUS</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[16%] bg-[#0a0a0c]">KEY FEATURES</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[16%] bg-[#0a0a0c]">STRENGTHS</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[16%] bg-[#0a0a0c]">WEAKNESSES</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[8%] bg-[#0a0a0c] text-center">USER RATING</th>
+                    <th className="case-meta text-[#5A5A5A] p-6 font-normal w-[20%] bg-[#0a0a0c] pl-8">GAP IDENTIFIED</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {competitiveAnalysisData.map((product) => (
+                    <tr 
+                      key={product.id}
+                      className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group"
+                    >
+                      <td className="p-6 align-top w-[12%] border-r border-white/5">
+                        <div className="text-white font-sans font-semibold mb-2 pr-4">{product.appName}</div>
+                      </td>
+                      <td className="p-6 align-top text-[#A7A7A7] w-[12%] text-sm leading-relaxed border-r border-white/5">
+                        <div className="line-clamp-3">{product.primaryFocus}</div>
+                      </td>
+                      <td className="p-6 align-top text-[#A7A7A7] w-[16%] text-sm leading-relaxed border-r border-white/5">
+                        <div className="line-clamp-3">{product.keyFeatures}</div>
+                      </td>
+                      <td className="p-6 align-top text-[#A7A7A7] w-[16%] text-sm leading-relaxed border-r border-white/5">
+                        <div className="line-clamp-3">{product.strengths}</div>
+                      </td>
+                      <td className="p-6 align-top text-[#A7A7A7] w-[16%] text-sm leading-relaxed border-r border-white/5">
+                        <div className="line-clamp-3">{product.weaknesses}</div>
+                      </td>
+                      <td className="p-6 align-top text-[#A7A7A7] w-[8%] text-sm leading-relaxed border-r border-white/5 text-center">
+                        <div className="font-mono">{product.userRating}</div>
+                      </td>
+                      <td className="p-6 align-top w-[20%] text-sm leading-relaxed">
+                        <div className="text-white border-l border-[#1CB4F5]/30 pl-4 py-1 line-clamp-3">{product.gapIdentified}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+// ------------------------------------------
+
+const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive', data: any[] }) => {
+  const isLit = type === 'literature';
+  const displayData = data.slice(0, 3);
+
+  return (
+    <div className="w-full bg-[#0a0a0c] border border-white/5 rounded-lg overflow-hidden relative flex flex-col h-full pointer-events-none">
+      <div className="flex border-b border-white/10 bg-[#0a0a0c] p-3 pb-2 shrink-0">
+        {isLit ? (
+          <>
+            <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">PAPER / STUDY</div>
+            <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">METHOD</div>
+            <div className="w-[40%] case-meta text-[8px] text-[#5A5A5A] truncate">KEY LEARNING</div>
+          </>
+        ) : (
+          <>
+            <div className="w-[20%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">APP / PLATFORM</div>
+            <div className="w-[25%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">PRIMARY FOCUS</div>
+            <div className="w-[25%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">STRENGTHS</div>
+            <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] pl-2 truncate">GAP IDENTIFIED</div>
+          </>
+        )}
+      </div>
+      
+      <div className="flex-1 p-3 pt-0 relative overflow-hidden">
+        {displayData.map((row, i) => (
+          <div key={row.id || i} className="flex border-b border-white/5 py-2">
+            {isLit ? (
+              <>
+                <div className="w-[30%] text-[9px] text-white font-sans font-semibold pr-3 line-clamp-2 leading-snug">{row.paperTitle}</div>
+                <div className="w-[30%] text-[9px] text-[#A7A7A7] pr-3 line-clamp-2 leading-snug">{row.method}</div>
+                <div className="w-[40%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.keyLearning}</div>
+              </>
+            ) : (
+              <>
+                <div className="w-[20%] text-[9px] text-white font-sans font-semibold pr-2 truncate">{row.appName}</div>
+                <div className="w-[25%] text-[9px] text-[#A7A7A7] pr-2 line-clamp-2 leading-snug">{row.primaryFocus}</div>
+                <div className="w-[25%] text-[9px] text-[#A7A7A7] pr-2 line-clamp-2 leading-snug">{row.strengths}</div>
+                <div className="w-[30%] text-[9px] text-white border-l border-[#1CB4F5]/30 pl-2 line-clamp-2 leading-snug">{row.gapIdentified}</div>
+              </>
+            )}
+          </div>
+        ))}
+        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#0a0a0c] to-transparent pointer-events-none" />
+      </div>
+    </div>
+  );
+};
+
+// Case Study Navigation
+const NAV_SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'context', label: 'Problem' },
+  { id: 'solution', label: 'Solution' },
+  { id: 'research', label: 'Research' },
+  { id: 'design', label: 'Design' },
+  { id: 'testing', label: 'Testing & Impact' }
+];
+
+const CaseStudyNav = () => {
+  const [activeSection, setActiveSection] = useState('overview');
+  const [progress, setProgress] = useState(0);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
+  const [globalNavVisible, setGlobalNavVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Match global header visibility logic
+          if (currentScrollY < lastScrollY || currentScrollY < 10) {
+            setGlobalNavVisible(true);
+          } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            setGlobalNavVisible(false);
+          }
+          lastScrollY = currentScrollY;
+
+          // Only show nav when reaching the actual content (past bento grid)
+          const overviewElement = document.getElementById('overview');
+          if (overviewElement) {
+            // offsetTop is usually relative to the document here
+            setIsPastHero(currentScrollY > overviewElement.offsetTop - window.innerHeight / 2);
+          }
+
+          // Progress calculation
+          const container = document.getElementById('case-study-content');
+          if (container) {
+            const rect = container.getBoundingClientRect();
+            const totalHeight = container.offsetHeight - window.innerHeight;
+            const currentScroll = -rect.top;
+            
+            if (currentScroll < 0) setProgress(0);
+            else if (currentScroll > totalHeight) setProgress(100);
+            else setProgress((currentScroll / totalHeight) * 100);
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -80% 0px' }
+    );
+
+    NAV_SECTIONS.forEach((section) => {
+      const element = document.getElementById(section.id);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleClick = (id: string) => {
+    setIsMobileOpen(false);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const activeIndex = NAV_SECTIONS.findIndex(s => s.id === activeSection);
+  const activeLabel = NAV_SECTIONS[activeIndex]?.label || 'Overview';
+  const indexDisplay = `0${Math.max(0, activeIndex) + 1}/06`;
+
+  // Define offset: when global nav is visible, it's roughly 98px high on desktop.
+  const offsetY = globalNavVisible ? 98 : 0;
+
+  return (
+    <motion.div 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ 
+        opacity: isPastHero ? 1 : 0,
+        y: isPastHero ? offsetY : -100
+      }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className={`fixed top-0 left-0 right-0 z-40 w-full bg-[#0a0a0c]/80 backdrop-blur-md border-b border-white/5 h-14 flex items-center justify-between px-6 md:px-12 pointer-events-auto ${!isPastHero ? 'pointer-events-none' : ''}`}
+    >
+      <div className="flex items-center gap-12 w-full max-w-[1440px] mx-auto relative">
+        <span className="case-meta text-[10px] text-white/50 tracking-widest hidden md:block">CHEMOBUDDY</span>
+        
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {NAV_SECTIONS.map(section => (
+            <button
+              key={section.id}
+              onClick={() => handleClick(section.id)}
+              className={`text-sm font-sans transition-colors ${activeSection === section.id ? 'text-[#1CB4F5]' : 'text-[#A7A7A7] hover:text-white'}`}
+            >
+              {section.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Mobile Nav Toggle */}
+        <div className="md:hidden flex items-center justify-between w-full relative">
+          <button 
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="flex items-center gap-2 text-sm text-[#A7A7A7]"
+          >
+            <span className={`text-white transition-colors`}>{activeLabel}</span>
+            <span className="opacity-50">· {indexDisplay}</span>
+            {isMobileOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          
+          <AnimatePresence>
+            {isMobileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-10 left-0 w-48 bg-[#121217] border border-white/10 rounded-lg shadow-2xl py-2 flex flex-col z-50"
+              >
+                {NAV_SECTIONS.map(section => (
+                  <button
+                    key={section.id}
+                    onClick={() => handleClick(section.id)}
+                    className={`text-left px-4 py-2 text-sm font-sans transition-colors ${activeSection === section.id ? 'text-[#1CB4F5] bg-white/5' : 'text-[#A7A7A7] hover:bg-white/[0.02] hover:text-white'}`}
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+      
+      {/* Progress Bar */}
+      <div className="absolute bottom-0 left-0 h-[2px] w-full pointer-events-none">
+        <motion.div 
+          className="h-full bg-[#1CB4F5]"
+          style={{ width: `${progress}%` }}
+          transition={{ ease: 'linear', duration: 0.1 }}
+        />
+      </div>
+    </motion.div>
+  );
+};
+
 export function ChemoBuddyCaseStudy() {
   const navigate = useNavigate();
   const { setHideCursor } = useCursor();
@@ -111,12 +593,44 @@ export function ChemoBuddyCaseStudy() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightboxAlt, setLightboxAlt] = useState<string>('');
+  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis', title: string, metadata: string} | null>(null);
+  
+  // Lock body scroll when lightboxes are open
+  useEffect(() => {
+    if (lightboxImage || tableLightboxOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // ESC listener
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setLightboxImage(null);
+        setTableLightboxOpen(null);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'unset';
+    };
+  }, [lightboxImage, tableLightboxOpen]);
+
+  const openImage = (src: string, alt: string) => {
+    setLightboxImage(src);
+    setLightboxAlt(alt);
+  };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="bg-black min-h-screen text-[#A7A7A7] font-['IBM_Plex_Mono'] selection:bg-white selection:text-black">
+    <div className="bg-black min-h-screen text-[#A7A7A7] font-sans selection:bg-white selection:text-black">
       {/* Scroll to Top Button */}
       <motion.button
         onClick={scrollToTop}
@@ -136,97 +650,92 @@ export function ChemoBuddyCaseStudy() {
         <ChevronUp size={20} />
       </motion.button>
 
-      {/* 2. Hero Section */}
-      <section className="pt-32 pb-16 px-6 md:px-12 max-w-[1440px] mx-auto">
-        <div className="max-w-[1190px] mx-auto">
-          <div className="flex flex-col gap-8 mb-12">
-            <div className="flex justify-between items-start">
-              <div>
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-4xl md:text-6xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"
-                >
-                  ChemoBuddy - Bridging the Knowledge Gap in Cancer Care
-                </motion.h1>
-                <p className="text-xl text-[#A7A7A7] mb-6">In collaboration with Mayo Clinic</p>
-                <div className="flex flex-wrap items-center gap-4 mb-4">
-                  <span className="inline-block border border-white/20 rounded-full px-4 py-1 text-sm">
-                    2025
-                  </span>
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
-                  >
-                    <motion.div
-                      animate={{ 
-                        rotate: [0, 10, -10, 10, 0],
-                        scale: [1, 1.1, 1]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <Trophy size={16} className="text-yellow-400" />
-                    </motion.div>
-                    <p 
-                      className="text-sm font-medium"
-                      style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
-                    >
-                      <span className="bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent">
-                        Selected for a Mayo Clinic Observership for its impact on chemotherapy education
-                      </span>
-                    </p>
-                  </motion.div>
-                </div>
+      {/* 01 — HERO */}
+      <section id="hero" className="pt-24 md:pt-32 pb-10 md:pb-12 px-6 md:px-12 max-w-[1440px] mx-auto w-full">
+        <div className="flex justify-between items-start gap-8">
+          
+          <div className="flex-1 min-w-0 max-w-[760px]">
+            <motion.h1 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="font-sans font-bold mb-6 text-white tracking-tight"
+              style={{ fontSize: "clamp(3.5rem, 5vw, 5.1rem)", lineHeight: 1.1 }}
+            >
+              ChemoBuddy
+            </motion.h1>
+            
+            <motion.h2 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
+              className="text-[#A7A7A7] text-lg md:text-xl max-w-[700px] mb-8"
+              style={{ lineHeight: 1.5 }}
+            >
+              Bridging the knowledge gap in cancer care through a personalized, AI-driven digital companion.
+            </motion.h2>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+              className="flex flex-wrap items-center gap-3"
+            >
+              <span className="inline-block border border-white/20 rounded-full px-4 py-1.5 case-meta text-white text-xs">
+                2025
+              </span>
+              <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-500/10 to-yellow-500/5 border border-yellow-400/20">
+                <Trophy size={14} className="text-yellow-400" />
+                <span className="case-meta text-yellow-100/90 text-xs tracking-wide uppercase">
+                  Selected for a Mayo Clinic Observership
+                </span>
               </div>
-              
-              {/* Prev/Next Navigation */}
-              <div className="hidden md:flex gap-4">
-                <Link 
-                  to="/works/zylker" 
-                  className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <ArrowLeft size={20} />
-                </Link>
-                <Link 
-                  to="/works/arizona-yoga-studio" 
-                  className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <ArrowRight size={20} />
-                </Link>
-              </div>
-            </div>
+            </motion.div>
           </div>
-
+            
+          {/* Prev/Next Navigation */}
+          <div className="hidden md:flex gap-3 shrink-0 pt-4">
+            <Link 
+              to="/works/zylker" 
+              className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors opacity-70 hover:opacity-100"
+              onMouseEnter={() => setHideCursor(true)}
+              onMouseLeave={() => setHideCursor(false)}
+              aria-label="Previous Project"
+            >
+              <ArrowLeft size={18} />
+            </Link>
+            <Link 
+              to="/works/arizona-yoga-studio" 
+              className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors opacity-70 hover:opacity-100"
+              onMouseEnter={() => setHideCursor(true)}
+              onMouseLeave={() => setHideCursor(false)}
+              aria-label="Next Project"
+            >
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+          
         </div>
       </section>
 
       {/* Bento Grid Section - Full Width */}
-      <section className="w-full mb-16">
+      <section className="w-full mb-16 px-2 md:px-6">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-2 lg:gap-3"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.05 } }
+          }}
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3 max-w-[1600px] mx-auto"
         >
           {/* Dashboard - Extra tall and wide */}
           <motion.div 
             className="col-span-2 md:col-span-3 lg:col-span-2 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
-              src={image_056f058b598dbb5ba9ed90f94b8880797dac30da}
+              src={image_hero_bento_dashboard}
               alt="Dashboard View"
               className="w-full h-full object-cover object-left transition-transform duration-350 group-hover:scale-105"
             />
@@ -235,9 +744,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Profile - Tall narrow */}
           <motion.div 
             className="col-span-2 md:col-span-1 lg:col-span-1 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_e2875e290d4a2b2ca4bed813b199115b1bdae041}
@@ -249,9 +756,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Stats - Short square */}
           <motion.div 
             className="col-span-1 md:col-span-2 lg:col-span-1 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_9b84f1632d73307214f57b506cb409eae84c6c75}
@@ -263,9 +768,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Symptom Tracker - Wide short */}
           <motion.div 
             className="col-span-1 md:col-span-2 lg:col-span-2 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_59d13c8214ad12598c9d2470478d8fa2004aad78}
@@ -277,9 +780,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Alerts - Small square */}
           <motion.div 
             className="col-span-1 md:col-span-2 lg:col-span-1 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_9cb1021147062033ad95ff4b70af680d32459dae}
@@ -291,9 +792,7 @@ export function ChemoBuddyCaseStudy() {
           {/* AI Chatbot - Extra wide */}
           <motion.div 
             className="col-span-1 md:col-span-2 lg:col-span-4 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b}
@@ -305,9 +804,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Medication - Tall medium */}
           <motion.div 
             className="col-span-2 md:col-span-2 lg:col-span-1 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_44206bd9b324eb75a24acdfa72b2f8e80d1cbd65}
@@ -319,9 +816,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Caregiver - Medium */}
           <motion.div 
             className="col-span-1 md:col-span-2 lg:col-span-2 h-[180px] md:h-[200px] lg:h-[240px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_9a41f841d18e2e15b19fa5b42310fca9fe85eb4d}
@@ -333,9 +828,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Community & Resources - Wide merged */}
           <motion.div 
             className="col-span-2 md:col-span-4 lg:col-span-4 h-[180px] md:h-[200px] lg:h-[240px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.9 }}
+            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
             <img 
               src={image_eb187deb8f81d162075cc22324c64e79f06dee2f}
@@ -346,834 +839,858 @@ export function ChemoBuddyCaseStudy() {
         </motion.div>
       </section>
 
+      {/* Secondary Sticky Navigation */}
+      <CaseStudyNav />
+      <div id="case-study-content">
+
       {/* Resume main container */}
       <section className="pb-16 px-6 md:px-12 max-w-[1440px] mx-auto">
         <div className="max-w-[1190px] mx-auto">
-          {/* 3. Project Info Section */}
+        
+          {/* 02 — PROJECT AT A GLANCE */}
           <motion.div 
+            id="overview"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-32 border-b border-white/10 pb-16"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="flex flex-col gap-12 mb-24 case-content-container scroll-mt-[140px]"
           >
-            <div className="col-span-1 space-y-8">
-              <div>
-                <h3 className="text-[#1CB4F5] text-sm font-normal mb-2 uppercase tracking-wider text-[16px]">My Role</h3>
-                <p className="font-semibold mb-2 text-xl">UI/UX Designer & Researcher</p>
-                <p className="leading-relaxed text-[18px]">Handled end-to-end design, from research and wireframes to interface design, usability testing, and design iterations.</p>
-              </div>
-              <div>
-                <h3 className="text-[#1CB4F5] text-sm font-normal mb-2 uppercase tracking-wider text-[16px]">Stakeholder collaboration</h3>
-                <p className="leading-relaxed mb-3 text-[18px]">
-                  <span className="text-white font-semibold text-[20px]">Stakeholders:</span> Shah Noor Shafqat, MFA ( ASU faculty ), Dr. Irbaz Riaz, MD, MS, MBI, PhD (Mayo Clinic faculty), Dr. Umar Janjua, MD (Mayo Clinic faculty)
-                </p>
-                <p className="leading-relaxed text-[18px]">
-                  <span className="text-white font-semibold text-[20px]">Collaboration:</span> Weekly standups, user research interviews, usability testing reviews
-                </p>
-              </div>
-              <div>
-                <h3 className="text-[#1CB4F5] text-sm font-normal mb-2 uppercase tracking-wider text-[16px]">Timeline</h3>
-                <p className="leading-relaxed text-[18px]">10 weeks (from initial research to final prototype)</p>
+            <div className="border-b border-white/10 pb-12">
+              <span className="case-eyebrow block mb-6">Project at a Glance</span>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+                {/* Primary Summary */}
+                <div className="col-span-1 lg:col-span-8">
+                  <p className="case-body-lg case-reading-width">
+                    ChemoBuddy is a digital healthcare platform created in partnership with Mayo Clinic to empower chemotherapy patients and their caregivers. The platform delivers personalized education, real-time guidance, and user-friendly tracking capabilities. Through AI-powered personalization, multimodal learning experiences, and clinically validated content, ChemoBuddy helps patients stay informed, supported, and confident throughout their treatment journey.
+                  </p>
+                </div>
+                
+                {/* Compact Metadata */}
+                <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
+                  <div>
+                    <h4 className="case-meta text-xs mb-1">Role</h4>
+                    <p className="case-body text-white">UI/UX Designer & Researcher</p>
+                  </div>
+                  <div>
+                    <h4 className="case-meta text-xs mb-1">Timeline</h4>
+                    <p className="case-body text-white">10 weeks</p>
+                  </div>
+                  <div>
+                    <h4 className="case-meta text-xs mb-1">Clinical Partners</h4>
+                    <p className="case-caption text-white">
+                      Shah Noor Shafqat, MFA (ASU)<br/>
+                      Dr. Irbaz Riaz, MD (Mayo Clinic)<br/>
+                      Dr. Umar Janjua, MD (Mayo Clinic)
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-[#1CB4F5] text-sm font-normal mb-4 uppercase tracking-wider text-[16px]">Overview</h3>
-              <p className="text-base md:text-lg leading-[1.7] text-[rgb(167,167,167)] text-left">
-                ChemoBuddy is a digital healthcare platform created in partnership with Mayo Clinic to empower chemotherapy patients and their caregivers. The platform delivers personalized education, real-time guidance, and user-friendly tracking capabilities. Through AI-powered personalization, multimodal learning experiences, and clinically validated content, ChemoBuddy helps patients stay informed, supported, and confident throughout their treatment journey.
-              </p>
+
+            {/* Horizontal Editorial Metrics */}
+            <div className="w-full">
+              <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.1 } }
+                }}
+                className="flex flex-col md:flex-row gap-10 md:gap-16 lg:gap-24"
+              >
+                {/* Outcomes Group */}
+                <div className="flex-1">
+                  <div className="case-meta text-[9px] text-[#8A8A8A] uppercase tracking-widest mb-4">OUTCOMES</div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-4">
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
+                      <span className="case-metric text-white mb-1">94%</span>
+                      <span className="case-meta text-[#A7A7A7] text-[10px]">Task Completion</span>
+                    </motion.div>
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
+                      <span className="case-metric text-white mb-1">-65%</span>
+                      <span className="case-meta text-[#A7A7A7] text-[10px]">Info Overwhelm</span>
+                    </motion.div>
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
+                      <span className="case-metric text-white mb-1">100%</span>
+                      <span className="case-meta text-[#A7A7A7] text-[10px]">Caregiver Access</span>
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Timeline Group */}
+                <div className="md:min-w-[200px]">
+                  <div className="case-meta text-[9px] text-[#8A8A8A] uppercase tracking-widest mb-4">TIMELINE</div>
+                  <div className="grid grid-cols-1">
+                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
+                      <span className="case-metric text-white mb-1">10 Wks</span>
+                      <span className="case-meta text-[#A7A7A7] text-[10px]">Research to Hi-Fi</span>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </motion.div>
 
           {/* 4. Content Sections */}
           <div className="space-y-32">
             
-            {/* Section: Context */}
+            {/* 03 — THE PROBLEM */}
             <motion.section
+              id="context"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
+              className="case-content-container scroll-mt-[140px]"
             >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Target className="text-[#1CB4F5]" size={24} />
-                <span className="text-sm font-normal tracking-widest text-[#1CB4F5]">CONTEXT</span>
-              </motion.div>
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                The Challenge
-              </motion.h2>
-              <motion.div 
-                className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
+              <div className="flex items-center gap-3 mb-6">
+                <Target className="text-[#1CB4F5]" size={20} />
+                <span className="case-eyebrow">The Problem</span>
+              </div>
+              
+              <h2 className="case-section-title mb-12">
+                200 pages of static text vs. a digital companion.
+              </h2>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
                 {/* Left Column - Body Text */}
-                <div>
-                  <p className="leading-relaxed text-[18px]">
+                <div className="lg:col-span-5">
+                  <p className="case-body-lg">
                     Chemotherapy patients manage an enormous amount of medical and emotional stress. Many receive thick binders of generic information and must juggle symptoms, schedules, and medications while coping with uncertainty.
                   </p>
-                </div>
-
-                {/* Right Column - Stacked Cards */}
-                <div className="flex flex-col gap-2">
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <FileText size={20} className="text-[#6FFF00] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Information overload</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Printed materials are overwhelming and not tailored to treatment type.
-                    </p>
-                  </div>
                   
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Clock size={20} className="text-[#6FFF00] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">24/7 Anxiety</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Questions arise late at night when help isn't available.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Activity size={20} className="text-[#6FFF00] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Symptom confusion</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Patients can't easily tell what's "normal" versus dangerous.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Users size={20} className="text-[#6FFF00] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Caregiver gaps</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Family members lack structured ways to support or monitor progress.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Calendar size={20} className="text-[#6FFF00] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Complex logistics</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Appointments, medications, and diets are scattered across platforms.
+                  {/* HMW Statement (Secondary) */}
+                  <div className="mt-12 case-card-base p-6 border-l-2 border-[#1CB4F5] border-t-0 border-r-0 border-b-0 bg-transparent rounded-r-xl rounded-l-sm">
+                    <h4 className="case-meta text-[11px] mb-3">How Might We</h4>
+                    <p className="case-body text-white">
+                      Transform overwhelming, static chemotherapy education into a personalized, supportive, and accessible digital companion for patients and their caregivers?
                     </p>
                   </div>
                 </div>
-              </motion.div>
-              
-              {/* 5. Highlighted Statement Box - Full Width */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="relative bg-gradient-to-br from-[#121217] to-[#0A0A0A] border border-white/5 rounded-2xl p-8 md:p-12 my-12 w-full overflow-hidden group cursor-pointer"
-              >
-                {/* Animated background glow */}
+
+                {/* Right Column - Problem Areas */}
                 <motion.div 
-                  className="absolute inset-0 bg-[#6FFF00]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  animate={{
-                    background: [
-                      "radial-gradient(circle at 0% 0%, rgba(111, 255, 0, 0.1) 0%, transparent 50%)",
-                      "radial-gradient(circle at 100% 100%, rgba(111, 255, 0, 0.1) 0%, transparent 50%)",
-                      "radial-gradient(circle at 0% 0%, rgba(111, 255, 0, 0.1) 0%, transparent 50%)",
-                    ]
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.1 } }
                   }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-                
-                {/* Icon */}
-                <div className="flex justify-center mb-6 relative z-10">
-                  <motion.div 
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-16 h-16 bg-[#6FFF00]/10 border border-[#6FFF00] rounded-full flex items-center justify-center"
-                  >
-                    <Lightbulb size={32} className="text-[#6FFF00]" />
+                  className="lg:col-span-7 flex flex-col gap-4"
+                >
+                  <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="case-card-base p-6 flex gap-6 items-start">
+                    <div className="flex flex-col items-center gap-2 mt-1">
+                      <span className="case-meta text-[#1CB4F5] text-xs">01</span>
+                      <FileText size={20} className="text-[#1CB4F5]" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-lg font-bold mb-2 font-sans">Information Overload</h3>
+                      <p className="case-body text-[15px]">
+                        Printed materials are overwhelming, disconnected, and rarely tailored to an individual's specific treatment type or immediate phase of care.
+                      </p>
+                    </div>
                   </motion.div>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-[#6FFF00] text-sm font-bold mb-4 uppercase tracking-widest text-center relative z-10">
-                  The Challenge
-                </h3>
-
-                {/* Body Text */}
-                <h4 className="text-white md:text-2xl font-bold leading-relaxed text-center relative z-10 font-normal text-[20px]">
-                  How might I design an experience that helps chemotherapy patients and their caregivers manage education, symptoms, and emotions, without increasing cognitive load?
-                </h4>
-
-                {/* Corner accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#6FFF00]/5 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#6FFF00]/5 rounded-tr-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </motion.div>
+                  
+                  <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="case-card-base p-6 flex gap-6 items-start">
+                    <div className="flex flex-col items-center gap-2 mt-1">
+                      <span className="case-meta text-[#1CB4F5] text-xs">02</span>
+                      <Clock size={20} className="text-[#1CB4F5]" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-lg font-bold mb-2 font-sans">24/7 Anxiety</h3>
+                      <p className="case-body text-[15px]">
+                        Questions and fear naturally arise late at night when clinical help isn't readily available, leaving patients feeling isolated and anxious.
+                      </p>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="case-card-base p-6 flex gap-6 items-start">
+                    <div className="flex flex-col items-center gap-2 mt-1">
+                      <span className="case-meta text-[#1CB4F5] text-xs">03</span>
+                      <Activity size={20} className="text-[#1CB4F5]" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-lg font-bold mb-2 font-sans">Symptom Confusion</h3>
+                      <p className="case-body text-[15px]">
+                        Patients struggle to assess whether a side effect is normal, expected, or an emergency requiring immediate medical intervention.
+                      </p>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </div>
             </motion.section>
 
-            {/* Section: Research */}
+            {/* 04 — SOLUTION PREVIEW */}
             <motion.section
+              id="solution"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
+              className="case-content-container pb-12 scroll-mt-[140px]"
             >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Lightbulb className="text-[#1CB4F5]" size={24} />
-                <span className="text-sm font-normal tracking-widest text-[#1CB4F5]">RESEARCH</span>
-              </motion.div>
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Understanding the Needs of Patients and Caregivers
-              </motion.h2>
-              <motion.div 
-                className="leading-relaxed mb-16 text-[18px] space-y-6"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <p>
-                  Over 10 weeks, I conducted an in-depth exploration of the learning, coping, and communication patterns of chemotherapy patients.
-                </p>
-                <p>
-                  My research unfolded across four strategic phases, weaving together clinical knowledge, emotional patient experiences, and caregiver perspectives to reveal what matters most during cancer treatment. The project's scope naturally expanded, what started as streamlining educational content transformed into understanding how patients interpret complex medical information, confront their fears, and lean on loved ones for support. From foundational literature reviews and competitive landscape analysis to hands-on simulated user scenarios, each phase built upon the last, with every design choice validated through rigorous research and empathetic understanding.
-                </p>
-              </motion.div>
-              
-              {/* Research Image Placeholder */}
-              <div className="w-full h-[60vh] mb-16">
-                <Frame69 />
+              <div className="flex items-center gap-3 mb-6">
+                <Monitor className="text-[#1CB4F5]" size={20} />
+                <span className="case-eyebrow">Solution Preview</span>
               </div>
               
-              {/* Secondary Research Section */}
-              <div className="mb-16">
-                <h3 className="text-sm font-normal tracking-widest text-[#1CB4F5] mb-6">SECONDARY RESEARCH</h3>
-                
-                <p className="text-white font-bold text-[32px] mb-4">01 - Literature Review (Week 1-2)</p>
-                <p className="leading-relaxed text-[18px] mb-8">
-                  I began with an extensive literature review to anchor my design approach in established oncology and digital health research, ensuring decisions were evidence-based rather than assumption-driven.
-                </p>
-                
-                {/* Research Objectives - Two Column Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8">
-                  <p className="text-white font-bold text-[18px]">Research Objectives:</p>
-                  <ul className="list-none space-y-2">
-                    <li className="leading-relaxed text-[18px]">• How do chemotherapy patients currently access education and support?</li>
-                    <li className="leading-relaxed text-[18px]">• What documented shortcomings exist in current chemo education tools?</li>
-                    <li className="leading-relaxed text-[18px]">• What digital health solutions, symptom trackers, and AI chatbots have been tested?</li>
-                    <li className="leading-relaxed text-[18px]">• What clinical safety parameters and risk boundaries must inform my design?</li>
-                  </ul>
-                </div>
-                
-                {/* Methodology - Two Column Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8">
-                  <p className="text-white font-bold text-[18px]">Methodology:</p>
-                  <div>
-                    <p className="leading-relaxed text-[18px] mb-3">I analyzed 11 peer-reviewed journals and oncology studies examining:</p>
-                    <ul className="list-none space-y-2">
-                      <li className="leading-relaxed text-[18px]">• Mobile health (mHealth) applications for cancer patients</li>
-                      <li className="leading-relaxed text-[18px]">• Symptom management and patient-reported outcomes</li>
-                      <li className="leading-relaxed text-[18px]">• Digital education tools and their influence on treatment adherence</li>
-                      <li className="leading-relaxed text-[18px]">• Emerging chatbot and AI applications in oncology care</li>
-                    </ul>
+              <h2 className="case-section-title mb-24">
+                The Core Experience
+              </h2>
+
+              <div className="space-y-32">
+                {/* 01 Command Center Dashboard */}
+                <motion.div 
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7 }}
+                >
+                  <div className="order-2 lg:order-1 col-span-1 lg:col-span-7">
+                    <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                      <img src={image_056f058b598dbb5ba9ed90f94b8880797dac30da} alt="Command Center Dashboard" className="w-full h-auto object-cover" />
+                    </div>
                   </div>
-                </div>
-                
-                {/* Literature Review Data Visual */}
-                <div className="w-full h-[650px] mb-12 relative">
-                  <Frame1686557570 />
-                </div>
-                
-                <h3 className="text-2xl md:text-3xl font-semibold text-white mb-6 mt-12 text-[20px]">Key Findings</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <motion.div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <motion.div 
-                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-4 text-white"
-                      initial={{ color: "#ffffff" }}
-                      whileInView={{ color: "#6FFF00" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: 0.8 }}
-                    >
-                      1
-                    </motion.div>
-                    <h4 className="text-white font-bold mb-2">Personalization Drives Comprehension</h4>
-                    <p className="text-sm">
-                      Patients demonstrate significantly better information retention and engagement when content is customized to their specific treatment protocol and disease stage, rather than receiving generalized materials.
+                  <div className="order-1 lg:order-2 col-span-1 lg:col-span-5">
+                    <span className="case-meta block mb-4">01 — Command Center</span>
+                    <h3 className="case-subsection-title mb-4">Command Center Dashboard</h3>
+                    <p className="case-body-lg">
+                      A centralized, calm hub designed to reduce cognitive burden. It prioritizes relevant daily actions, upcoming schedules, and immediate symptom-logging access without overwhelming the patient with non-essential data.
                     </p>
-                  </motion.div>
-                  <motion.div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <motion.div 
-                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-4 text-white"
-                      initial={{ color: "#ffffff" }}
-                      whileInView={{ color: "#6FFF00" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: 1.2 }}
-                    >
-                      2
-                    </motion.div>
-                    <h4 className="text-white font-bold mb-2">Design Tone Impacts Patient Behavior</h4>
-                    <p className="text-sm">
-                      Calm, encouraging, and non-judgmental interface design directly correlates with improved user engagement and treatment adherence, while clinical or overwhelming aesthetics create barriers.
+                  </div>
+                </motion.div>
+
+                {/* 02 AI Educational Companion */}
+                <motion.div 
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7 }}
+                >
+                  <div className="col-span-1 lg:col-span-5">
+                    <span className="case-meta block mb-4">02 — Support</span>
+                    <h3 className="case-subsection-title mb-4">AI Educational Companion</h3>
+                    <p className="case-body-lg">
+                      An intelligent, empathetic chat interface providing personalized, clinically-bounded education. It proactively surfaces relevant resources and answers late-night questions, effectively bridging the 24/7 knowledge gap.
                     </p>
-                  </motion.div>
-                  <motion.div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <motion.div 
-                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-4 text-white"
-                      initial={{ color: "#ffffff" }}
-                      whileInView={{ color: "#6FFF00" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: 1.6 }}
-                    >
-                      3
-                    </motion.div>
-                    <h4 className="text-white font-bold mb-2">AI Requires Clear Clinical Boundaries</h4>
-                    <p className="text-sm">
-                      Conversational AI and chatbots prove most effective as educational support tools rather than diagnostic instruments, with clinical oversight remaining essential for patient safety and trust.
+                  </div>
+                  <div className="col-span-1 lg:col-span-7">
+                    <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                      <img src={image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b} alt="AI Educational Companion" className="w-full h-auto object-cover" />
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* 03 3D Symptom Tracker */}
+                <motion.div 
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7 }}
+                >
+                  <div className="order-2 lg:order-1 col-span-1 lg:col-span-7">
+                    <div className="w-full rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                      <img src={image_59d13c8214ad12598c9d2470478d8fa2004aad78} alt="3D Symptom Tracker Interface" className="w-full h-auto object-cover" />
+                    </div>
+                  </div>
+                  <div className="order-1 lg:order-2 col-span-1 lg:col-span-5">
+                    <span className="case-meta block mb-4">03 — Tracking</span>
+                    <h3 className="case-subsection-title mb-4">3D Symptom Tracker</h3>
+                    <p className="case-body-lg">
+                      An intuitive anatomical interface allowing patients to precisely log where they feel pain or discomfort. It bypasses complex medical terminology and provides clear visual communication of symptom history to their care team.
                     </p>
-                  </motion.div>
-                </div>
+                  </div>
+                </motion.div>
               </div>
             </motion.section>
 
-            {/* Competitive Analysis Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.h3 
-                className="text-2xl md:text-3xl font-semibold text-white mb-6 mt-12 text-[20px]"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                02 - Competitive Analysis - Existing Oncology & Health Apps (Week 3)
-              </motion.h3>
-              
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Following the literature review, I shifted focus to understanding the actual patient experience with current digital health solutions.
-              </motion.p>
-              
-              {/* Research Objectives - Two Column Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8">
-                <p className="text-white font-bold text-[18px]">Research Objectives:</p>
-                <ul className="list-none space-y-2">
-                  <li className="leading-relaxed text-[18px]">• What strengths can I leverage from existing applications?</li>
-                  <li className="leading-relaxed text-[18px]">• Where do current solutions fail to address emotional support, educational clarity, and caregiver engagement?</li>
-                  <li className="leading-relaxed text-[18px]">• How can ChemoBuddy offer distinctive value beyond standard symptom tracking?</li>
-                </ul>
-              </div>
-              
-              {/* Methodology - Two Column Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8">
-                <p className="text-white font-bold text-[18px]">Methodology:</p>
-                <div>
-                  <p className="leading-relaxed text-[18px] mb-3">I conducted a comprehensive evaluation of 8 leading applications, including MyChart, Cancer.Net, Belong, and various symptom-tracking and hospital portal platforms. My assessment framework examined:</p>
-                  <ul className="list-none space-y-2">
-                    <li className="leading-relaxed text-[18px]">• Initial user onboarding journey</li>
-                    <li className="leading-relaxed text-[18px]">• Information structure and navigation</li>
-                    <li className="leading-relaxed text-[18px]">• Educational content delivery (format, length, tone)</li>
-                    <li className="leading-relaxed text-[18px]">• Symptom logging workflows</li>
-                    <li className="leading-relaxed text-[18px]">• Caregiver-specific functionality</li>
-                    <li className="leading-relaxed text-[18px]">• Visual design approach</li>
-                    <li className="leading-relaxed text-[18px]">• Accessibility and inclusive design features</li>
-                  </ul>
-                </div>
-              </div>
-              
-              {/* Competitive Analysis Image Placeholder */}
-              <div className="w-full h-[60vh] mb-24">
-                <CompetetiveAnalysis />
-              </div>
-            </motion.section>
 
-            {/* Highlight Insight */}
+
+{/* Section: Research */}
+<motion.section
+  id="research"
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.7, delay: 0.1 }}
+  className="case-content-container scroll-mt-[140px]"
+>
+  {/* RESEARCH OPENING */}
+  <div className="flex items-center gap-3 mb-6">
+    <Lightbulb className="text-[#1CB4F5]" size={20} />
+    <span className="case-eyebrow">RESEARCH</span>
+  </div>
+
+  <h2 className="case-section-title mb-8">
+    Understanding the Needs of Patients and Caregivers
+  </h2>
+
+  <div className="case-body-lg case-reading-width mb-24">
+    To design a truly supportive companion, I needed to understand the distinct learning patterns, emotional coping mechanisms, and communication needs of chemotherapy patients. This meant looking beyond clinical data to understand how patients interpret complex medical information, confront uncertainty, and lean on their caregivers.
+  </div>
+
+  {/* COMPACT RESEARCH APPROACH */}
+  <div className="mb-32">
+    <h3 className="case-meta text-[#5A5A5A] mb-8 border-b border-white/10 pb-4">
+      Research Approach
+    </h3>
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.08 } }
+      }}
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+    >
+      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
+        <div className="case-meta text-[#1CB4F5] mb-2">01</div>
+        <h4 className="text-white font-sans font-bold mb-1">Literature Review</h4>
+        <p className="case-caption text-[#A7A7A7]">11 peer-reviewed oncology & mHealth studies.</p>
+      </motion.div>
+      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
+        <div className="case-meta text-[#1CB4F5] mb-2">02</div>
+        <h4 className="text-white font-sans font-bold mb-1">Competitive Analysis</h4>
+        <p className="case-caption text-[#A7A7A7]">8 existing oncology & digital health applications.</p>
+      </motion.div>
+      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
+        <div className="case-meta text-[#1CB4F5] mb-2">03</div>
+        <h4 className="text-white font-sans font-bold mb-1">Role-Play Research</h4>
+        <p className="case-caption text-[#A7A7A7]">Structured scenarios with clinical oncology mentor.</p>
+      </motion.div>
+      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
+        <div className="case-meta text-[#1CB4F5] mb-2">04</div>
+        <h4 className="text-white font-sans font-bold mb-1">Synthesis</h4>
+        <p className="case-caption text-[#A7A7A7]">Affinity mapping and thematic clustering.</p>
+      </motion.div>
+    </motion.div>
+  </div>
+
+  {/* KEY RESEARCH INSIGHTS */}
+  <div className="mb-24">
+    <h3 className="case-meta text-[#1CB4F5] mb-12 flex items-center gap-4">
+      Key Research Insights
+      <div className="h-[1px] bg-gradient-to-r from-[#1CB4F5]/50 to-transparent flex-grow"></div>
+    </h3>
+
+    {/* INSIGHT 01 */}
+    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <div className="lg:col-span-8">
+        <div className="case-meta text-[#1CB4F5] mb-4">01 / INSIGHT</div>
+        <h4 className="case-subsection-title mb-6">
+          Cognitive overload demands directive, bite-sized guidance.
+        </h4>
+        <p className="case-body-lg mb-12">
+          Patients are frequently overwhelmed by generalized medical materials. During treatment, cognitive fatigue severely limits information retention, making standard medical encyclopedias ineffective.
+        </p>
+
+        <div className="space-y-8">
+          <div>
+            <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
+            <ul className="space-y-3 border-l border-white/10 pl-6">
+              <li className="case-body">Dr. Umar's clinical insight: "Patients stop listening after five minutes."</li>
+              <li className="case-body">Patients crave clear, actionable guidance: "Do this next" beats presenting multiple options.</li>
+              <li className="case-body">Videos and infographics help fatigued patients retain information more effectively than text alone.</li>
+            </ul>
+          </div>
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+            <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
+            <p className="case-body text-white">
+              Deliver personalized, progressive, and multimodal education modules tailored to the user's specific treatment protocol rather than a static library of articles.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="lg:col-span-4 mt-8 lg:mt-0">
+        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / FINDINGS</div>
+        <div 
+          className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] cursor-pointer group hover:border-white/30 transition-colors"
+          onClick={() => openImage(image_975eb820b2db35fb5fac046d478d0954033f591e, "Role-play research findings")}
+        >
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+          <img
+            src={image_975eb820b2db35fb5fac046d478d0954033f591e}
+            alt="Role-play research findings"
+            className="w-full h-auto opacity-80 mix-blend-screen group-hover:scale-[1.01] group-hover:opacity-100 transition-all duration-300 object-contain"
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* INSIGHT 02 */}
+    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <div className="lg:col-span-4 order-2 lg:order-1 mt-8 lg:mt-0">
+        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / AFFINITY MAPPING</div>
+        <div 
+          className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] cursor-pointer group hover:border-white/30 transition-colors"
+          onClick={() => openImage(image_1359c5d57ea418d545cb77a8af23298b569b64c5, "Affinity mapping clusters")}
+        >
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+          <img
+            src={image_1359c5d57ea418d545cb77a8af23298b569b64c5}
+            alt="Affinity mapping clusters"
+            className="w-full h-auto opacity-80 mix-blend-screen group-hover:scale-[1.01] group-hover:opacity-100 transition-all duration-300 object-contain"
+          />
+        </div>
+      </div>
+      
+      <div className="lg:col-span-8 order-1 lg:order-2">
+        <div className="case-meta text-[#1CB4F5] mb-4">02 / INSIGHT</div>
+        <h4 className="case-subsection-title mb-6">
+          The persistent anxiety of "Is this normal?"
+        </h4>
+        <p className="case-body-lg mb-12">
+          Patients frequently experience symptom uncertainty, having difficulty differentiating expected chemotherapy side effects from critical symptoms that require immediate medical attention.
+        </p>
+
+        <div className="space-y-8">
+          <div>
+            <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
+            <ul className="space-y-3 border-l border-white/10 pl-6">
+              <li className="case-body">Thematic cluster: High anxiety surrounding the inability to interpret physical changes during treatment cycles.</li>
+              <li className="case-body">Literature review highlighted the need for better symptom management and patient-reported outcome tracking.</li>
+            </ul>
+          </div>
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+            <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
+            <p className="case-body text-white">
+              Implement a visual symptom tracker that provides instant, clear guidance on expected side effects and appropriate next steps.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* INSIGHT 03 */}
+    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+      <div className="lg:col-span-7">
+        <div className="case-meta text-[#1CB4F5] mb-4">03 / INSIGHT</div>
+        <h4 className="case-subsection-title mb-6">
+          The caregiver's invisible workload is unsupported.
+        </h4>
+        <p className="case-body-lg mb-12">
+          Family members and caregivers carry a significant emotional and logistical burden, yet existing digital health platforms consistently exclude them from the primary user experience.
+        </p>
+        
+        <div className="space-y-8">
+          <div>
+            <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
+            <ul className="space-y-3 border-l border-white/10 pl-6">
+              <li className="case-body">Competitive Analysis Gap: There was a clear lack of empathy-driven interfaces and caregiver inclusion in existing solutions.</li>
+              <li className="case-body">Role-play synthesis: Family members require dedicated dashboards with digestible summaries like "today's focus" and "symptoms to monitor."</li>
+              <li className="case-body">Thematic cluster: The caregiver's invisible workload.</li>
+            </ul>
+          </div>
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+            <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
+            <p className="case-body text-white">
+              Create dedicated caregiver access providing digestible summaries, progress reports, and shared tracking without compromising patient autonomy.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="lg:col-span-5 mt-8 lg:mt-0">
+        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / COMPETITIVE ANALYSIS</div>
+        <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] p-6">
+          <div className="h-[250px] overflow-hidden rounded-lg relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0c] z-10 pointer-events-none"></div>
+            <div className="scale-75 origin-top-left w-[133%]">
+              <CompetetiveAnalysis />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* AI + CLINICAL TRUST AS A PRODUCT CONSTRAINT */}
+  <motion.div 
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true }}
+    className="mb-24 relative bg-[#121217] rounded-r-2xl border-y border-r border-white/5 p-8 lg:p-12"
+  >
+    <motion.div 
+      variants={{ hidden: { height: 0 }, visible: { height: "100%", transition: { duration: 0.8, ease: "easeOut" } } }}
+      className="absolute left-0 top-0 w-1 bg-[#FF4E4E]"
+    />
+    
+    <span className="case-meta text-[#FF4E4E] mb-4 block">CRITICAL PRODUCT CONSTRAINT</span>
+    <h4 className="case-subsection-title mb-6">AI Requires Clear Clinical Boundaries</h4>
+    <p className="case-body-lg mb-8 max-w-3xl">
+      Conversational AI and chatbots prove most effective as educational support tools. Clinical oversight remains essential for patient safety, trust, and ethical responsibility.
+    </p>
+
+    <div className="bg-black/40 p-5 rounded-xl border border-white/5 inline-block">
+      <div className="case-meta text-[#A7A7A7] mb-2 text-[10px]">DESIGN PRINCIPLE</div>
+      <p className="case-body text-white font-medium">
+        Position AI strictly for empathetic education and navigation support—never as a diagnostic instrument or unrestricted medical decision-maker.
+      </p>
+    </div>
+  </motion.div>
+
+  {/* PERSONA TREATMENT - COMPRESSED */}
+  <div className="mb-24">
+    <h3 className="case-meta text-[#5A5A5A] mb-8 border-b border-white/10 pb-4">
+      Who I Designed For
+    </h3>
+    <p className="case-body-lg mb-12 max-w-3xl">
+      Profiles derived from literature review, competitive analysis, and clinical mentor scenarios, representing patients at different treatment stages with distinct emotional, physical, and digital needs.
+    </p>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Profile 1 */}
+      <div className="bg-[#121217] rounded-xl border border-white/5 p-6 flex flex-col h-full">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h4 className="text-xl text-white font-bold mb-1 font-sans">Sarah, 58</h4>
+            <p className="case-meta text-[#A7A7A7]">Early Stage Patient</p>
+          </div>
+        </div>
+        <div className="mb-6">
+          <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">SYNTHESIZED NEED</div>
+          <p className="case-body text-white italic">Overwhelmed by medical binders. Needs to know what to expect today.</p>
+        </div>
+        <div className="mt-auto pt-6 border-t border-white/5">
+          <button 
+            onClick={() => openImage(image_0a7341009409eb5c92a8468f00f59b855a2e96ec, "Persona Sarah")}
+            className="case-meta text-[#1CB4F5] hover:text-white transition-colors flex items-center gap-2 group"
+          >
+            View full profile <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </div>
+
+      {/* Profile 2 */}
+      <div className="bg-[#121217] rounded-xl border border-white/5 p-6 flex flex-col h-full">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h4 className="text-xl text-white font-bold mb-1 font-sans">Rachel, 48</h4>
+            <p className="case-meta text-[#A7A7A7]">Mid-Treatment</p>
+          </div>
+        </div>
+        <div className="mb-6">
+          <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">SYNTHESIZED NEED</div>
+          <p className="case-body text-white italic">Uncertain if severe fatigue is normal. Concerned about caregiver burden.</p>
+        </div>
+        <div className="mt-auto pt-6 border-t border-white/5">
+          <button 
+            onClick={() => openImage(image_6b94fbe06bc29faf769f47c274b9f57570099e4e, "Persona Rachel")}
+            className="case-meta text-[#1CB4F5] hover:text-white transition-colors flex items-center gap-2 group"
+          >
+            View full profile <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* DEEP RESEARCH (COLLAPSED) */}
+  <div className="mb-32">
+    <details className="group">
+      <summary className="cursor-pointer list-none flex items-center justify-between p-6 bg-[#121217] border border-white/10 rounded-xl hover:bg-[#1a1a24] transition-colors">
+        <div>
+          <span className="case-meta text-white block mb-1">DEEP RESEARCH</span>
+          <span className="case-caption text-[#A7A7A7]">Methodology, source review & supporting artifacts</span>
+        </div>
+        <div className="case-meta text-[#5A5A5A] group-open:hidden flex items-center gap-2">Explore <span className="text-xl">+</span></div>
+        <div className="case-meta text-[#5A5A5A] hidden group-open:flex items-center gap-2">Close <span className="text-xl">×</span></div>
+      </summary>
+      
+      <div className="p-8 border border-t-0 border-white/10 rounded-b-xl bg-[#0a0a0c] mt-[-10px] pt-12">
+        {/* Unified Artifact Gallery */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Lit Review Shell */}
+          <div 
+            onClick={() => setTableLightboxOpen({type: 'lit_review', title: "Literature Review", metadata: `${literatureReviewData.length} STUDIES`})}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand table <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">LITERATURE REVIEW</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">{literatureReviewData.length} STUDIES</span>
+              </div>
+            </div>
             <motion.div 
-              className="border-l-4 border-white pl-8 py-4 mt-64 mb-16"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
+              layoutId="literature-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
             >
-              <span className="block text-sm font-normal text-[#1CB4F5] mb-2 uppercase">KEY GAP IDENTIFIED</span>
-              <p className="text-2xl md:text-3xl text-white text-[24px] font-normal not-italic font-bold">
-                There was a clear lack of empathy-driven interfaces and caregiver inclusion in existing solutions.
-              </p>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="literature" data={literatureReviewData} />
+              </div>
             </motion.div>
-
-            {/* Section 3.3: Primary Research */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
+          </div>
+          
+          {/* Comp Analysis Shell */}
+          <div 
+            onClick={() => setTableLightboxOpen({type: 'comp_analysis', title: "Competitive Analysis", metadata: `${competitiveAnalysisData.length} PRODUCTS`})}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand table <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">COMPETITIVE ANALYSIS</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">{`${competitiveAnalysisData.length} PRODUCTS / APPLICATIONS`}</span>
+              </div>
+            </div>
+            <motion.div 
+              layoutId="competitive-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
             >
-              <h3 className="text-sm font-normal tracking-widest text-[#1CB4F5] mb-6">PRIMARY RESEARCH</h3>
-              <p className="text-white font-bold text-[32px] mb-12">03 - Role-Play Testing with Clinical Mentor (Week 4-5)</p>
-
-              {/* Two Column Layout: Title on Left, Content on Right */}
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8">
-                <p className="text-white font-bold text-[18px]">Research Goal:</p>
-                <p className="leading-relaxed text-[18px]">
-                  Understand how patients and caregivers navigate information overload, emotional distress, and uncertainty—and discover how a digital tool could support them without adding complexity.
-                </p>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="competitive" data={competitiveAnalysisData} />
               </div>
+            </motion.div>
+          </div>
 
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-12"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Without direct patient access, I partnered with my oncology mentor, Dr. Umar, to conduct ethically sound research through structured role-play scenarios that authentically replicated patient-caregiver interactions during chemotherapy treatment.
-              </motion.p>
-
-              {/* What I Learned - Card Format */}
-              <h3 className="text-white font-bold text-[24px] mb-6">What I Learned</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Directive Over Choice</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Patients crave clear, actionable guidance: "Do this next" beats presenting multiple options.
-                  </p>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Show, Don't Just Tell</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Videos and infographics help fatigued patients retain information more effectively than text alone.
-                  </p>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Caregivers Need Their Own Space</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Family members require dedicated dashboards with digestible summaries like "today's focus" and "symptoms to monitor."
-                  </p>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Less is More</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Dr. Umar's insight: "Patients stop listening after five minutes"—confirming the need for bite-sized, progressive education.
-                  </p>
-                </motion.div>
+          {/* Role-Play Scenarios */}
+          <div 
+            onClick={() => openImage(image_7185839779b789cbfbfd75fdfef3c494ccafb053, "Role-Play Scenarios")}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">ROLE-PLAY SCENARIOS</span>
               </div>
+            </div>
+            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <img src={image_7185839779b789cbfbfd75fdfef3c494ccafb053} alt="Role-Play Scenarios" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
+            </div>
+          </div>
 
-              {/* Role-play Research Findings Image */}
-              <motion.div 
-                className="w-full mb-16"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_975eb820b2db35fb5fac046d478d0954033f591e} 
-                  alt="Role-play research findings showing scenario design and role-play sessions" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
-            </motion.section>
-
-            {/* Section 3.4: Synthesis & Strategy */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <p className="text-white font-bold text-[32px] mb-12">04 - Synthesis & Strategy</p>
-
-              {/* Affinity Mapping */}
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-12">
-                <p className="text-white font-bold text-[18px]">Affinity Mapping:</p>
-                <div>
-                  <p className="leading-relaxed text-[18px] mb-4">
-                    I organized research findings into five thematic clusters using FigJam:
-                  </p>
-                  <ul className="list-none space-y-2">
-                    <li className="leading-relaxed text-[18px]">• Overwhelm & cognitive fatigue</li>
-                    <li className="leading-relaxed text-[18px]">• "Is this normal?" – symptom uncertainty</li>
-                    <li className="leading-relaxed text-[18px]">• Trust and clinical credibility</li>
-                    <li className="leading-relaxed text-[18px]">• The caregiver's invisible workload</li>
-                    <li className="leading-relaxed text-[18px]">• Digital literacy and accessibility barriers</li>
-                  </ul>
-                </div>
+          {/* Affinity Mapping */}
+          <div 
+            onClick={() => openImage(image_872548eb54e3a9a24e2d9fe1ba3961431a895775, "Affinity Mapping")}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">AFFINITY MAPPING & SYNTHESIS</span>
               </div>
+            </div>
+            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <img src={image_872548eb54e3a9a24e2d9fe1ba3961431a895775} alt="Affinity Mapping" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
+            </div>
+          </div>
 
-              {/* Affinity Mapping Image */}
-              <motion.div 
-                className="w-full mb-16"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_1359c5d57ea418d545cb77a8af23298b569b64c5} 
-                  alt="Affinity mapping showing categorized user insights including overwhelm and fatigue, trust and credibility, caregiver invisible workload, tech comfort and accessibility" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
-
-              {/* Persona Development */}
-              <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-12">
-                <p className="text-white font-bold text-[18px]">Persona Development:</p>
-                <p className="leading-relaxed text-[18px]">
-                  These insights crystallized into two primary personas representing patients at different treatment stages, each with distinct emotional, physical, and digital needs.
-                </p>
+          {/* Brainstorming */}
+          <div 
+            onClick={() => openImage(image_a932146b4da5fd39394bd08dc371833a947bf031, "Brainstorming")}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">BRAINSTORMING & CONCEPT GENERATION</span>
               </div>
+            </div>
+            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <img src={image_a932146b4da5fd39394bd08dc371833a947bf031} alt="Brainstorming" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
+            </div>
+          </div>
 
-              {/* User Persona 1 - Sarah */}
-              <motion.div 
-                className="w-full mb-16"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_0a7341009409eb5c92a8468f00f59b855a2e96ec} 
-                  alt="User Persona 1 - Sarah, 58 years old, Metastatic Kidney Cancer Patient, showing goals, pain points, behavioral insights and behavior traits" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
-
-              {/* User Persona 2 - Rachel */}
-              <motion.div 
-                className="w-full"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_6b94fbe06bc29faf769f47c274b9f57570099e4e} 
-                  alt="User Persona 2 - Rachel, 48 years old, Breast Cancer Patient, showing goals, pain points, behavioral insights and behavior traits" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
-            </motion.section>
-
-            {/* Section 04: Ideation & Concept Development */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Sparkles className="text-[#1CB4F5]" size={24} />
-                <span className="text-sm font-normal tracking-widest text-[#1CB4F5]">IDEATION</span>
-              </motion.div>
-
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                From Insights to Ideas
-              </motion.h2>
-
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                I transformed research findings into actionable design opportunities using "How Might We" questions:
-              </motion.p>
-
-              <ul className="list-none space-y-3 mb-16 ml-6">
-                <li className="leading-relaxed text-[18px]">• <span className="italic">How might we</span> simplify complex chemotherapy information?</li>
-                <li className="leading-relaxed text-[18px]">• <span className="italic">How might we</span> help patients recognize emergency symptoms immediately?</li>
-                <li className="leading-relaxed text-[18px]">• <span className="italic">How might we</span> give caregivers secure, controlled access to updates?</li>
-              </ul>
-
-              <h3 className="text-white font-bold text-[24px] mb-6">Three Concepts Emerged</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <div className="w-12 h-12 bg-[#6FFF00]/10 rounded-lg flex items-center justify-center mb-4">
-                    <Activity size={24} className="text-[#6FFF00]" />
-                  </div>
-                  <h4 className="text-white font-bold mb-3 text-[18px]">3D Symptom Tracker</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    An intuitive body map for visual symptom logging
-                  </p>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <div className="w-12 h-12 bg-[#6FFF00]/10 rounded-lg flex items-center justify-center mb-4">
-                    <BookOpen size={24} className="text-[#6FFF00]" />
-                  </div>
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Multi-Modal Education Hub</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Learning through video, audio, and infographics
-                  </p>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <div className="w-12 h-12 bg-[#6FFF00]/10 rounded-lg flex items-center justify-center mb-4">
-                    <Layout size={24} className="text-[#6FFF00]" />
-                  </div>
-                  <h4 className="text-white font-bold mb-3 text-[18px]">Centralized Dashboard</h4>
-                  <p className="text-[16px] leading-relaxed">
-                    Unified view of appointments, medications, and care teams
-                  </p>
-                </motion.div>
+          {/* Timeline */}
+          <div 
+            onClick={() => openImage(image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5, "Research Timeline")}
+            className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
+          >
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
+              <div>
+                <span className="case-meta text-[11px] text-white block mb-0.5">RESEARCH TIMELINE</span>
               </div>
+            </div>
+            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+              <img src={image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5} alt="Research Timeline" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </details>
+  </div>
+</motion.section>
 
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-12"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                After mentor feedback, I unified these concepts into <span className="text-white font-bold">ChemoBuddy</span>: a mobile-first platform integrating personalized education, symptom tracking, and caregiver communication.
-              </motion.p>
+{/* Section: Design Process */}
+<motion.section
+  id="design"
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.7, delay: 0.1 }}
+  className="case-content-container scroll-mt-[140px]"
+>
+  <div className="flex items-center gap-3 mb-6">
+    <Sparkles className="text-[#1CB4F5]" size={20} />
+    <span className="case-eyebrow">DESIGN PROCESS</span>
+  </div>
 
-              {/* Concept Sketches - Brainstorming */}
-              <motion.div 
-                className="w-full"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_a932146b4da5fd39394bd08dc371833a947bf031} 
-                  alt="Brainstorming concept sketches showing healthcare app features including appointment management, medication tracking, and treatment information organized on colorful sticky notes" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
-            </motion.section>
+  <h2 className="case-section-title mb-6">
+    From Research to Product
+  </h2>
 
-            {/* Section 05: Design Process */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Pencil className="text-[#1CB4F5]" size={24} />
-                <span className="text-sm font-normal tracking-widest text-[#1CB4F5]">DESIGN PROCESS</span>
-              </motion.div>
+  <p className="case-body-lg mb-16 max-w-3xl">
+    The three major research insights naturally evolved into actionable design directions.
+  </p>
 
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Building with Empathy
-              </motion.h2>
+  {/* Visual Bridge */}
+  <motion.div 
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-100px" }}
+    className="mb-24 flex flex-col gap-10"
+  >
+    {/* Row 1 */}
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr_40px_1fr] items-center gap-4">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">RESEARCH INSIGHT 01</div>
+        <div className="text-white font-bold font-sans">Cognitive overload</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.1 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.3 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg opacity-60">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">DESIGN PRINCIPLE</div>
+        <div className="text-white font-bold font-sans text-sm">Actionable, bite-sized guidance</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.4 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.6 } } }} className="bg-[#121217] border border-[#1CB4F5]/30 p-6 rounded-lg relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-[#1CB4F5]" />
+        <div className="case-meta text-[#1CB4F5] text-[10px] mb-2">PRODUCT DIRECTION</div>
+        <div className="text-white font-bold font-sans">Multimodal Education</div>
+      </motion.div>
+    </div>
 
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                I mapped the user experience across five essential touchpoints:
-              </motion.p>
+    {/* Row 2 */}
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr_40px_1fr] items-center gap-4">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.1 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">RESEARCH INSIGHT 02</div>
+        <div className="text-white font-bold font-sans">"Is this normal?"</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.2 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.4 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg opacity-60">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">DESIGN PRINCIPLE</div>
+        <div className="text-white font-bold font-sans text-sm">Instant symptom clarity</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.5 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.7 } } }} className="bg-[#121217] border border-[#1CB4F5]/30 p-6 rounded-lg relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-[#1CB4F5]" />
+        <div className="case-meta text-[#1CB4F5] text-[10px] mb-2">PRODUCT DIRECTION</div>
+        <div className="text-white font-bold font-sans">Visual Symptom Tracking</div>
+      </motion.div>
+    </div>
 
-              <ul className="list-none space-y-3 mb-16 ml-6">
-                <li className="leading-relaxed text-[18px]">1. <span className="text-white font-bold">Onboarding</span> – Secure clinic code login with automatic treatment data sync</li>
-                <li className="leading-relaxed text-[18px]">2. <span className="text-white font-bold">Dashboard</span> – At-a-glance progress, appointments, and medication reminders</li>
-                <li className="leading-relaxed text-[18px]">3. <span className="text-white font-bold">AI Chatbot</span> – Empathetic, conversational support and education</li>
-                <li className="leading-relaxed text-[18px]">4. <span className="text-white font-bold">Symptom Tracker</span> – Visual body map with instant guidance and alerts</li>
-                <li className="leading-relaxed text-[18px]">5. <span className="text-white font-bold">Caregiver Access</span> – Privacy-controlled sharing and progress reports</li>
-              </ul>
+    {/* Row 3 */}
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_40px_1fr_40px_1fr] items-center gap-4">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.2 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">RESEARCH INSIGHT 03</div>
+        <div className="text-white font-bold font-sans">Caregiver workload</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.3 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.5 } } }} className="bg-[#121217] border border-white/10 p-6 rounded-lg opacity-60">
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-2">DESIGN PRINCIPLE</div>
+        <div className="text-white font-bold font-sans text-sm">Digestible shared progress</div>
+      </motion.div>
+      
+      <motion.div 
+        variants={{ hidden: { width: 0, opacity: 0 }, visible: { width: "100%", opacity: 1, transition: { duration: 0.5, delay: 0.6 } } }}
+        className="hidden md:block h-[1px] bg-[#1CB4F5] mx-auto w-full origin-left"
+      />
+      
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.8 } } }} className="bg-[#121217] border border-[#1CB4F5]/30 p-6 rounded-lg relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-[#1CB4F5]" />
+        <div className="case-meta text-[#1CB4F5] text-[10px] mb-2">PRODUCT DIRECTION</div>
+        <div className="text-white font-bold font-sans">Controlled Caregiver Access</div>
+      </motion.div>
+    </div>
 
-              {/* User Journey Map - Onboarding Flow */}
-              <motion.div 
-                className="w-full mb-24"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_47e793bbbd9b6c47a009bc5cd565225ecbc3555b} 
-                  alt="User journey map showing the complete onboarding flow from initial 24/7 treatment companion screen through personalization, care team setup, patient code entry, email verification, account setup, and profile verification screens" 
-                  className="w-full h-auto rounded-lg transition-transform duration-350 hover:scale-105 cursor-pointer"
-                />
-              </motion.div>
+    {/* Foundational Component - Visually grouped below the three columns */}
+    <div className="flex flex-col items-center mt-6">
+      <motion.div 
+        variants={{ hidden: { height: 0, opacity: 0 }, visible: { height: 24, opacity: 0.4, transition: { duration: 0.4, delay: 0.9 } } }}
+        className="w-[1px] bg-gradient-to-b from-[#1CB4F5] to-transparent mb-2"
+      />
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 1.0 } } }} className="bg-[#0a0a0c] border border-white/5 border-t-[#1CB4F5]/30 py-4 px-8 rounded-full flex flex-col items-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#1CB4F5]/50 to-transparent" />
+        <div className="case-meta text-[#5A5A5A] text-[10px] mb-1">FOUNDATIONAL EXPERIENCE</div>
+        <div className="text-white font-bold font-sans text-sm">Centralized Dashboard</div>
+      </motion.div>
+    </div>
+  </motion.div>
 
-              {/* Early Explorations */}
-              <p className="text-white font-bold text-[32px] mb-12">Early Explorations</p>
+  {/* Transition Text */}
+  <p className="case-body-lg italic mb-24 max-w-3xl border-l-2 border-[#1CB4F5] pl-6 py-2">
+    Research established the priorities. I translated them into a system designed around clarity, reassurance, safety and patient autonomy.
+  </p>
 
-              <motion.p 
-                className="leading-relaxed text-[18px] mb-12"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                Initial wireframes prioritized simplicity: minimal taps, large touch targets, and clear visual hierarchy—designed specifically for patients with limited digital fluency or low energy.
-              </motion.p>
+  {/* Early Explorations */}
+  <div className="mb-24">
+    <h3 className="case-meta text-[#5A5A5A] mb-8 border-b border-white/10 pb-4">
+      Early Explorations
+    </h3>
+    <p className="case-body-lg mb-8 max-w-3xl">
+      Initial wireframes prioritized simplicity: minimal taps, large touch targets, and clear visual hierarchy—designed specifically for patients with limited digital fluency or low energy.
+    </p>
+
+    <div 
+      className="bg-[#121217] border border-white/10 rounded-xl p-4 overflow-hidden cursor-pointer group hover:border-white/30 transition-colors relative"
+      onClick={() => openImage(image_47e793bbbd9b6c47a009bc5cd565225ecbc3555b, "Early Explorations - Onboarding Flow")}
+    >
+      <div className="absolute top-6 right-6 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Explore early flow <ArrowUpRight size={12} /></div>
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none rounded-xl" />
+      <div className="case-meta text-[#5A5A5A] text-[10px] mb-4">LOW-FIDELITY / ONBOARDING FLOW</div>
+      <img 
+        src={image_47e793bbbd9b6c47a009bc5cd565225ecbc3555b} 
+        alt="User journey map showing the complete onboarding flow" 
+        className="w-full h-auto rounded-lg opacity-80 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300"
+      />
+    </div>
+  </div>
 
               {/* High-Fidelity Solutions */}
               <p className="text-white font-bold text-[32px] mb-16">High-Fidelity Solutions</p>
@@ -1505,10 +2022,12 @@ export function ChemoBuddyCaseStudy() {
 
             {/* Section 06: User Testing */}
             <motion.section
+              id="testing"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.1 }}
+              className="scroll-mt-[140px]"
             >
               <motion.div 
                 className="flex items-center gap-3 mb-6"
@@ -2116,6 +2635,30 @@ export function ChemoBuddyCaseStudy() {
 
         </div>
       </section>
+
+      </div>
+
+      {/* Lightboxes */}
+      <ImageLightbox 
+        isOpen={!!lightboxImage} 
+        onClose={() => setLightboxImage(null)} 
+        imageSrc={lightboxImage || ''} 
+        imageAlt={lightboxAlt} 
+      />
+      <TableLightbox 
+        isOpen={tableLightboxOpen?.type === 'lit_review'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="literature-database" 
+      />
+      <CompetitiveAnalysisLightbox 
+        isOpen={tableLightboxOpen?.type === 'comp_analysis'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="competitive-database" 
+      />
     </div>
   );
 }
