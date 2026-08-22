@@ -3,38 +3,40 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowUpRight, ArrowRight, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCursor } from "../contexts/CursorContext";
+
 import image_9eba4ef78c719ff307dfa84e927ac719277023fb from 'figma:asset/9eba4ef78c719ff307dfa84e927ac719277023fb.png';
-import image_ee6ac64eaea5a8ed9bbd18190233110cc58ff789 from 'figma:asset/ee6ac64eaea5a8ed9bbd18190233110cc58ff789.png';
-import zylkerImage from 'figma:asset/4cb3156685ec7ae6186027b783c567811e64a2ad.png';
-import arizonaYogaImage from 'figma:asset/2345e114a306f984d586277a1cbc1eaa58f13532.png';
+import chemoVideo from '../../assets/Chemo thumbnail.mp4';
+import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
+import auraVideo from '../../assets/Aura thumbnail.mp4';
+import aisleVideo from '../../assets/AIsle.mp4';
 
 const projects = [
   {
     id: "fintech-dashboard",
     title: "Chemotherapy education platform",
     category: "UX Case Study",
-    image: image_ee6ac64eaea5a8ed9bbd18190233110cc58ff789,
+    video: chemoVideo,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
-    id: "arizona-yoga-studio",
-    title: "Arizona Yoga Studio",
-    category: "Coming Soon",
-    image: arizonaYogaImage,
-    size: "col-span-1 md:col-span-1 md:row-span-1",
-  },
-  {
-    id: "zylker",
-    title: "Zylker form builder",
-    category: "UX Research",
-    image: zylkerImage,
+    id: "aura",
+    title: "Aura - Feel the room",
+    category: "UX Case Study",
+    video: auraVideo,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     id: "aisle",
     title: "Aisle",
     category: "Product Design",
-    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop",
+    video: aisleVideo,
+    size: "col-span-1 md:col-span-1 md:row-span-1",
+  },
+  {
+    id: "arizona-yoga-studio",
+    title: "Arizona Yoga Studio",
+    category: "Coming Soon",
+    video: arizonaYogaVideo,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
 ];
@@ -169,12 +171,12 @@ export function Hero() {
             <span className="text-[#A7A7A7]">thiruvenkata saha.</span>
           </h1>
           <p 
-            className="text-[#A7A7A7] text-base md:text-xl max-w-[70%] leading-relaxed text-left mb-8"
+            className="text-[#A7A7A7] text-base md:text-xl max-w-[95%] lg:max-w-[90%] leading-relaxed text-left mb-8"
             style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: '1.7' }}
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
-            I'm a user experience graduate student at ASU and multidisciplinary designer, currently intergrating at the ASU SWAP Hub, where I design and build digital experinces. 
+            I’m a founding designer who loves the 0→1. I turn fuzzy ideas into products used by 3,000+ people, experiment with AI from research to media production and occasionally wonder, “What if we tried it this way?”
           </p>
           
           {/* Say Hi Button */}
@@ -213,17 +215,33 @@ export function Hero() {
         <div id="works" className="grid grid-cols-1 md:grid-cols-4 gap-2 auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
           {projects.map((project, index) => {
             const cardContent = (
-              <motion.div
+                <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
-                className={`relative group cursor-pointer overflow-hidden ${index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'} h-full w-full ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}
+                className={`relative group cursor-pointer overflow-hidden h-full w-full ${
+                  project.id === 'arizona-yoga-studio' ? 'bg-white' : 
+                  index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'
+                } ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 object-cover"
-                />
+                {project.video ? (
+                  <video
+                    src={project.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className={`w-full h-full transition-transform duration-700 ${
+                      project.id === 'arizona-yoga-studio' ? 'object-contain scale-125 group-hover:scale-[1.30]' : 'object-cover group-hover:scale-105'
+                    }`}
+                  />
+                ) : (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
+                  />
+                )}
                 
                 <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl ${index === 2 ? 'bg-black/60' : 'bg-black/30'} ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}>
                   <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>

@@ -18,7 +18,7 @@ const recommendations = [
   },
   {
     name: "Tamara Gligoric",
-    title: "Project Coordinator",
+    title: "Project Manager",
     org: "Southwest Advanced Prototyping (SWAP) Hub at Arizona State University",
     tagline: "Tamara managed Thiruvenkata Saha directly",
     content: [

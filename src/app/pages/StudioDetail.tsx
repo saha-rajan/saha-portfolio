@@ -3,25 +3,6 @@ import { motion } from "motion/react";
 import { ArrowLeft, Move } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import stadiumImg from "figma:asset/52e72f7f24face51a30e9ed8ff5decf4a50e33b0.png";
-import trainImg from "figma:asset/b474af98e1d63545706e7c867b42b273c1082b34.png";
-import templeImg from "figma:asset/bf6fd2939af9d160aa611142701aca102f95d363.png";
-import snowImg from "figma:asset/85f960d44b7c54823bcc93531dae6ad9e4882932.png";
-import treesImg from "figma:asset/55bfe0101e96a98d8a7c7168e32a60e2aeacd571.png";
-import caveImg from "figma:asset/912f021086eadca18bd8ec27a8a3ac1edab53796.png";
-import summitImg from "figma:asset/0902b04f5fc0e540c92f6ef607c657c406d37641.png";
-import sunsetGroupImg from "figma:asset/95585d9e4e6f09563cedbcf4a6df7d8b7b815103.png";
-import ruinsImg from "figma:asset/d9d716885d3713e59390a871b546d6bc28a83b5e.png";
-import cityscapeImg from "figma:asset/f09489f05dcb966ee77164e8c38c226188416055.png";
-import couchImg from "figma:asset/cad4184cff8840002e85f65ffcdc73ce6af50493.png";
-import wandererImg from "figma:asset/525ffd42988a5dbf06571117b0185795ce32938f.png";
-import dockImg from "figma:asset/3ab3a0b5b6c78b968bcb4e1569ae06e2668ad8fd.png";
-import apartmentImg from "figma:asset/9edae7bdf697fd739e6338ffc1d8c17dcb6943b9.png";
-import roadImg from "figma:asset/fdbd17a90a42563c09b2c9e5e2c036bcf1d8ddfa.png";
-import curryImg from "figma:asset/900d717f07264980831c076350c2772e04adef61.png";
-import dinerImg from "figma:asset/b2ac0a4dddeca58515e3fc8c4c5af3d994f1a661.png";
-import innoutImg from "figma:asset/172678394c3bc5d4970475d82d460382c8d48a8a.png";
-import busImg from "figma:asset/791ae484c129ff9b243fb763b59cfef810a00ab0.png";
 import robotImg from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
 import sketchImg from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
@@ -30,178 +11,24 @@ import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.pn
 const studioImages = [
   {
     id: 1,
-    url: stadiumImg,
-    label: "STADIUM",
-    initialX: -680,
-    initialY: -420,
-    rotation: -8,
-  },
-  {
-    id: 2,
-    url: trainImg,
-    label: "TWILIGHT",
-    initialX: 620,
-    initialY: -280,
-    rotation: 12,
-  },
-  {
-    id: 3,
-    url: templeImg,
-    label: "TEMPLE",
-    initialX: -320,
-    initialY: 480,
-    rotation: -5,
-  },
-  {
-    id: 4,
-    url: snowImg,
-    label: "WINTER",
-    initialX: 520,
-    initialY: 520,
-    rotation: 8,
-  },
-  {
-    id: 5,
-    url: treesImg,
-    label: "SKYWARD",
-    initialX: -820,
-    initialY: 120,
-    rotation: 6,
-  },
-  {
-    id: 6,
-    url: caveImg,
-    label: "DEPTHS",
-    initialX: 780,
-    initialY: -520,
-    rotation: -12,
-  },
-  {
-    id: 7,
-    url: summitImg,
-    label: "SUMMIT",
-    initialX: -120,
-    initialY: -620,
-    rotation: 4,
-  },
-  {
-    id: 8,
-    url: sunsetGroupImg,
-    label: "HORIZON",
-    initialX: 720,
-    initialY: 280,
-    rotation: -6,
-  },
-  {
-    id: 9,
-    url: ruinsImg,
-    label: "EXPLORE",
-    initialX: -580,
-    initialY: -180,
-    rotation: 10,
-  },
-  {
-    id: 10,
-    url: cityscapeImg,
-    label: "VISTA",
-    initialX: 320,
-    initialY: -480,
-    rotation: -4,
-  },
-  {
-    id: 11,
-    url: couchImg,
-    label: "PAUSE",
-    initialX: -420,
-    initialY: 620,
-    rotation: 7,
-  },
-  {
-    id: 12,
-    url: wandererImg,
-    label: "WANDERER",
-    initialX: -920,
-    initialY: -320,
-    rotation: -10,
-    objectPosition: "center bottom", // Maximum downward positioning
-  },
-  {
-    id: 13,
-    url: dockImg,
-    label: "SOLITUDE",
-    initialX: 880,
-    initialY: 80,
-    rotation: 5,
-  },
-  {
-    id: 14,
-    url: apartmentImg,
-    label: "TRANSIT",
-    initialX: 120,
-    initialY: 680,
-    rotation: -7,
-  },
-  {
-    id: 15,
-    url: roadImg,
-    label: "JOURNEY",
-    initialX: -680,
-    initialY: -680,
-    rotation: 9,
-  },
-  {
-    id: 16,
-    url: curryImg,
-    label: "CURRY",
-    initialX: -1000,
-    initialY: 1000,
-    rotation: 15,
-  },
-  {
-    id: 17,
-    url: dinerImg,
-    label: "DINER",
-    initialX: 1000,
-    initialY: 1000,
-    rotation: -15,
-  },
-  {
-    id: 18,
-    url: innoutImg,
-    label: "INNOUT",
-    initialX: -1000,
-    initialY: -1000,
-    rotation: 20,
-    objectPosition: "center top", // Maximum upward positioning to show face
-  },
-  {
-    id: 19,
-    url: busImg,
-    label: "BUS",
-    initialX: 1000,
-    initialY: -1000,
-    rotation: -20,
-  },
-  {
-    id: 20,
     url: robotImg,
-    label: "ROBOT",
+    label: "Spline 3D\nInteractive 3D Model",
     initialX: 0,
     initialY: 220,
     rotation: 3,
   },
   {
-    id: 21,
+    id: 2,
     url: sketchImg,
-    label: "AFTER EFFECTS",
+    label: "After Effects\nLogo Animation",
     initialX: 420,
     initialY: 380,
     rotation: -6,
   },
   {
-    id: 22,
+    id: 3,
     url: gameLogoImg,
-    label: "GAME",
+    label: "Adobe Illustrator\nThumbnail Design",
     initialX: -680,
     initialY: 420,
     rotation: 8,
@@ -257,7 +84,7 @@ function ImageCard({ image, onBringToFront, zIndex }: ImageCardProps) {
             style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
           />
         </div>
-        <div className="mt-2 text-black text-xs font-medium tracking-wider text-center font-mono">
+        <div className="mt-2 text-black text-xs font-medium tracking-wider text-center font-mono whitespace-pre-line leading-relaxed">
           {image.label}
         </div>
       </div>

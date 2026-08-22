@@ -2,23 +2,25 @@ import { motion } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
 import { Link } from "react-router-dom";
 import threeDGif from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
-import robotImage from "figma:asset/bdc72e3cdc6ff1d1de3e8cf50a76e0afe1d93e5c.png";
 import layoutGif from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import typographyImage from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
 
 const experiments = [
   {
-    type: "3D",
+    type: "Robot",
+    label: "Spline 3D\nInteractive 3D Model",
     image: threeDGif,
     size: "col-span-1 md:col-span-1 row-span-1",
   },
   {
-    type: "Game Thumbnail",
+    type: "Game",
+    label: "Adobe Illustrator\nThumbnail Design",
     image: typographyImage,
     size: "col-span-1 md:col-span-2 row-span-2",
   },
   {
     type: "After Effects",
+    label: "After Effects\nLogo Animation",
     image: layoutGif,
     size: "col-span-1 md:col-span-1 row-span-1",
   },
@@ -107,16 +109,16 @@ export function Studio() {
                   src={item.image}
                   alt={item.type}
                   className={`w-full h-full transition-transform duration-700 opacity-80 group-hover:opacity-100 object-cover scale-125 ${
-                    item.type === "Game Thumbnail" 
+                    item.type === "Game" 
                       ? "group-hover:scale-120" 
                       : "group-hover:scale-130"
                   }`}
                   style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
                   animate={
-                    item.type === "Game Thumbnail" ? {
+                    item.type === "Game" ? {
                       y: [0, -15, 0],
                       x: [0, 8, 0],
-                    } : item.type === "3D" ? {
+                    } : item.type === "Robot" ? {
                       y: [0, -8, 0],
                       rotate: [0, 2, 0],
                     } : {
@@ -125,11 +127,11 @@ export function Studio() {
                     }
                   }
                   transition={
-                    item.type === "Game Thumbnail" ? {
+                    item.type === "Game" ? {
                       duration: 5,
                       repeat: Infinity,
                       ease: "easeInOut"
-                    } : item.type === "3D" ? {
+                    } : item.type === "Robot" ? {
                       duration: 6,
                       repeat: Infinity,
                       ease: "easeInOut"
@@ -142,8 +144,8 @@ export function Studio() {
                 />
                 
                 {/* Title overlay - appears on hover in center */}
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
-                  <span className="text-white text-lg font-bold tracking-widest">{item.type}</span>
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl px-4 text-center">
+                  <span className="text-white text-lg font-bold tracking-widest whitespace-pre-line leading-tight">{item.label}</span>
                 </div>
               </motion.div>
             </Link>

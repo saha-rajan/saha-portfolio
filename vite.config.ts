@@ -21,6 +21,7 @@ function figmaAssetPlugin(): Plugin {
 }
 
 export default defineConfig({
+  assetsInclude: ['**/*.glb', '**/*.gltf'],
   plugins: [
     // Plugin to resolve Figma Make asset imports
     figmaAssetPlugin(),

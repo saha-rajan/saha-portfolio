@@ -15,6 +15,31 @@ import solutionImage2 from 'figma:asset/3334744517cfb0f8fa6a3697b568391d2ea42a22
 import solutionImage3 from 'figma:asset/d17e5d9158db8507662ad84fcb34bd83c9d7e945.png';
 import solutionImage4 from 'figma:asset/489c923093a55da107a0157f6c89d4a17dc16080.png';
 
+// ─── Fade In on Scroll ─────────────────────────────────────────────────────────
+function FadeInView({
+  children,
+  delay = 0,
+  className = "",
+  y = 20,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+  y?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 // Animated Counter Component
 function AnimatedCounter({ value, decimals = 0 }: { value: number; decimals?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -45,6 +70,11 @@ export function ArizonaYogaCaseStudy() {
   const [hoveredSide, setHoveredSide] = useState<'left' | 'right' | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollTopArrowPosition, setScrollTopArrowPosition] = useState({ x: 0, y: 0 });
+  const [prevTopNavPosition, setPrevTopNavPosition] = useState({ x: 0, y: 0 });
+  const [nextTopNavPosition, setNextTopNavPosition] = useState({ x: 0, y: 0 });
+  const [prevBottomNavPosition, setPrevBottomNavPosition] = useState({ x: 0, y: 0 });
+  const [nextBottomNavPosition, setNextBottomNavPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,6 +94,71 @@ export function ArizonaYogaCaseStudy() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleScrollTopMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setScrollTopArrowPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handlePrevTopNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setPrevTopNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handleNextTopNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setNextTopNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handlePrevBottomNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setPrevBottomNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handleNextBottomNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setNextBottomNavPosition({ x: clampedX, y: clampedY });
+  };
+
   const solutionImages = [solutionImage1, solutionImage2, solutionImage3, solutionImage4];
 
   const handleNextImage = () => {
@@ -79,12 +174,17 @@ export function ArizonaYogaCaseStudy() {
   }, []);
 
   return (
-    <div className="bg-black min-h-screen text-[#A7A7A7] font-['IBM_Plex_Mono'] selection:bg-white selection:text-black">
+    <div className="bg-black min-h-screen text-[#A7A7A7] font-sans selection:bg-white selection:text-black">
       {/* Scroll to Top Button */}
       <motion.button
         onClick={scrollToTop}
+        data-cursor-hide="true"
         onMouseEnter={() => setHideCursor(true)}
-        onMouseLeave={() => setHideCursor(false)}
+        onMouseLeave={() => {
+          setHideCursor(false);
+          setScrollTopArrowPosition({ x: 0, y: 0 });
+        }}
+        onMouseMove={handleScrollTopMouseMove}
         initial={{ opacity: 0, y: 20 }}
         animate={{ 
           opacity: showScrollTop ? 1 : 0,
@@ -96,40 +196,100 @@ export function ArizonaYogaCaseStudy() {
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         aria-label="Scroll to top"
       >
-        <ChevronUp size={20} />
+        <motion.div
+          className="inline-block flex items-center justify-center"
+          animate={{ x: scrollTopArrowPosition.x, y: scrollTopArrowPosition.y }}
+          transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+        >
+          <ChevronUp size={20} />
+        </motion.div>
       </motion.button>
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6 md:px-12 max-w-[1440px] mx-auto">
-        <div className="max-w-[1190px] mx-auto">
-          <div className="flex flex-col gap-8 mb-12">
-            <div className="flex justify-between items-start">
-              <div>
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-4xl md:text-6xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"
-                >
-                  Arizona Yoga Co. - Website UX Redesign
-                </motion.h1>
-                <p className="text-xl text-[#A7A7A7] mb-6">UX Research & Website Redesign</p>
-                <span className="inline-block border border-white/20 rounded-full px-4 py-1 text-sm">
-                  Second Semester Project
-                </span>
-              </div>
-              
-              {/* Prev/Next Navigation */}
-              <div className="hidden md:flex gap-4">
-                <Link to="/works/fintech-dashboard" className="p-3 border border-white/10 rounded-full hover:bg-white hover:text-black transition-colors">
-                  <ArrowLeft size={20} />
-                </Link>
-                <Link to="/works/zylker" className="p-3 border border-white/10 rounded-full hover:bg-white hover:text-black transition-colors">
-                  <ArrowRight size={20} />
-                </Link>
-              </div>
-            </div>
+      <section id="hero" className="pt-24 md:pt-32 pb-10 md:pb-12 px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto w-full">
+        <div className="flex justify-between items-start gap-8">
+          
+          <div className="flex-1 min-w-0 max-w-[760px]">
+            <motion.h1 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="font-sans font-bold mb-6 text-white tracking-tight bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent"
+              style={{ fontSize: "clamp(3.5rem, 5vw, 5.1rem)", lineHeight: 1.1 }}
+            >
+              Arizona Yoga Co. - Website UX Redesign
+            </motion.h1>
+            
+            <motion.h2 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
+              className="text-[#A7A7A7] text-lg md:text-xl max-w-[700px] mb-8"
+              style={{ lineHeight: 1.5 }}
+            >
+              UX Research & Website Redesign
+            </motion.h2>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+              className="flex flex-wrap items-center gap-3"
+            >
+              <span className="inline-block rounded-full px-4 py-1.5 text-xs tracking-widest uppercase border border-white/15 text-[#A7A7A7]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                Second Semester Project
+              </span>
+            </motion.div>
           </div>
+          
+          {/* Prev/Next Navigation */}
+          <div className="hidden md:flex gap-3 shrink-0 pt-4">
+                <Link 
+                  to="/works/aisle" 
+                  data-cursor-hide="true"
+                  className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
+                  onMouseEnter={() => setHideCursor(true)}
+                  onMouseLeave={() => {
+                    setHideCursor(false);
+                    setPrevTopNavPosition({ x: 0, y: 0 });
+                  }}
+                  onMouseMove={handlePrevTopNavMouseMove}
+                  aria-label="Previous Project"
+                >
+                  <motion.div
+                    className="inline-block flex items-center justify-center"
+                    animate={{ x: prevTopNavPosition.x, y: prevTopNavPosition.y }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+                  >
+                    <ArrowLeft size={18} />
+                  </motion.div>
+                </Link>
+                <Link 
+                  to="/works/fintech-dashboard" 
+                  data-cursor-hide="true"
+                  className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
+                  onMouseEnter={() => setHideCursor(true)}
+                  onMouseLeave={() => {
+                    setHideCursor(false);
+                    setNextTopNavPosition({ x: 0, y: 0 });
+                  }}
+                  onMouseMove={handleNextTopNavMouseMove}
+                  aria-label="Next Project"
+                >
+                  <motion.div
+                    className="inline-block flex items-center justify-center"
+                    animate={{ x: nextTopNavPosition.x, y: nextTopNavPosition.y }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+                  >
+                    <ArrowRight size={18} />
+                  </motion.div>
+                </Link>
+              </div>
+        </div>
+      </section>
 
+      <section className="px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto w-full pb-16">
+        <div className="max-w-[1190px] mx-auto">
           {/* Hero Image */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -164,851 +324,188 @@ export function ArizonaYogaCaseStudy() {
             />
           </motion.div>
 
-          {/* Project Info Section */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-32 border-b border-white/10 pb-16"
-          >
-            <div className="col-span-1 space-y-8">
-              <div>
-                <h3 className="text-[#FF8C42] text-sm font-bold mb-2 uppercase tracking-wider text-[16px]">My Role</h3>
-                <p className="font-semibold mb-2 text-xl">UX Designer & Researcher</p>
-                <p className="leading-relaxed text-[18px]">Led the complete UX research and redesign process, from heuristic evaluation and user surveys to prototyping and usability testing.</p>
-              </div>
-              <div>
-                <h3 className="text-[#FF8C42] text-sm font-bold mb-2 uppercase tracking-wider text-[16px]">Tools & Methods</h3>
-                <p className="leading-relaxed text-[18px]">
-                  Heuristic Evaluation, User Surveys, Personas, Usability Testing, Figma Prototyping
-                </p>
-              </div>
-              <div>
-                <h3 className="text-[#FF8C42] text-sm font-bold mb-2 uppercase tracking-wider text-[16px]">Platform & Timeline</h3>
-                <p className="leading-relaxed mb-3 text-[18px]">
-                  <span className="text-white font-semibold text-[20px]">Platform:</span> Desktop Website
-                </p>
-                <p className="leading-relaxed text-[18px]">
-                  <span className="text-white font-semibold text-[20px]">Timeline:</span> Second Semester Project
-                </p>
+          {/* ══════════════════════════════════════════════════════════════════
+              02 — PROJECT AT A GLANCE
+          ══════════════════════════════════════════════════════════════════ */}
+          <section id="glance" className="w-full pb-16 md:pb-24">
+            <div className="w-full border-y border-white/10 py-12 md:py-16">
+              <FadeInView>
+                <span
+                  className="block mb-8 text-[11px] tracking-widest uppercase text-[#7FAF9B]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Project at a Glance
+                </span>
+              </FadeInView>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+                {[
+                  { label: "ROLE", value: "UX Designer\nResearcher" },
+                  { label: "TOOLS", value: "Heuristics, Surveys\nPersonas, Figma" },
+                  { label: "TIMELINE", value: "Second Semester" },
+                  { label: "PLATFORM", value: "Desktop Website\nResponsive Redesign" }
+                ].map((item, i) => (
+                  <FadeInView key={item.label} delay={i * 0.05} className="col-span-1">
+                    <div className="flex flex-col">
+                      <h4
+                        className="text-[11px] mb-3 tracking-widest uppercase text-white/40"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                      >
+                        {item.label}
+                      </h4>
+                      <p className="text-[14px] leading-relaxed text-white/80 whitespace-pre-line">
+                        {item.value}
+                      </p>
+                    </div>
+                  </FadeInView>
+                ))}
               </div>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-[#FF8C42] text-sm font-bold mb-4 uppercase tracking-wider text-[16px]">Overview</h3>
-              <p className="text-base md:text-lg leading-[1.7] text-[rgb(167,167,167)] text-left">
-                Arizona Yoga Co. is a community-focused yoga studio offering in-studio, online, and workshop-based classes through a donation-based pricing model. While the studio has a strong mission centered on accessibility and inclusivity, its website experience did not effectively support users in discovering classes, understanding pricing, or completing key tasks such as booking or contacting the studio. This project focused on identifying usability barriers and translating research-driven insights into practical, user-centered design solutions.
-              </p>
+          </section>            
+            {/* ══════════════════════════════════════════════════════════════════
+              03 — THE CHALLENGE
+          ══════════════════════════════════════════════════════════════════ */}
+          <section id="problem" className="pt-16 md:pt-24 pb-16 md:pb-20">
+            <FadeInView>
+              <div className="max-w-3xl mb-16 md:mb-24">
+                <span
+                  className="block mb-6 md:mb-8 text-[11px] tracking-widest uppercase text-[#FF6B50]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  01 / THE CHALLENGE
+                </span>
+                <h2
+                  className="font-sans font-medium leading-none tracking-tight mb-8 text-white"
+                  style={{ fontSize: "clamp(2.5rem, 4.5vw, 4rem)", letterSpacing: "-0.04em" }}
+                >
+                  Good intentions. High friction.
+                </h2>
+                <p className="text-[18px] md:text-[21px] leading-relaxed font-light text-white/70">
+                  Despite offering valuable yoga programs and a unique donation-based pricing model, the Arizona Yoga Co. website created significant friction for users attempting to complete core tasks, particularly for first-time visitors and beginners.
+                </p>
+              </div>
+            </FadeInView>
+
+            {/* Problem Themes */}
+            <div className="border-t border-white/10 pt-16 md:pt-20">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8">
+                <FadeInView delay={0.1}>
+                  <h3 className="text-lg font-medium text-white mb-3">Class Discovery</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Users struggled to understand how to book or register for classes across different formats.
+                  </p>
+                </FadeInView>
+                <FadeInView delay={0.2}>
+                  <h3 className="text-lg font-medium text-white mb-3">Navigation</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Inconsistent navigation patterns between Studio, Zoom, YouTube, and Workshop formats.
+                  </p>
+                </FadeInView>
+                <FadeInView delay={0.3}>
+                  <h3 className="text-lg font-medium text-white mb-3">Pricing Ambiguity</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Users couldn't interpret the donation-based pricing model with confidence.
+                  </p>
+                </FadeInView>
+                <FadeInView delay={0.4}>
+                  <h3 className="text-lg font-medium text-white mb-3">Hierarchy</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Difficulty finding essential information like schedules, instructors, and contact options.
+                  </p>
+                </FadeInView>
+              </div>
             </div>
-          </motion.div>
+          </section>
 
-          {/* Content Sections */}
-          <div className="space-y-32">
-            
-            {/* Section: Context */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Target className="text-white" size={24} />
-                <span className="text-sm font-bold tracking-widest text-white">CONTEXT</span>
-              </motion.div>
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                The Challenge
-              </motion.h2>
-              <motion.div 
-                className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                {/* Left Column - Body Text */}
-                <div>
-                  <p className="leading-relaxed text-[18px] mb-6">
-                    Despite offering valuable yoga programs and a unique donation-based pricing model, the Arizona Yoga Co. website created significant friction for users attempting to complete core tasks.
-                  </p>
-                  <p className="leading-relaxed text-[18px]">
-                    Research revealed that users struggled with understanding how to book classes, navigating between different class formats, interpreting the donation-based pricing model, and finding essential information. These issues affected usability, user trust, and conversion—particularly for first-time visitors and beginners.
-                  </p>
-                </div>
 
-                {/* Right Column - Stacked Cards */}
-                <div className="flex flex-col gap-2">
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Search size={20} className="text-[#FFA500] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Class Discovery Confusion</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Users struggled to understand how to book or register for classes across different formats.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Navigation size={20} className="text-[#FFA500] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Navigation Complexity</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Inconsistent navigation patterns between Studio, Zoom, YouTube, and Workshop formats.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <DollarSign size={20} className="text-[#FFA500] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Pricing Ambiguity</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Users couldn't interpret the donation-based pricing model with confidence.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <FileQuestion size={20} className="text-[#FFA500] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">Information Hierarchy</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Difficulty finding essential information like schedules, instructor details, and contact options.
-                    </p>
-                  </div>
-                  
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="flex gap-4 items-start mb-3">
-                      <Clock size={20} className="text-[#FFA500] shrink-0 mt-1" />
-                      <h3 className="text-white text-lg font-bold">No Online Booking Flow</h3>
-                    </div>
-                    <p className="leading-relaxed text-[#A7A7A7] ml-9">
-                      Absence of online booking flow increased cognitive load and caused frustration.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-              
-              {/* Highlighted Problem Statement Box */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="relative bg-gradient-to-br from-[#121217] to-[#0A0A0A] border border-white/5 rounded-2xl p-8 md:p-12 my-12 w-full overflow-hidden group cursor-pointer"
-              >
-                {/* Animated background glow */}
-                <motion.div 
-                  className="absolute inset-0 bg-[#FFA500]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  animate={{
-                    background: [
-                      "radial-gradient(circle at 0% 0%, rgba(255, 165, 0, 0.1) 0%, transparent 50%)",
-                      "radial-gradient(circle at 100% 100%, rgba(255, 165, 0, 0.1) 0%, transparent 50%)",
-                      "radial-gradient(circle at 0% 0%, rgba(255, 165, 0, 0.1) 0%, transparent 50%)",
-                    ]
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-                
-                {/* Icon */}
-                <div className="flex justify-center mb-6 relative z-10">
-                  <motion.div 
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-16 h-16 bg-[#FFA500]/10 border border-[#FFA500] rounded-full flex items-center justify-center"
-                  >
-                    <Lightbulb size={32} className="text-[#FFA500]" />
-                  </motion.div>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-[#FFA500] text-sm font-bold mb-4 uppercase tracking-widest text-center relative z-10">
-                  The Challenge
-                </h3>
-
-                {/* Body Text */}
-                <h4 className="text-white md:text-2xl font-bold leading-relaxed text-center relative z-10 text-[20px]">
-                  How might we redesign the experience to reduce friction in class discovery and booking, clearly communicate pricing, and support both beginner and experienced practitioners?
-                </h4>
-
-                {/* Corner accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFA500]/5 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#FFA500]/5 rounded-tr-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </motion.div>
-            </motion.section>
-
-            {/* Section: Research */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Lightbulb className="text-white" size={24} />
-                <span className="text-sm font-bold tracking-widest text-white">RESEARCH</span>
-              </motion.div>
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                Project Timeline — 12-Week UX Process
-              </motion.h2>
-              <motion.p 
-                className="leading-relaxed mb-16 text-[18px]"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                This project followed a structured 12-week UX research and design process, moving from understanding the problem to delivering research-driven solutions.
-              </motion.p>
-
-              {/* Week 1-2: Initial Audit */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 1–2</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Project Understanding & Initial Audit</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-4">
-                  I began by familiarizing myself with Arizona Yoga Co.'s mission, offerings, and existing website experience. During this phase, I reviewed the site's structure, content, and primary user flows to understand how users currently discover classes, pricing, and contact information.
+          {/* ══════════════════════════════════════════════════════════════════
+              04 — RESEARCH
+          ══════════════════════════════════════════════════════════════════ */}
+          <section id="research" className="pt-24 md:pt-32 pb-16 md:pb-24 border-t border-white/10">
+            <FadeInView>
+              <div className="max-w-3xl mb-16 md:mb-24">
+                <span
+                  className="block mb-6 md:mb-8 text-[11px] tracking-widest uppercase text-[#7FAF9B]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  02 / RESEARCH
+                </span>
+                <h2
+                  className="font-sans font-medium leading-none tracking-tight mb-8 text-white"
+                  style={{ fontSize: "clamp(2.5rem, 4.5vw, 4rem)", letterSpacing: "-0.04em" }}
+                >
+                  Finding the friction.
+                </h2>
+                <p className="text-[18px] md:text-[21px] leading-relaxed font-light text-white/70">
+                  Through heuristic evaluation and user surveys, I discovered that beginners were struggling to navigate the schedule and understand the donation model. The site was built for those who already knew how it worked, alienating newcomers.
                 </p>
-                <p className="leading-relaxed text-[18px]">
-                  I identified early signs of usability friction, including unclear navigation labels, inconsistent layouts across class pages, and the absence of a clear booking pathway. This initial audit helped me form hypotheses that guided deeper research in later stages.
-                </p>
-              </motion.div>
-              
-              {/* Research Image 1 */}
-              <motion.div 
-                className="w-full aspect-video bg-[#121217] rounded-lg border border-white/10 overflow-hidden mb-16 relative group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
+              </div>
+            </FadeInView>
+
+            {/* Research Image */}
+            <FadeInView delay={0.2} y={20}>
+              <div className="w-full aspect-video bg-[#121217] rounded-lg border border-white/10 overflow-hidden mb-16 relative">
                 <img
                   src={image_c85cd79d8db605865c878c0bd8b508284ae400c1}
                   alt="Arizona Yoga Co. existing website"
                   className="w-full h-full object-cover"
                 />
-                
-                {/* Hover overlay text */}
-                <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm py-3 px-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="text-white text-sm font-semibold tracking-wide">Existing Design (Old Version)</p>
+                <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-md py-2 px-4 rounded border border-white/10">
+                  <p className="text-white text-xs font-mono tracking-wide">Legacy Website (Old Design)</p>
                 </div>
-              </motion.div>
+              </div>
+            </FadeInView>
 
-              {/* Week 3-4: Heuristic Evaluation */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 3–4</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Heuristic Evaluation (Usability Assessment)</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  I conducted a comprehensive heuristic evaluation using Nielsen's 10 Usability Heuristics to systematically identify usability issues across the website.
+            {/* Research Findings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-5xl">
+              <FadeInView delay={0.1}>
+                <h3 className="text-[#FF6B50] text-sm font-mono tracking-widest uppercase mb-4">
+                  01 / Heuristics
+                </h3>
+                <p className="text-white/70 leading-relaxed text-sm">
+                  Evaluated against Nielsen's 10 Usability Heuristics, the legacy site suffered from a lack of user control, poor visibility of system status during booking, and buried documentation regarding the donation model.
                 </p>
-                
-                <div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 mb-4 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
+              </FadeInView>
+              <FadeInView delay={0.2}>
+                <h3 className="text-[#FF6B50] text-sm font-mono tracking-widest uppercase mb-4">
+                  02 / User Surveys
+                </h3>
+                <p className="text-white/70 leading-relaxed text-sm">
+                  Surveys with 14 users revealed that class schedules, booking, and pricing were critical decision factors. Many users expected standard online booking flows and found the donation model confusing without proper framing.
+                </p>
+              </FadeInView>
+            </div>
+          </section>
+          {/* (Old Timeline Removed) */}
+
+          {/* ══════════════════════════════════════════════════════════════════
+              05 — DESIGN
+          ══════════════════════════════════════════════════════════════════ */}
+          <section id="design" className="pt-24 md:pt-32 pb-16 md:pb-24 border-t border-white/10">
+            <FadeInView>
+              <div className="max-w-3xl mb-16 md:mb-24">
+                <span
+                  className="block mb-6 md:mb-8 text-[11px] tracking-widest uppercase text-[#7FAF9B]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
-                  <h4 className="text-[#FF8C42] font-bold mb-4">Key issues identified included:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Lack of user control and freedom (no clear way to undo actions or navigate back)</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Poor visibility of system status (no feedback on clicks or form interactions)</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Inconsistent standards across similar pages</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Missing or hidden help and documentation</p>
-                    </li>
-                  </ul>
-                </div>
-                
-                <p className="leading-relaxed text-[18px]">
-                  Each issue was severity-rated to prioritize design focus. Several problems were classified as major or catastrophic, particularly around navigation, booking expectations, and clarity of actions. These findings established a strong usability baseline for the redesign.
-                </p>
-              </motion.div>
-
-              {/* Week 5: User Survey */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 5</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">User Survey & Quantitative Research</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  To better understand user expectations, behaviors, and decision-making patterns, I designed and conducted a user survey with 14 participants.
-                </p>
-                
-                <div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 mb-4 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
+                  03 / DESIGN
+                </span>
+                <h2
+                  className="font-sans font-medium leading-none tracking-tight mb-8 text-white"
+                  style={{ fontSize: "clamp(2.5rem, 4.5vw, 4rem)", letterSpacing: "-0.04em" }}
                 >
-                  <h4 className="text-[#FF8C42] font-bold mb-4">The survey revealed that:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Many users were beginners or infrequent visitors who needed fast, obvious answers</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Class schedules, booking, pricing, and location information were considered critical</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Most users expected familiar patterns such as online booking and membership options</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Donation-based pricing was unfamiliar and caused uncertainty</p>
-                    </li>
-                  </ul>
-                </div>
-                
-                <p className="leading-relaxed text-[18px]">
-                  These insights helped ground the redesign in real user needs rather than assumptions.
+                  Reducing the cognitive load.
+                </h2>
+                <p className="text-[18px] md:text-[21px] leading-relaxed font-light text-white/70">
+                  The final design is a mobile-first experience with a streamlined booking flow that takes just 2 clicks from homepage to confirmation. The visual identity uses warm, earthy tones and soft imagery that reflects the studio's peaceful atmosphere, while keeping the interface highly utilitarian.
                 </p>
-              </motion.div>
+              </div>
+            </FadeInView>
 
-              {/* Survey Image */}
-              <motion.div 
-                className="w-full aspect-video bg-[#121217] rounded-lg border border-white/10 overflow-hidden mb-16 flex items-center justify-center"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <motion.img
-                  src={image_951dd61283abdcb0dee59290acdcf1450ed7ea9e}
-                  alt="User survey and feedback collection"
-                  className="w-auto h-auto max-w-full max-h-full object-contain cursor-pointer"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                />
-              </motion.div>
-
-              {/* Week 6: Research Synthesis */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 6</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Research Synthesis & Key Insights</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  I synthesized findings from the heuristic evaluation and user survey into clear, actionable insights. This step allowed me to move from individual observations to broader UX problems.
-                </p>
-                
-                <h4 className="text-[#FF8C42] font-bold mb-4">Three core themes emerged:</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="text-2xl font-bold text-[#FFA500] mb-2">1</div>
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Booking friction</h5>
-                    <p className="text-[16px]">Users could not complete their primary goal efficiently</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="text-2xl font-bold text-[#FFA500] mb-2">2</div>
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Cognitive overload</h5>
-                    <p className="text-[16px]">Inconsistent layouts and hidden information increased effort</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <div className="text-2xl font-bold text-[#FFA500] mb-2">3</div>
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Decision anxiety</h5>
-                    <p className="text-[16px]">Unclear pricing and expectations reduced user confidence</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Week 7: Persona Development */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 7</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Persona Development</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  Based on research patterns, I created user personas representing key audience segments, including beginners, experienced practitioners, and tech-savvy planners.
-                </p>
-                
-                <div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 mb-4 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-[#FF8C42] font-bold mb-4">Each persona captured:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Goals and motivations</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Pain points with the existing website</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Behavioral traits affecting booking and decision-making</p>
-                    </li>
-                  </ul>
-                </div>
-                
-                <p className="leading-relaxed text-[18px]">
-                  Personas ensured that design decisions remained user-centered and aligned with real needs throughout the redesign process.
-                </p>
-              </motion.div>
-
-              {/* Week 8: Usability Test Planning */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 8</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Usability Test Planning</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  I developed a usability testing plan to validate whether users could successfully complete critical tasks such as finding a beginner-friendly class, comparing pricing options, and locating instructor or contact information.
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Clear test objectives</h5>
-                    <p className="text-[16px]">Defined what success looks like for each task</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Realistic user tasks</h5>
-                    <p className="text-[16px]">Scenarios based on actual user goals</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Success metrics</h5>
-                    <p className="text-[16px]">Task completion and time on task</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Week 9: Usability Testing */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 9</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Usability Testing & Observation</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  I conducted moderated usability testing sessions and observed participants as they attempted to complete key tasks on the existing website. Users consistently struggled with booking, navigation, and pricing clarity.
-                </p>
-                
-                <div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 mb-4 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-[#FF8C42] font-bold mb-4">Testing confirmed that:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">The lack of online booking was a blocker for all participants</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Navigation inconsistencies made comparison between class types difficult</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Users felt unsure about what to pay or what was expected in the donation model</p>
-                    </li>
-                  </ul>
-                </div>
-                
-                <p className="leading-relaxed text-[18px]">
-                  These findings validated earlier research and highlighted areas requiring immediate redesign.
-                </p>
-              </motion.div>
-
-              {/* Usability Testing Table - Scrollable */}
-              <motion.div 
-                className="w-full h-[600px] bg-[#121217] rounded-lg border border-white/10 overflow-y-auto overflow-x-hidden mb-16 relative scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <ImageWithFallback 
-                  src={week9TableImage}
-                  alt="Usability testing data table"
-                  className="w-full h-auto select-none"
-                  draggable={false}
-                />
-                <div className="sticky bottom-4 right-4 float-right mr-4 mb-4 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full pointer-events-none">
-                  Scroll to explore
-                </div>
-              </motion.div>
-
-              {/* Week 10: Ideation */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 10</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Ideation & UX Solution Design</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  Using insights from testing, I began designing solutions to address the most critical usability issues. I focused on:
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Clear booking flow</h5>
-                    <p className="text-[16px]">Step-by-step online booking experience</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Simplified navigation</h5>
-                    <p className="text-[16px]">Improved information architecture</p>
-                  </div>
-                  <div 
-                    className="bg-[#121217] p-6 rounded-lg border border-white/5 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                    onMouseEnter={() => setHideCursor(true)}
-                    onMouseLeave={() => setHideCursor(false)}
-                  >
-                    <h5 className="text-[#FF8C42] font-bold mb-2">Clearer pricing</h5>
-                    <p className="text-[16px]">Structured donation options</p>
-                  </div>
-                </div>
-                <p className="leading-relaxed text-[18px] mt-6">
-                  UX principles such as consistency, recognition over recall, and visibility of system status guided all design decisions.
-                </p>
-              </motion.div>
-
-              {/* Week 11: High-Fidelity Prototyping */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 11</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">High-Fidelity Prototyping</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  I designed a high-fidelity prototype in Figma that translated research insights into a realistic, testable interface.
-                </p>
-                
-                <div 
-                  className="bg-[#121217] p-6 rounded-lg border border-white/5 mb-4 hover:bg-[#282834] hover:border-transparent transition-all cursor-pointer"
-                  onMouseEnter={() => setHideCursor(true)}
-                  onMouseLeave={() => setHideCursor(false)}
-                >
-                  <h4 className="text-[#FF8C42] font-bold mb-4">The prototype included:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">A prominent "Book a Class" call-to-action</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">A visual class scheduling and booking flow</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Clear pricing and donation selections</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Consistent layouts across class formats</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Accessibility improvements such as improved contrast and readable text sizes</p>
-                    </li>
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Prototype Image - Scrollable */}
-              <motion.div 
-                className="w-full h-[600px] bg-[#121217] rounded-lg border border-white/10 overflow-y-auto overflow-x-hidden mb-16 relative scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <ImageWithFallback 
-                  src={week11PrototypeImage}
-                  alt="High-fidelity Figma prototype"
-                  className="w-full h-auto select-none"
-                  draggable={false}
-                />
-                <div className="sticky bottom-4 right-4 float-right mr-4 mb-4 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full pointer-events-none">
-                  Scroll to explore
-                </div>
-              </motion.div>
-
-              {/* Week 12: Reflection */}
-              <motion.div
-                className="mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[#FFA500] text-black font-bold px-3 py-1 rounded text-sm">WEEK 12</div>
-                  <h3 className="text-[#FF8C42] font-bold text-[20px]">Reflection & Expected Impact</h3>
-                </div>
-                <p className="leading-relaxed text-[18px] mb-6">
-                  In the final week, I evaluated the redesigned experience against the original research goals. The proposed solution significantly reduced friction in booking, improved navigation clarity, and aligned user expectations with the studio's mission.
-                </p>
-                
-                <div className="bg-gradient-to-br from-[#121217] to-[#0A0A0A] border border-white/5 rounded-2xl p-8">
-                  <h4 className="text-[#FF8C42] font-bold mb-4 text-[20px]">Through this project, I strengthened my skills in:</h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Research synthesis and usability evaluation</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Translating insights into actionable design decisions</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-[#FFA500] rounded-full shrink-0 mt-2"></div>
-                      <p className="text-[16px]">Designing for accessibility, clarity, and trust</p>
-                    </li>
-                  </ul>
-                  <p className="leading-relaxed text-[18px] mt-6">
-                    This 12-week process reinforced the importance of research-driven design and demonstrated how usability improvements can directly support both user needs and business goals.
-                  </p>
-                </div>
-              </motion.div>
-            </motion.section>
-
-            {/* Highlight Insight */}
-            <motion.div 
-              className="border-l-4 border-white pl-8 py-4 mb-16"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <span className="block text-sm font-bold text-white mb-2 uppercase">Key Insight</span>
-              <p className="text-2xl md:text-3xl text-white text-[24px] font-bold">
-                Students are 3x more likely to book a class if the schedule is accessible within one click.
-              </p>
-            </motion.div>
-
-            {/* Section: Solution */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.div 
-                className="flex items-center gap-3 mb-6"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <ArrowUpRight className="text-white" size={24} />
-                <span className="text-sm font-bold tracking-widest text-white">SOLUTION</span>
-              </motion.div>
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                The Final Design
-              </motion.h2>
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <div>
-                  <p className="leading-relaxed text-[18px] mb-6">
-                    We designed a mobile-first experience with a streamlined booking flow that takes just 2 clicks from homepage to confirmation. The new visual identity uses warm, earthy tones and soft imagery that reflects the studio's peaceful atmosphere.
-                  </p>
-                  <p className="leading-relaxed text-[18px]">
-                    We also introduced a community feed where members can share their practice journey, studio updates, and connect with fellow yogis.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-[#FF8C42] font-bold mb-4 text-[18px]">Key Features</h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-[#FFA500]/20 rounded-full flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-[#FFA500] text-xs">✓</span>
-                      </div>
-                      <p className="text-[16px]">One-tap class booking from any page</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-[#FFA500]/20 rounded-full flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-[#FFA500] text-xs">✓</span>
-                      </div>
-                      <p className="text-[16px]">Real-time class availability and waitlist</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-[#FFA500]/20 rounded-full flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-[#FFA500] text-xs">✓</span>
-                      </div>
-                      <p className="text-[16px]">Community feed for member connections</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-[#FFA500]/20 rounded-full flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-[#FFA500] text-xs">✓</span>
-                      </div>
-                      <p className="text-[16px]">Personalized class recommendations</p>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-[#FFA500]/20 rounded-full flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-[#FFA500] text-xs">✓</span>
-                      </div>
-                      <p className="text-[16px]">Instructor profiles with teaching styles</p>
-                    </li>
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Solution Images - Scrollable Carousel */}
-              <motion.div 
-                className="relative w-full h-[700px] bg-[#121217] rounded-lg border border-white/10 mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+            {/* Solution Images - Scrollable Carousel */}
+            <FadeInView delay={0.2} y={20}>
+              <div 
+                className="relative w-full h-[700px] bg-[#121217] rounded-lg border border-white/10 mb-16 overflow-hidden"
               >
                 {/* Scrollable content area */}
                 <div className="w-full h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30">
@@ -1021,7 +518,7 @@ export function ArizonaYogaCaseStudy() {
                 </div>
                 
                 {/* Scroll hint badge - fixed position */}
-                <div className="absolute top-4 right-4 bg-black/70 text-white text-xs px-3 py-1.5 rounded-full pointer-events-none z-20">
+                <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full pointer-events-none z-20">
                   Scroll to explore
                 </div>
                 
@@ -1031,13 +528,13 @@ export function ArizonaYogaCaseStudy() {
                     onClick={handlePrevImage}
                     onMouseEnter={() => setHideCursor(true)}
                     onMouseLeave={() => setHideCursor(false)}
-                    className="bg-white/10 backdrop-blur-md hover:bg-[#282834] border border-white/20 hover:border-transparent text-white p-3 rounded-full transition-all duration-300"
+                    className="bg-black/50 backdrop-blur-md hover:bg-black/80 border border-white/10 text-white w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300"
                     aria-label="Previous image"
                   >
-                    <ArrowLeft size={20} />
+                    <ArrowLeft size={16} />
                   </button>
                   
-                  <div className="bg-black/70 backdrop-blur-md text-white text-sm px-4 py-3 rounded-full flex items-center gap-2">
+                  <div className="bg-black/70 backdrop-blur-md text-white text-xs px-4 py-0 rounded-full flex items-center gap-2 font-mono">
                     <span className="font-bold">{currentImageIndex + 1}</span>
                     <span className="text-white/50">/</span>
                     <span className="text-white/70">{solutionImages.length}</span>
@@ -1047,86 +544,142 @@ export function ArizonaYogaCaseStudy() {
                     onClick={handleNextImage}
                     onMouseEnter={() => setHideCursor(true)}
                     onMouseLeave={() => setHideCursor(false)}
-                    className="bg-white/10 backdrop-blur-md hover:bg-[#282834] border border-white/20 hover:border-transparent text-white p-3 rounded-full transition-all duration-300"
+                    className="bg-black/50 backdrop-blur-md hover:bg-black/80 border border-white/10 text-white w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300"
                     aria-label="Next image"
                   >
-                    <ArrowRight size={20} />
+                    <ArrowRight size={16} />
                   </button>
                 </div>
-              </motion.div>
-            </motion.section>
+              </div>
+            </FadeInView>
 
-            {/* Impact Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-12 bg-gradient-to-r from-white to-[#A7A7A7] bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                Impact & Results
-              </motion.h2>
-              
-              <div className="mb-16">
-                <div className="bg-gradient-to-br from-[#121217] to-[#0A0A0A] border border-white/5 rounded-2xl p-8">
-                  <div className="text-5xl font-bold text-[#FFA500] mb-3">
-                    <AnimatedCounter value={4.8} decimals={1} />/5
-                  </div>
-                  <p className="text-white font-bold mb-2">User satisfaction</p>
-                  <p className="text-sm">Post-launch surveys showed an average rating of 4.8/5 for the new booking experience.</p>
+            {/* Feature Breakdown */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 max-w-6xl">
+              <FadeInView delay={0.1}>
+                <h3 className="text-white text-sm font-mono tracking-widest uppercase mb-4">
+                  01 / 1-Click Booking
+                </h3>
+                <p className="text-white/70 leading-relaxed text-sm">
+                  Users can now jump straight into the schedule and reserve a spot directly from the homepage, reducing the flow from 5 disjointed pages down to a single seamless modal.
+                </p>
+              </FadeInView>
+              <FadeInView delay={0.2}>
+                <h3 className="text-white text-sm font-mono tracking-widest uppercase mb-4">
+                  02 / Clear Pricing
+                </h3>
+                <p className="text-white/70 leading-relaxed text-sm">
+                  The donation-based model is introduced with predefined tiers and a custom input box, providing immediate clarity on what is expected without creating a paywall.
+                </p>
+              </FadeInView>
+              <FadeInView delay={0.3}>
+                <h3 className="text-white text-sm font-mono tracking-widest uppercase mb-4">
+                  03 / Unified UI
+                </h3>
+                <p className="text-white/70 leading-relaxed text-sm">
+                  Whether a class is In-Studio, on Zoom, or a Workshop, the interface remains consistent, allowing users to browse offerings without shifting context.
+                </p>
+              </FadeInView>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════════
+              06 — REFLECTION
+          ══════════════════════════════════════════════════════════════════ */}
+          <section id="reflection" className="pt-24 md:pt-32 pb-16 md:pb-24 border-t border-white/10">
+            <FadeInView>
+              <div className="max-w-4xl mb-24">
+                <span
+                  className="block mb-6 md:mb-8 text-[11px] tracking-widest uppercase text-white/40"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  04 / REFLECTION
+                </span>
+                <h2
+                  className="font-sans font-medium leading-none tracking-tight text-white mb-8"
+                  style={{ fontSize: "clamp(2.5rem, 4.5vw, 4rem)", letterSpacing: "-0.04em" }}
+                >
+                  Mobile-first is mandatory.
+                </h2>
+                <div className="text-[18px] md:text-[21px] leading-relaxed font-light text-white/70 space-y-6">
+                  <p>
+                    Post-launch surveys showed an average rating of 4.8/5 for the new booking experience. The data showed that most users make booking decisions spontaneously, often on the go.
+                  </p>
+                  <p>
+                    When the website finally matched the studio's warm, welcoming atmosphere, conversion rates improved dramatically.
+                  </p>
                 </div>
               </div>
+            </FadeInView>
 
-              <motion.div 
-                className="bg-[#121217] border border-white/5 rounded-2xl p-8 md:p-12"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <h3 className="text-[#FF8C42] font-bold mb-4 text-[20px]">Lessons Learned</h3>
-                <div className="space-y-4 text-[18px] leading-relaxed">
-                  <p>
-                    This project reinforced the importance of <span className="text-white font-semibold">mobile-first design</span> for service-based businesses. The data showed that most users make booking decisions spontaneously, often on the go.
-                  </p>
-                  <p>
-                    Additionally, we learned that <span className="text-white font-semibold">visual identity consistency</span> between physical and digital experiences is crucial for building trust. When the website finally matched the studio's warm, welcoming atmosphere, conversion rates improved dramatically.
-                  </p>
-                  <p>
-                    The community features, while initially a "nice to have," became one of the most-used aspects of the platform, driving both engagement and retention.
-                  </p>
-                </div>
-              </motion.div>
-            </motion.section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8">
+              <FadeInView delay={0.1}>
+                <h3 className="text-lg font-medium text-white mb-4">Identity Consistency</h3>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  Visual identity consistency between physical and digital experiences is crucial for building trust.
+                </p>
+              </FadeInView>
+              <FadeInView delay={0.2}>
+                <h3 className="text-lg font-medium text-white mb-4">Community Matters</h3>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  The community features, while initially considered a "nice to have," became one of the most-used aspects of the platform, driving both engagement and retention.
+                </p>
+              </FadeInView>
+            </div>
+          </section>
 
-          </div>
+        </div>
+      </section>
 
-          {/* Bottom Navigation */}
-          <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-white/10">
+      {/* ══════════════════════════════════════════════════════════════════
+          BOTTOM NAVIGATION (Footer System)
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="pb-12 px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto">
+        <div className="max-w-[1190px] mx-auto">
+          <div
+            className="flex justify-end gap-4 mt-8 pt-6"
+            style={{ borderTop: `1px solid rgba(255, 255, 255, 0.1)` }}
+          >
+             <Link 
+               to="/works/aisle" 
+               data-cursor-hide="true"
+               className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
+               onMouseEnter={() => setHideCursor(true)}
+               onMouseLeave={() => {
+                 setHideCursor(false);
+                 setPrevBottomNavPosition({ x: 0, y: 0 });
+               }}
+               onMouseMove={handlePrevBottomNavMouseMove}
+               aria-label="Previous Project"
+             >
+               <motion.div
+                 className="inline-block flex items-center justify-center"
+                 animate={{ x: prevBottomNavPosition.x, y: prevBottomNavPosition.y }}
+                 transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+               >
+                 <ArrowLeft size={18} />
+               </motion.div>
+             </Link>
              <Link 
                to="/works/fintech-dashboard" 
-               className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent transition-all duration-300"
+               data-cursor-hide="true"
+               className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}
-               onMouseLeave={() => setHideCursor(false)}
+               onMouseLeave={() => {
+                 setHideCursor(false);
+                 setNextBottomNavPosition({ x: 0, y: 0 });
+               }}
+               onMouseMove={handleNextBottomNavMouseMove}
+               aria-label="Next Project"
              >
-               <ArrowLeft size={20} />
-             </Link>
-             <Link 
-               to="/works/zylker" 
-               className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent transition-all duration-300"
-               onMouseEnter={() => setHideCursor(true)}
-               onMouseLeave={() => setHideCursor(false)}
-             >
-               <ArrowRight size={20} />
+               <motion.div
+                 className="inline-block flex items-center justify-center"
+                 animate={{ x: nextBottomNavPosition.x, y: nextBottomNavPosition.y }}
+                 transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+               >
+                 <ArrowRight size={18} />
+               </motion.div>
              </Link>
           </div>
-
         </div>
       </section>
     </div>

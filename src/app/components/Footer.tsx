@@ -53,59 +53,9 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative bg-black border-t border-[#333] mt-24 overflow-hidden">
-      {/* 6-Column Grid Background - Center Aligned - Double Lines */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
-          {/* Desktop: 7 columns - double lines for middle, single for first/last */}
-          <div className="hidden lg:flex w-full h-full justify-between">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="flex gap-[16px]">
-                {i === 0 || i === 6 ? (
-                  // First and last: single line
-                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                ) : (
-                  // Middle: double lines
-                  <>
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Tablet: 4 columns - double lines for middle, single for first/last */}
-          <div className="hidden md:flex lg:hidden w-full h-full justify-between">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-[16px]">
-                {i === 0 || i === 3 ? (
-                  // First and last: single line
-                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                ) : (
-                  // Middle: double lines
-                  <>
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Mobile: 2 columns - all single lines */}
-          <div className="flex md:hidden w-full h-full justify-between">
-            {[...Array(2)].map((_, i) => (
-              <div key={i}>
-                <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+    <footer className="relative bg-black border-t border-[#333] mt-8 md:mt-12 overflow-hidden">
       {/* Content Container */}
-      <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24 py-24">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24 py-12 md:py-16">
         <div className="flex justify-between items-center w-full">
           <div className="flex gap-10 items-center">
             <div className="flex gap-3 items-center text-xl font-medium text-white">
@@ -166,6 +116,7 @@ export function Footer() {
 
           <button 
             onClick={scrollToTop}
+            data-cursor-hide="true"
             className="px-6 py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
             aria-label="Back to top"
             onMouseEnter={() => setHideCursor(true)}

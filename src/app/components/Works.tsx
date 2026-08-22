@@ -1,30 +1,33 @@
-import image_9eba4ef78c719ff307dfa84e927ac719277023fb from 'figma:asset/9eba4ef78c719ff307dfa84e927ac719277023fb.png';
+import chemoVideo from '../../assets/Chemo thumbnail.mp4';
 import image_a77d1db12e8df8c86d603cb5d79ce40f7ba0c131 from 'figma:asset/a77d1db12e8df8c86d603cb5d79ce40f7ba0c131.png';
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import auraVideo from '../../assets/Aura thumbnail.mp4';
+
+import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
 
 const projects = [
   {
     id: "fintech-dashboard",
     title: "Chemotherapy education platform",
     category: "In collaboration with Mayo Clinic",
-    image: image_9eba4ef78c719ff307dfa84e927ac719277023fb,
+    video: chemoVideo,
     size: "col-span-1 md:col-span-1 md:row-span-2",
+  },
+  {
+    id: "aura",
+    title: "AURA - FEEL THE ROOM",
+    category: "UX Case Study",
+    video: auraVideo,
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     id: "arizona-yoga-studio",
     title: "Arizona Yoga Studio",
     category: "UX / UI Design",
-    image: image_a77d1db12e8df8c86d603cb5d79ce40f7ba0c131,
+    video: arizonaYogaVideo,
     size: "col-span-1 md:col-span-2 md:row-span-1",
-  },
-  {
-    id: "zylker",
-    title: "ZYLKER FORM BUILDER",
-    category: "2Days Design Challenge",
-    image: "https://images.unsplash.com/photo-1695648481990-c70c64d4bc52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXJrJTIwbW9kZXJuJTIwYXJjaGl0ZWN0dXJlfGVufDF8fHx8MTc2Njk1MjI0MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     id: "art-gallery",
@@ -108,13 +111,26 @@ export function Works() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="relative group cursor-pointer overflow-hidden bg-[#111] h-full w-full"
+                className={`relative group cursor-pointer overflow-hidden h-full w-full ${project.id === 'arizona-yoga-studio' ? 'bg-white' : 'bg-[#111]'}`}
               >
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                />
+                {project.video ? (
+                  <video
+                    src={project.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className={`w-full h-full transition-transform duration-700 ${
+                      project.id === 'arizona-yoga-studio' ? 'object-contain scale-125 group-hover:scale-[1.30]' : 'object-cover group-hover:scale-105'
+                    }`}
+                  />
+                ) : (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
                 
                 <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                    <div className="bg-white text-black p-3 rounded-full">

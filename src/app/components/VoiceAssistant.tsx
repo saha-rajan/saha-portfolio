@@ -141,13 +141,12 @@ export function VoiceAssistant() {
       speak(response);
       setTimeout(() => navigate('/works/arizona-yoga-studio'), 1000);
     } 
-    
-    // Zylker
-    else if (cmd.includes('zylker') || cmd.includes('form builder') || cmd.includes('form design') || cmd.includes('enterprise tool')) {
-      response = 'Sure, here\'s the Zylker Form Builder case study. An enterprise software tool completed in a two-day design challenge';
-      setFeedback('Opening Zylker case study');
+    // Aura
+    else if (cmd.includes('aura') || cmd.includes('feel the room') || cmd.includes('case study')) {
+      response = 'Sure, here\'s the Aura - Feel the room case study. A UX case study focused on ambient experiences.';
+      setFeedback('Opening Aura case study');
       speak(response);
-      setTimeout(() => navigate('/works/zylker'), 1000);
+      setTimeout(() => navigate('/works/aura'), 1000);
     }
     
     // ==================== PROJECT SUMMARIES & DETAILS ====================
@@ -166,16 +165,16 @@ export function VoiceAssistant() {
       speak(response);
     }
     
-    // Zylker Details
-    else if (cmd.includes('zylker') && (cmd.includes('about') || cmd.includes('tell') || cmd.includes('explain') || cmd.includes('detail') || cmd.includes('summary') || cmd.includes('summarize') || cmd.includes('what is') || cmd.includes('describe'))) {
-      response = 'Zylker Form Builder is an enterprise software tool completed as a two-day design challenge. Saha designed an intuitive drag-and-drop interface with real-time preview, conditional logic, validation rules, and seamless integration capabilities. The design makes form building accessible for non-technical users while providing advanced features for power users. It includes templates, field customization, and analytics';
-      setFeedback('Summarizing Zylker');
+    // Aura Details
+    else if (cmd.includes('aura') && (cmd.includes('about') || cmd.includes('tell') || cmd.includes('explain') || cmd.includes('detail') || cmd.includes('summary') || cmd.includes('summarize') || cmd.includes('what is') || cmd.includes('describe'))) {
+      response = 'Aura - Feel the room is a UX case study exploring ambient and atmospheric design. It focuses on creating immersive digital spaces that evoke specific moods and feelings.';
+      setFeedback('Summarizing Aura');
       speak(response);
     }
     
     // List All Projects
     else if (cmd.includes('project') && (cmd.includes('show') || cmd.includes('list') || cmd.includes('what') || cmd.includes('all') || cmd.includes('how many') || cmd.includes('which'))) {
-      response = 'Saha\'s portfolio features three main case studies: ChemoBuddy, a healthcare app for cancer patients done with Mayo Clinic; Arizona Yoga Co., a wellness platform redesign; and Zylker Form Builder, an enterprise form creation tool. There\'s also a Studio playground section with draggable polaroid images, a Cinematics section showcasing videography work shot on iPhone, and a Write section featuring design articles';
+      response = 'Saha\'s portfolio features three main case studies: ChemoBuddy, a healthcare app for cancer patients done with Mayo Clinic; Arizona Yoga Co., a wellness platform redesign; and Aura - Feel the room, an ambient UX case study. There\'s also a Studio playground section with draggable polaroid images, a Cinematics section showcasing videography work shot on iPhone, and a Write section featuring design articles';
       setFeedback('Listing all projects');
       speak(response);
     }

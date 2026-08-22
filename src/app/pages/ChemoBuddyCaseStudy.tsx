@@ -10,7 +10,7 @@ import image_73be314deac034d00b65d7a9d4bb46c5f3c0272f from 'figma:asset/73be314d
 import image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b from 'figma:asset/5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b.png';
 import image_2b8bffd76f419f68be1a74616b439c493c27366f from 'figma:asset/2b8bffd76f419f68be1a74616b439c493c27366f.png';
 import image_056f058b598dbb5ba9ed90f94b8880797dac30da from '../../assets/chemobuddy_command_center_dashboard.png';
-import image_hero_bento_dashboard from '../../assets/hero_bento_dashboard.png';
+import image_hero_bento_dashboard from '../../assets/chemobuddy_hero_animated.gif';
 import image_fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe from 'figma:asset/fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe.png';
 import image_d43ea63d788cb45c53fb10f7153ed33027f96302 from 'figma:asset/d43ea63d788cb45c53fb10f7153ed33027f96302.png';
 import image_59d13c8214ad12598c9d2470478d8fa2004aad78 from '../../assets/chemobuddy_3d_symptom_tracker.png';
@@ -57,7 +57,7 @@ import image_872548eb54e3a9a24e2d9fe1ba3961431a895775 from 'figma:asset/872548eb
 import image_1fe6da1fb24e994dedf5f88213c048966d32519a from 'figma:asset/1fe6da1fb24e994dedf5f88213c048966d32519a.png';
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, useInView, useMotionValue, useSpring, AnimatePresence } from "motion/react";
+import { motion, useInView, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, X, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, ChevronDown, Trophy, Monitor } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useCursor } from "../contexts/CursorContext";
@@ -67,6 +67,7 @@ import Frame69 from "../../imports/Frame69";
 import Frame1686557570 from "../../imports/Frame1686557570";
 import CompetetiveAnalysis from "../../imports/CompetetiveAnalysis";
 import { HighlightOnScroll } from "../components/HighlightOnScroll";
+import { CaseStudyNav } from "../components/CaseStudyNav";
 
 // Animated Counter Component
 function AnimatedCounter({ value, decimals = 0 }: { value: number; decimals?: number }) {
@@ -400,8 +401,8 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
   );
 };
 
-// Case Study Navigation
-const NAV_SECTIONS = [
+// Case Study Navigation Sections
+const CHEMOBUDDY_NAV_SECTIONS = [
   { id: 'overview', label: 'Overview' },
   { id: 'context', label: 'Problem' },
   { id: 'solution', label: 'Solution' },
@@ -410,170 +411,16 @@ const NAV_SECTIONS = [
   { id: 'testing', label: 'Testing & Impact' }
 ];
 
-const CaseStudyNav = () => {
-  const [activeSection, setActiveSection] = useState('overview');
-  const [progress, setProgress] = useState(0);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isPastHero, setIsPastHero] = useState(false);
-  const [globalNavVisible, setGlobalNavVisible] = useState(true);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-          
-          // Match global header visibility logic
-          if (currentScrollY < lastScrollY || currentScrollY < 10) {
-            setGlobalNavVisible(true);
-          } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            setGlobalNavVisible(false);
-          }
-          lastScrollY = currentScrollY;
-
-          // Only show nav when reaching the actual content (past bento grid)
-          const overviewElement = document.getElementById('overview');
-          if (overviewElement) {
-            // offsetTop is usually relative to the document here
-            setIsPastHero(currentScrollY > overviewElement.offsetTop - window.innerHeight / 2);
-          }
-
-          // Progress calculation
-          const container = document.getElementById('case-study-content');
-          if (container) {
-            const rect = container.getBoundingClientRect();
-            const totalHeight = container.offsetHeight - window.innerHeight;
-            const currentScroll = -rect.top;
-            
-            if (currentScroll < 0) setProgress(0);
-            else if (currentScroll > totalHeight) setProgress(100);
-            else setProgress((currentScroll / totalHeight) * 100);
-          }
-          
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-20% 0px -80% 0px' }
-    );
-
-    NAV_SECTIONS.forEach((section) => {
-      const element = document.getElementById(section.id);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handleClick = (id: string) => {
-    setIsMobileOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const activeIndex = NAV_SECTIONS.findIndex(s => s.id === activeSection);
-  const activeLabel = NAV_SECTIONS[activeIndex]?.label || 'Overview';
-  const indexDisplay = `0${Math.max(0, activeIndex) + 1}/06`;
-
-  // Define offset: when global nav is visible, it's roughly 98px high on desktop.
-  const offsetY = globalNavVisible ? 98 : 0;
-
-  return (
-    <motion.div 
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ 
-        opacity: isPastHero ? 1 : 0,
-        y: isPastHero ? offsetY : -100
-      }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`fixed top-0 left-0 right-0 z-40 w-full bg-[#0a0a0c]/80 backdrop-blur-md border-b border-white/5 h-14 flex items-center justify-between px-6 md:px-12 pointer-events-auto ${!isPastHero ? 'pointer-events-none' : ''}`}
-    >
-      <div className="flex items-center gap-12 w-full max-w-[1440px] mx-auto relative">
-        <span className="case-meta text-[10px] text-white/50 tracking-widest hidden md:block">CHEMOBUDDY</span>
-        
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {NAV_SECTIONS.map(section => (
-            <button
-              key={section.id}
-              onClick={() => handleClick(section.id)}
-              className={`text-sm font-sans transition-colors ${activeSection === section.id ? 'text-[#1CB4F5]' : 'text-[#A7A7A7] hover:text-white'}`}
-            >
-              {section.label}
-            </button>
-          ))}
-        </nav>
-
-        {/* Mobile Nav Toggle */}
-        <div className="md:hidden flex items-center justify-between w-full relative">
-          <button 
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="flex items-center gap-2 text-sm text-[#A7A7A7]"
-          >
-            <span className={`text-white transition-colors`}>{activeLabel}</span>
-            <span className="opacity-50">· {indexDisplay}</span>
-            {isMobileOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-          
-          <AnimatePresence>
-            {isMobileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-10 left-0 w-48 bg-[#121217] border border-white/10 rounded-lg shadow-2xl py-2 flex flex-col z-50"
-              >
-                {NAV_SECTIONS.map(section => (
-                  <button
-                    key={section.id}
-                    onClick={() => handleClick(section.id)}
-                    className={`text-left px-4 py-2 text-sm font-sans transition-colors ${activeSection === section.id ? 'text-[#1CB4F5] bg-white/5' : 'text-[#A7A7A7] hover:bg-white/[0.02] hover:text-white'}`}
-                  >
-                    {section.label}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-      
-      {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-full pointer-events-none">
-        <motion.div 
-          className="h-full bg-[#1CB4F5]"
-          style={{ width: `${progress}%` }}
-          transition={{ ease: 'linear', duration: 0.1 }}
-        />
-      </div>
-    </motion.div>
-  );
-};
-
 export function ChemoBuddyCaseStudy() {
   const navigate = useNavigate();
   const { setHideCursor } = useCursor();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollTopArrowPosition, setScrollTopArrowPosition] = useState({ x: 0, y: 0 });
+  const [prevTopNavPosition, setPrevTopNavPosition] = useState({ x: 0, y: 0 });
+  const [nextTopNavPosition, setNextTopNavPosition] = useState({ x: 0, y: 0 });
+  const [prevBottomNavPosition, setPrevBottomNavPosition] = useState({ x: 0, y: 0 });
+  const [nextBottomNavPosition, setNextBottomNavPosition] = useState({ x: 0, y: 0 });
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -629,13 +476,83 @@ export function ChemoBuddyCaseStudy() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleScrollTopMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setScrollTopArrowPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handlePrevTopNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setPrevTopNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handleNextTopNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setNextTopNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handlePrevBottomNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setPrevBottomNavPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handleNextBottomNavMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    const maxMove = 6;
+    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
+    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
+    
+    setNextBottomNavPosition({ x: clampedX, y: clampedY });
+  };
+
   return (
     <div className="bg-black min-h-screen text-[#A7A7A7] font-sans selection:bg-white selection:text-black">
       {/* Scroll to Top Button */}
       <motion.button
         onClick={scrollToTop}
+        data-cursor-hide="true"
         onMouseEnter={() => setHideCursor(true)}
-        onMouseLeave={() => setHideCursor(false)}
+        onMouseLeave={() => {
+          setHideCursor(false);
+          setScrollTopArrowPosition({ x: 0, y: 0 });
+        }}
+        onMouseMove={handleScrollTopMouseMove}
         initial={{ opacity: 0, y: 20 }}
         animate={{ 
           opacity: showScrollTop ? 1 : 0,
@@ -647,11 +564,17 @@ export function ChemoBuddyCaseStudy() {
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         aria-label="Scroll to top"
       >
-        <ChevronUp size={20} />
+        <motion.div
+          className="inline-block flex items-center justify-center"
+          animate={{ x: scrollTopArrowPosition.x, y: scrollTopArrowPosition.y }}
+          transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+        >
+          <ChevronUp size={20} />
+        </motion.div>
       </motion.button>
 
       {/* 01 — HERO */}
-      <section id="hero" className="pt-24 md:pt-32 pb-10 md:pb-12 px-6 md:px-12 max-w-[1440px] mx-auto w-full">
+      <section id="hero" className="pt-24 md:pt-32 pb-10 md:pb-12 px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto w-full">
         <div className="flex justify-between items-start gap-8">
           
           <div className="flex-1 min-w-0 max-w-[760px]">
@@ -696,22 +619,44 @@ export function ChemoBuddyCaseStudy() {
           {/* Prev/Next Navigation */}
           <div className="hidden md:flex gap-3 shrink-0 pt-4">
             <Link 
-              to="/works/zylker" 
-              className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors opacity-70 hover:opacity-100"
+              to="/works/arizona-yoga-studio" 
+              data-cursor-hide="true"
+              className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center hover:bg-[#282834] hover:border-transparent hover:text-white transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
-              onMouseLeave={() => setHideCursor(false)}
+              onMouseLeave={() => {
+                setHideCursor(false);
+                setPrevTopNavPosition({ x: 0, y: 0 });
+              }}
+              onMouseMove={handlePrevTopNavMouseMove}
               aria-label="Previous Project"
             >
-              <ArrowLeft size={18} />
+              <motion.div
+                className="inline-block flex items-center justify-center"
+                animate={{ x: prevTopNavPosition.x, y: prevTopNavPosition.y }}
+                transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+              >
+                <ArrowLeft size={18} />
+              </motion.div>
             </Link>
             <Link 
-              to="/works/arizona-yoga-studio" 
-              className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent hover:text-white transition-colors opacity-70 hover:opacity-100"
+              to="/works/aura" 
+              data-cursor-hide="true"
+              className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center hover:bg-[#282834] hover:border-transparent hover:text-white transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
-              onMouseLeave={() => setHideCursor(false)}
+              onMouseLeave={() => {
+                setHideCursor(false);
+                setNextTopNavPosition({ x: 0, y: 0 });
+              }}
+              onMouseMove={handleNextTopNavMouseMove}
               aria-label="Next Project"
             >
-              <ArrowRight size={18} />
+              <motion.div
+                className="inline-block flex items-center justify-center"
+                animate={{ x: nextTopNavPosition.x, y: nextTopNavPosition.y }}
+                transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+              >
+                <ArrowRight size={18} />
+              </motion.div>
             </Link>
           </div>
           
@@ -840,11 +785,16 @@ export function ChemoBuddyCaseStudy() {
       </section>
 
       {/* Secondary Sticky Navigation */}
-      <CaseStudyNav />
+      <CaseStudyNav
+        metaText="CHEMOBUDDY"
+        sections={CHEMOBUDDY_NAV_SECTIONS}
+        activeColorClass="text-[#1CB4F5]"
+        progressBarColor="bg-[#1CB4F5]"
+      />
       <div id="case-study-content">
 
       {/* Resume main container */}
-      <section className="pb-16 px-6 md:px-12 max-w-[1440px] mx-auto">
+      <section className="pb-16 px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto">
         <div className="max-w-[1190px] mx-auto">
         
           {/* 02 — PROJECT AT A GLANCE */}
@@ -897,7 +847,9 @@ export function ChemoBuddyCaseStudy() {
                 viewport={{ once: true }}
                 variants={{
                   hidden: {},
-                  visible: { transition: { staggerChildren: 0.1 } }
+                  visible: { 
+                    transition: { staggerChildren: 0.14 }
+                  }
                 }}
                 className="flex flex-col md:flex-row gap-10 md:gap-16 lg:gap-24"
               >
@@ -905,17 +857,67 @@ export function ChemoBuddyCaseStudy() {
                 <div className="flex-1">
                   <div className="case-meta text-[9px] text-[#8A8A8A] uppercase tracking-widest mb-4">OUTCOMES</div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-4">
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
-                      <span className="case-metric text-white mb-1">94%</span>
-                      <span className="case-meta text-[#A7A7A7] text-[10px]">Task Completion</span>
+                    {/* Metric 01: 94% */}
+                    <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-4 overflow-hidden">
+                      <motion.div 
+                        className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+                        variants={{
+                          hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+                          visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+                        }} 
+                      />
+                      <motion.div 
+                        className="flex flex-col"
+                        variants={{
+                          hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
+                          visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                        }}
+                      >
+                        <span className="case-metric text-white mb-1">94%</span>
+                        <span className="case-meta text-[#A7A7A7] text-[10px]">Task Completion</span>
+                      </motion.div>
                     </motion.div>
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
-                      <span className="case-metric text-white mb-1">-65%</span>
-                      <span className="case-meta text-[#A7A7A7] text-[10px]">Info Overwhelm</span>
+
+                    {/* Metric 02: -65% */}
+                    <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-4 overflow-hidden">
+                      <motion.div 
+                        className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+                        variants={{
+                          hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+                          visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+                        }} 
+                      />
+                      <motion.div 
+                        className="flex flex-col"
+                        variants={{
+                          hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+                          visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                        }}
+                      >
+                        <span className="case-metric text-white mb-1">-65%</span>
+                        <span className="case-meta text-[#A7A7A7] text-[10px]">Info Overwhelm</span>
+                      </motion.div>
                     </motion.div>
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
-                      <span className="case-metric text-white mb-1">100%</span>
-                      <span className="case-meta text-[#A7A7A7] text-[10px]">Caregiver Access</span>
+
+                    {/* Metric 03: 100% */}
+                    <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-4 overflow-hidden">
+                      <motion.div 
+                        className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+                        variants={{
+                          hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+                          visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+                        }} 
+                      />
+                      <motion.div 
+                        className="flex flex-col"
+                        variants={{
+                          hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+                          visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                        }}
+                      >
+                        <span className="case-metric text-white mb-1">100%</span>
+                        <span className="case-meta text-[#A7A7A7] text-[10px]">Caregiver Access</span>
+                      </motion.div>
                     </motion.div>
                   </div>
                 </div>
@@ -924,9 +926,25 @@ export function ChemoBuddyCaseStudy() {
                 <div className="md:min-w-[200px]">
                   <div className="case-meta text-[9px] text-[#8A8A8A] uppercase tracking-widest mb-4">TIMELINE</div>
                   <div className="grid grid-cols-1">
-                    <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col border-l border-white/10 pl-4 transition-opacity hover:opacity-80">
-                      <span className="case-metric text-white mb-1">10 Wks</span>
-                      <span className="case-meta text-[#A7A7A7] text-[10px]">Research to Hi-Fi</span>
+                    {/* Metric 04: 10 Wks */}
+                    <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-4 overflow-hidden">
+                      <motion.div 
+                        className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+                        variants={{
+                          hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+                          visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+                        }} 
+                      />
+                      <motion.div 
+                        className="flex flex-col"
+                        variants={{
+                          hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+                          visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                        }}
+                      >
+                        <span className="case-metric text-white mb-1">10 Wks</span>
+                        <span className="case-meta text-[#A7A7A7] text-[10px]">Research to Hi-Fi</span>
+                      </motion.div>
                     </motion.div>
                   </div>
                 </div>
@@ -1147,29 +1165,96 @@ export function ChemoBuddyCaseStudy() {
       viewport={{ once: true }}
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: 0.08 } }
+        visible: { transition: { staggerChildren: 0.14 } }
       }}
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
     >
-      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
-        <div className="case-meta text-[#1CB4F5] mb-2">01</div>
-        <h4 className="text-white font-sans font-bold mb-1">Literature Review</h4>
-        <p className="case-caption text-[#A7A7A7]">11 peer-reviewed oncology & mHealth studies.</p>
+      {/* 01 Literature Review */}
+      <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-6 overflow-hidden">
+        <motion.div 
+          className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+          variants={{
+            hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+            visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+          }} 
+        />
+        <motion.div 
+          className="flex flex-col"
+          variants={{
+            hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+          }}
+        >
+          <div className="case-meta text-[#1CB4F5] mb-2">01</div>
+          <h4 className="text-white font-sans font-bold mb-1">Literature Review</h4>
+          <p className="case-caption text-[#A7A7A7]">11 peer-reviewed oncology & mHealth studies.</p>
+        </motion.div>
       </motion.div>
-      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
-        <div className="case-meta text-[#1CB4F5] mb-2">02</div>
-        <h4 className="text-white font-sans font-bold mb-1">Competitive Analysis</h4>
-        <p className="case-caption text-[#A7A7A7]">8 existing oncology & digital health applications.</p>
+
+      {/* 02 Competitive Analysis */}
+      <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-6 overflow-hidden">
+        <motion.div 
+          className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+          variants={{
+            hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+            visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+          }} 
+        />
+        <motion.div 
+          className="flex flex-col"
+          variants={{
+            hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+          }}
+        >
+          <div className="case-meta text-[#1CB4F5] mb-2">02</div>
+          <h4 className="text-white font-sans font-bold mb-1">Competitive Analysis</h4>
+          <p className="case-caption text-[#A7A7A7]">8 existing oncology & digital health applications.</p>
+        </motion.div>
       </motion.div>
-      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
-        <div className="case-meta text-[#1CB4F5] mb-2">03</div>
-        <h4 className="text-white font-sans font-bold mb-1">Role-Play Research</h4>
-        <p className="case-caption text-[#A7A7A7]">Structured scenarios with clinical oncology mentor.</p>
+
+      {/* 03 Role-Play Research */}
+      <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-6 overflow-hidden">
+        <motion.div 
+          className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+          variants={{
+            hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+            visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+          }} 
+        />
+        <motion.div 
+          className="flex flex-col"
+          variants={{
+            hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+          }}
+        >
+          <div className="case-meta text-[#1CB4F5] mb-2">03</div>
+          <h4 className="text-white font-sans font-bold mb-1">Role-Play Research</h4>
+          <p className="case-caption text-[#A7A7A7]">Structured scenarios with clinical oncology mentor.</p>
+        </motion.div>
       </motion.div>
-      <motion.div variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="border-l border-white/10 pl-6">
-        <div className="case-meta text-[#1CB4F5] mb-2">04</div>
-        <h4 className="text-white font-sans font-bold mb-1">Synthesis</h4>
-        <p className="case-caption text-[#A7A7A7]">Affinity mapping and thematic clustering.</p>
+
+      {/* 04 Synthesis */}
+      <motion.div variants={{ hidden: {}, visible: {} }} className="relative pl-6 overflow-hidden">
+        <motion.div 
+          className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10 origin-top" 
+          variants={{
+            hidden: { scaleY: shouldReduceMotion ? 1 : 0, opacity: shouldReduceMotion ? 0 : 1 },
+            visible: { scaleY: 1, opacity: 1, transition: { duration: 0.5, delay: 0.1, ease: "easeOut" } }
+          }} 
+        />
+        <motion.div 
+          className="flex flex-col"
+          variants={{
+            hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -50 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
+          }}
+        >
+          <div className="case-meta text-[#1CB4F5] mb-2">04</div>
+          <h4 className="text-white font-sans font-bold mb-1">Synthesis</h4>
+          <p className="case-caption text-[#A7A7A7]">Affinity mapping and thematic clustering.</p>
+        </motion.div>
       </motion.div>
     </motion.div>
   </div>
@@ -2068,194 +2153,281 @@ export function ChemoBuddyCaseStudy() {
                 <li className="leading-relaxed text-[18px]">• Find educational content on fatigue</li>
               </ul>
 
-              {/* Before and After - 2 Column Placeholders */}
-              <h3 className="text-white font-bold text-[24px] mb-6">Design Iterations</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">BEFORE</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={image_7b12ed23134ee9b99fea891ec6bc912b3be0ec87} 
-                      alt="ChemoBuddy chat interface before testing - showing fever alert message" 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
+              {/* Editorial Design Iterations Sequence */}
+              <div className="space-y-32 mb-32">
+                {/* ITERATION 01 */}
+                <div className="flex flex-col">
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">01 / ITERATION</div>
+                    <div className="flex-grow h-px bg-white/10"></div>
+                    <h3 className="text-white font-bold text-[20px] md:text-[24px]">Reducing Cognitive Load</h3>
                   </div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.1 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">AFTER</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={image_ca40c914b63d117033bf40e44298bdf300d79d85} 
-                      alt="ChemoBuddy chat interface after testing - improved emergency alert design" 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
+
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
+                    {/* Screenshots (75% width on desktop) */}
+                    <div className="w-full lg:w-[72%] grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 relative">
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#A7A7A7] uppercase mb-4 text-center md:text-left">BEFORE</p>
+                        <div className="w-full flex items-center justify-center">
+                          <img src={image_7b12ed23134ee9b99fea891ec6bc912b3be0ec87} alt="ChemoBuddy chat before testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+
+                      {/* Connector */}
+                      <motion.div 
+                        className="hidden md:flex absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+                      >
+                        <span className="text-white/40 text-xl font-light">→</span>
+                      </motion.div>
+
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#1CB4F5] uppercase mb-4 text-center md:text-left">AFTER</p>
+                        <div className="w-full flex items-center justify-center relative">
+                          <img src={image_ca40c914b63d117033bf40e44298bdf300d79d85} alt="ChemoBuddy chat after testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Annotation (25% width on desktop) */}
+                    <motion.div 
+                      className="w-full lg:w-[28%] flex flex-col pt-4 lg:pt-0"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+                    >
+                      <div className="border-l-2 border-[#1CB4F5]/30 pl-4 lg:pl-6">
+                        <p className="font-mono text-[10px] tracking-widest text-[#1CB4F5] uppercase mb-2">WHAT CHANGED</p>
+                        <h4 className="text-white font-bold text-[16px] mb-3">Clearer Chat Hierarchy</h4>
+                        <p className="text-[#A7A7A7] text-[15px] leading-relaxed">
+                          Simplified chat interface with increased whitespace and alternating message colors to improve visual rhythm and reduce cognitive load during symptom tracking conversations.
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-                
-                {/* Description for Pair 1 */}
-                <motion.div 
-                  className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <h4 className="text-white font-bold text-[16px]">Design Changes</h4>
-                  <p className="text-[#A7A7A7] leading-relaxed text-[18px]">
-                    Simplified chat interface with increased whitespace and alternating message colors to improve visual rhythm and reduce cognitive load during symptom tracking conversations.
-                  </p>
-                </motion.div>
-                
-                {/* Additional Before Placeholder 1 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.2 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">BEFORE</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={image_befeaba9aa8513d7ed7947c448c03dda01c18294} 
-                      alt="ChemoBuddy dashboard before testing - showing treatment progress and care team" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+                </div>
+
+                {/* ITERATION 02 */}
+                <div className="flex flex-col">
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">02 / ITERATION</div>
+                    <div className="flex-grow h-px bg-white/10"></div>
+                    <h3 className="text-white font-bold text-[20px] md:text-[24px]">Making Sync Status Visible</h3>
                   </div>
-                </motion.div>
-                {/* Additional After Placeholder 1 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.3 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">AFTER</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center">
-                    <img 
-                      src={image_f8f8935eeffa8c1764b65eb66b6d14d377527bf4} 
-                      alt="ChemoBuddy dashboard after testing - improved interface based on user feedback" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
+                    {/* Screenshots (75% width on desktop) */}
+                    <div className="w-full lg:w-[72%] grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 relative">
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#A7A7A7] uppercase mb-4 text-center md:text-left">BEFORE</p>
+                        <div className="w-full flex items-center justify-center">
+                          <img src={image_befeaba9aa8513d7ed7947c448c03dda01c18294} alt="Dashboard before testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+
+                      {/* Connector */}
+                      <motion.div 
+                        className="hidden md:flex absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+                      >
+                        <span className="text-white/40 text-xl font-light">→</span>
+                      </motion.div>
+
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#1CB4F5] uppercase mb-4 text-center md:text-left">AFTER</p>
+                        <div className="w-full flex items-center justify-center relative">
+                          <img src={image_f8f8935eeffa8c1764b65eb66b6d14d377527bf4} alt="Dashboard after testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Annotation (25% width on desktop) */}
+                    <motion.div 
+                      className="w-full lg:w-[28%] flex flex-col pt-4 lg:pt-0"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+                    >
+                      <div className="border-l-2 border-[#1CB4F5]/30 pl-4 lg:pl-6">
+                        <p className="font-mono text-[10px] tracking-widest text-[#1CB4F5] uppercase mb-2">WHAT CHANGED</p>
+                        <h4 className="text-white font-bold text-[16px] mb-3">Immediate Sync Confirmation</h4>
+                        <p className="text-[#A7A7A7] text-[15px] leading-relaxed">
+                          Added animated sync confirmation with timestamp to provide immediate feedback and build user confidence in data reliability and cloud backup status.
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-                
-                {/* Description for Pair 2 */}
-                <motion.div 
-                  className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <h4 className="text-white font-bold text-[16px]">Design Changes</h4>
-                  <p className="text-[#A7A7A7] leading-relaxed text-[18px]">
-                    Added animated sync confirmation with timestamp to provide immediate feedback and build user confidence in data reliability and cloud backup status.
-                  </p>
-                </motion.div>
-                
-                {/* Additional Before Placeholder 2 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.4 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">BEFORE</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center">
-                    <img 
-                      src={image_b16062226f3bb2066b289a790fbad2e44621e2c7} 
-                      alt="ChemoBuddy emergency detection interface before testing" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+                </div>
+
+                {/* ITERATION 03 */}
+                <div className="flex flex-col">
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">03 / ITERATION</div>
+                    <div className="flex-grow h-px bg-white/10"></div>
+                    <h3 className="text-white font-bold text-[20px] md:text-[24px]">Designing for Critical Moments</h3>
                   </div>
-                </motion.div>
-                {/* Additional After Placeholder 2 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.5 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">AFTER</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center">
-                    <img 
-                      src={image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5} 
-                      alt="ChemoBuddy emergency detection interface after testing" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
+                    {/* Screenshots (75% width on desktop) */}
+                    <div className="w-full lg:w-[72%] grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 relative">
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#A7A7A7] uppercase mb-4 text-center md:text-left">BEFORE</p>
+                        <div className="w-full flex items-center justify-center">
+                          <img src={image_b16062226f3bb2066b289a790fbad2e44621e2c7} alt="Emergency detection before testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+
+                      {/* Connector */}
+                      <motion.div 
+                        className="hidden md:flex absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+                      >
+                        <span className="text-white/40 text-xl font-light">→</span>
+                      </motion.div>
+
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#1CB4F5] uppercase mb-4 text-center md:text-left">AFTER</p>
+                        <div className="w-full flex items-center justify-center relative">
+                          <img src={image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5} alt="Emergency detection after testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div 
+                      className="w-full lg:w-[28%] flex flex-col pt-4 lg:pt-0"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+                    >
+                      <div className="border-l-2 border-[#1CB4F5]/30 pl-4 lg:pl-6">
+                        <p className="font-mono text-[10px] tracking-widest text-[#1CB4F5] uppercase mb-2">WHAT CHANGED</p>
+                        <h4 className="text-white font-bold text-[16px] mb-3">Clearer Emergency Actions</h4>
+                        <p className="text-[#A7A7A7] text-[15px] leading-relaxed">
+                          Designed and integrated an NLP-based emergency detection system with easily accessible alert buttons to support fast action in critical moments.
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-                
-                {/* Description for Pair 3 */}
-                <motion.div 
-                  className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                >
-                  <h4 className="text-white font-bold text-[16px]">Design Changes</h4>
-                  <p className="text-[#A7A7A7] leading-relaxed text-[18px]">
-                    Designed and integrated an NLP-based emergency detection system with easily accessible alert buttons to support fast action in critical moments.
-                  </p>
-                </motion.div>
-                
-                {/* Additional Before Placeholder 3 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.6 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">BEFORE</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center">
-                    <img 
-                      src={image_7185839779b789cbfbfd75fdfef3c494ccafb053} 
-                      alt="ChemoBuddy education assistant interface before testing" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+                </div>
+
+                {/* ITERATION 04 */}
+                <div className="flex flex-col">
+                  {/* Header */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">04 / ITERATION</div>
+                    <div className="flex-grow h-px bg-white/10"></div>
+                    <h3 className="text-white font-bold text-[20px] md:text-[24px]">Supporting Different Ways to Learn</h3>
                   </div>
-                </motion.div>
-                {/* Additional After Placeholder 3 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: 0.7 }}
-                >
-                  <p className="text-white font-bold text-[16px] mb-4">AFTER</p>
-                  <div className="w-full h-[60vh] bg-[#121217] rounded-lg border border-white/10 flex items-center justify-center">
-                    <img 
-                      src={image_872548eb54e3a9a24e2d9fe1ba3961431a895775} 
-                      alt="ChemoBuddy education assistant with learning format selection after testing" 
-                      className="w-full h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
+
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start lg:items-center">
+                    {/* Screenshots (75% width on desktop) */}
+                    <div className="w-full lg:w-[72%] grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 relative">
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#A7A7A7] uppercase mb-4 text-center md:text-left">BEFORE</p>
+                        <div className="w-full flex items-center justify-center">
+                          <img src={image_7185839779b789cbfbfd75fdfef3c494ccafb053} alt="Education assistant before testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+
+                      {/* Connector */}
+                      <motion.div 
+                        className="hidden md:flex absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.2, delay: 0.1, ease: "easeOut" }}
+                      >
+                        <span className="text-white/40 text-xl font-light">→</span>
+                      </motion.div>
+
+                      <motion.div
+                        className="flex flex-col"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+                      >
+                        <p className="font-mono text-[12px] tracking-widest text-[#1CB4F5] uppercase mb-4 text-center md:text-left">AFTER</p>
+                        <div className="w-full flex items-center justify-center relative">
+                          <img src={image_872548eb54e3a9a24e2d9fe1ba3961431a895775} alt="Education assistant after testing" className="w-full h-auto max-h-[70vh] object-contain transition-transform duration-500 hover:scale-[1.03]" />
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <motion.div 
+                      className="w-full lg:w-[28%] flex flex-col pt-4 lg:pt-0"
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+                    >
+                      <div className="border-l-2 border-[#1CB4F5]/30 pl-4 lg:pl-6">
+                        <p className="font-mono text-[10px] tracking-widest text-[#1CB4F5] uppercase mb-2">WHAT CHANGED</p>
+                        <h4 className="text-white font-bold text-[16px] mb-3">Audio as an Alternative Format</h4>
+                        <p className="text-[#A7A7A7] text-[15px] leading-relaxed">
+                          Implemented audio summaries across sections to help users consume key insights faster and more effortlessly.
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                </motion.div>
-                
-                {/* Description for Pair 4 */}
-                <motion.div 
-                  className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                >
-                  <h4 className="text-white font-bold text-[16px]">Design Changes</h4>
-                  <p className="text-[#A7A7A7] leading-relaxed text-[18px]">
-                    Implemented audio summaries across sections to help users consume key insights faster and more effortlessly.
-                  </p>
-                </motion.div>
+                </div>
               </div>
 
               {/* User Feedback Table */}
@@ -2616,20 +2788,44 @@ export function ChemoBuddyCaseStudy() {
           {/* Bottom Navigation */}
           <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-white/10">
              <Link 
-               to="/works/art-gallery" 
-               className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent transition-all duration-300"
+               to="/works/aura" 
+               data-cursor-hide="true"
+               className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}
-               onMouseLeave={() => setHideCursor(false)}
+               onMouseLeave={() => {
+                 setHideCursor(false);
+                 setPrevBottomNavPosition({ x: 0, y: 0 });
+               }}
+               onMouseMove={handlePrevBottomNavMouseMove}
+               aria-label="Previous Project"
              >
-               <ArrowLeft size={20} />
+               <motion.div
+                 className="inline-block flex items-center justify-center"
+                 animate={{ x: prevBottomNavPosition.x, y: prevBottomNavPosition.y }}
+                 transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+               >
+                 <ArrowLeft size={18} />
+               </motion.div>
              </Link>
              <Link 
                to="/works/arizona-yoga-studio" 
-               className="p-3 border border-white/10 rounded-full hover:bg-[#282834] hover:border-transparent transition-all duration-300"
+               data-cursor-hide="true"
+               className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}
-               onMouseLeave={() => setHideCursor(false)}
+               onMouseLeave={() => {
+                 setHideCursor(false);
+                 setNextBottomNavPosition({ x: 0, y: 0 });
+               }}
+               onMouseMove={handleNextBottomNavMouseMove}
+               aria-label="Next Project"
              >
-               <ArrowRight size={20} />
+               <motion.div
+                 className="inline-block flex items-center justify-center"
+                 animate={{ x: nextBottomNavPosition.x, y: nextBottomNavPosition.y }}
+                 transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.5 }}
+               >
+                 <ArrowRight size={18} />
+               </motion.div>
              </Link>
           </div>
 

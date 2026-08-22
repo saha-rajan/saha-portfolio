@@ -7,7 +7,7 @@ export function CustomCursor() {
   const [isHoveringHeading, setIsHoveringHeading] = useState(false);
   const [headingHeight, setHeadingHeight] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const { hideCursor, isTextCursor, cursorText } = useCursor();
+  const { hideCursor, setHideCursor, isTextCursor, cursorText } = useCursor();
 
   // Detect if device is mobile/touch
   useEffect(() => {
@@ -29,6 +29,8 @@ export function CustomCursor() {
     
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
+      (window as any).mouseX = e.clientX;
+      (window as any).mouseY = e.clientY;
       
       // Reset state by default
       let isOverHeadingText = false;
@@ -147,6 +149,31 @@ export function CustomCursor() {
     window.addEventListener("mousemove", updateMousePosition);
     return () => window.removeEventListener("mousemove", updateMousePosition);
   }, [isMobile]);
+
+  // Safety net: if the cursor was hidden (e.g. on a link hover) and the
+  // user clicks or the mouse leaves the window, ensure it reappears unless still hovering a cursor-hide button.
+  useEffect(() => {
+    if (isMobile) return;
+    const restoreCursor = (e: MouseEvent) => {
+      const x = e.clientX || (window as any).mouseX || 0;
+      const y = e.clientY || (window as any).mouseY || 0;
+      const elems = document.elementsFromPoint(x, y);
+      const isOverHideElem = elems.some(
+        (el) =>
+          el.getAttribute("data-cursor-hide") === "true" ||
+          el.closest('[data-cursor-hide="true"]') !== null
+      );
+      if (!isOverHideElem) {
+        setHideCursor(false);
+      }
+    };
+    window.addEventListener("mouseup", restoreCursor);
+    window.addEventListener("mouseleave", () => setHideCursor(false));
+    return () => {
+      window.removeEventListener("mouseup", restoreCursor);
+      window.removeEventListener("mouseleave", () => setHideCursor(false));
+    };
+  }, [isMobile, setHideCursor]);
 
   // Show text cursor when there's cursor text
   const showTextCursor = cursorText.length > 0;

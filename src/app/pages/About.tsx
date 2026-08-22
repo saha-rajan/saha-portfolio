@@ -2,13 +2,16 @@ import image_13fbe3cb33bdd866c42f89a0b63321c6153dd542 from 'figma:asset/13fbe3cb
 import image_66f1cfabc87c947bb58e037d695220d1fd8de505 from 'figma:asset/66f1cfabc87c947bb58e037d695220d1fd8de505.png';
 import image_e16bb5934b0b8c4b4d6bf543f2e95291a282bfe9 from 'figma:asset/e16bb5934b0b8c4b4d6bf543f2e95291a282bfe9.png';
 import image_96d9f4d876a0debf676876e6df51ce08332049bb from 'figma:asset/96d9f4d876a0debf676876e6df51ce08332049bb.png';
-import { motion } from "motion/react";
-import { Target, LayoutTemplate, Layers, Zap, Search, Film, Ruler, Compass, Box } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { motion, useInView } from "motion/react";
+import { Target, LayoutTemplate, Layers, Zap, Search, Film, Ruler, Compass, Box, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
 import exampleImage from 'figma:asset/d7cd4901bed9632d30e81d9850f60137bc81d369.png';
+import videoPitch from '../../assets/Video Pitch.mp4';
 import travelingImage from 'figma:asset/5b4dbed0b99d9df47d017f509831a22af398669e.png';
 import runningImage from 'figma:asset/4df6f63d00c92b74769d085a5b796694512ebfd5.png';
 import photographyImage from 'figma:asset/4b74c7191b16e212fdb64d80d604ce557692fb93.png';
+import breweryImage from '../../assets/brewery_hopping.jpg';
 
 const experience = [
   {
@@ -50,6 +53,7 @@ const expertise = [
   { title: "Prototyping", description: "Bringing ideas to life.", icon: Zap },
   { title: "User Research", description: "Understanding the user.", icon: Search },
   { title: "Motion Design", description: "Adding life to interaction.", icon: Film },
+  { title: "AI + Experimentation", description: "Research. Build. Generate. Repeat.", icon: Sparkles },
 ];
 
 const hobbies = [
@@ -78,9 +82,9 @@ const hobbies = [
     className: "md:col-span-1 md:row-span-1"
   },
   {
-    title: "Coffee Brewing",
-    description: "The art of the perfect pour over.",
-    image: "https://images.unsplash.com/photo-1636897723338-044840ff6d53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmV3aW5nJTIwY29mZmVlJTIwcG91ciUyMG92ZXIlMjBtaW5pbWFsaXN0JTIwYmxhY2slMjBhbmQlMjB3aGl0ZXxlbnwxfHx8fDE3NjcxMjE2NjB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    title: "Brewery Hopping",
+    description: "Discovering craft flavors and good company.",
+    image: breweryImage,
     className: "md:col-span-1 md:row-span-1"
   },
   {
@@ -125,6 +129,17 @@ const architectureLessons = [
 ];
 
 export function About() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isVideoInView = useInView(videoRef, { margin: "-20%" });
+
+  useEffect(() => {
+    if (isVideoInView) {
+      videoRef.current?.play().catch(e => console.log("Autoplay prevented:", e));
+    } else {
+      videoRef.current?.pause();
+    }
+  }, [isVideoInView]);
+
   return (
     <div className="pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto">
       {/* Hero Section */}
@@ -146,6 +161,24 @@ export function About() {
           My work sits at the intersection of design, technology, and storytelling.
         </motion.p>
       </section>
+
+      {/* Video Banner */}
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="mb-24 w-full aspect-[21/9] md:aspect-[16/9] rounded-2xl overflow-hidden bg-[#111] relative"
+      >
+        <video 
+          ref={videoRef}
+          src={videoPitch} 
+          loop 
+          muted={false} 
+          playsInline
+          controls
+          className="object-cover w-full h-full"
+        />
+      </motion.section>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-32">
@@ -192,7 +225,7 @@ export function About() {
               {experience.map((job, index) => (
                 <div key={index} className="flex items-center gap-4 group">
                   <div className="w-16 h-16 bg-[#111] rounded-lg overflow-hidden flex-shrink-0">
-                    <img src={job.image} alt={job.company} className="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-opacity" />
+                    <img src={job.image} alt={job.company} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <h4 className="text-white font-medium group-hover:text-gray-300 transition-colors">{job.role}</h4>
@@ -282,7 +315,7 @@ export function About() {
         >
           MY EXPERTISE
         </motion.h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {expertise.map((item, index) => (
             <motion.div
               key={index}
@@ -291,7 +324,7 @@ export function About() {
               whileHover={{ y: -5, backgroundColor: "#1A1A1A" }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="p-8 border border-[#333] bg-[#111] rounded-xl group cursor-default transition-colors"
+              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] p-8 border border-[#333] bg-[#111] rounded-xl group cursor-default transition-colors flex flex-col items-start text-left"
             >
               <div className="mb-6 p-4 bg-black w-fit rounded-lg border border-[#222] group-hover:border-white/20 transition-colors">
                 <item.icon className="w-8 h-8 text-white" strokeWidth={1.5} />
@@ -328,7 +361,7 @@ export function About() {
                     <img 
                         src={hobby.image} 
                         alt={hobby.title} 
-                        className={`w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ${hobby.title === "Traveling" ? "object-[center_30%]" : ""}`}
+                        className={`w-full h-full object-cover grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 ${hobby.title === "Traveling" ? "object-[center_30%]" : ""} ${hobby.title === "Brewery Hopping" ? "object-[center_30%]" : ""}`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                         <span className="text-white font-medium text-lg">{hobby.title}</span>
