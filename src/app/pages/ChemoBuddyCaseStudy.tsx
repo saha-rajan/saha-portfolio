@@ -291,6 +291,112 @@ const affinityData = [
   }
 ];
 
+const timelineData = [
+  {
+    id: 1,
+    phase: "Secondary Research",
+    week: "Week (1-3)",
+    title: "Literature review & Competitive analysis",
+    desc: "Explored 11 peer-reviewed oncology journals and Evaluated 8 healthcare and oncology apps to identify usability gaps.",
+    output: "4 key problem clusters, feature benchmarking matrix"
+  },
+  {
+    id: 2,
+    phase: "User Research",
+    week: "Week (4-5)",
+    title: "Surveys & Interviews",
+    desc: "Gathering input from cancer patients, caregivers, and medical mentors to understand emotional, educational and technical pain points.",
+    output: "Personas"
+  },
+  {
+    id: 3,
+    phase: "Data Synthesis",
+    week: "Week (6-7)",
+    title: "Synthesis & Insight mapping",
+    desc: "Transcribed interviews and clustered findings into themes, trust, overload, accessibility and caregiver support.",
+    output: "Affinity map + design opportunity areas"
+  },
+  {
+    id: 4,
+    phase: "User Testing",
+    week: "Week (8-10)",
+    title: "Validation & Design direction",
+    desc: "Worked with oncology mentor to validate findings, align concepts with accuracy and define requirements for prototyping.",
+    output: "Validated problem statement + user needs"
+  }
+];
+
+const TimelineLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Research process</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar p-6 md:p-12 bg-[#0a0a0c]">
+              <div className="max-w-[1200px] mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative pt-4">
+                  {/* Horizontal Line for Desktop */}
+                  <div className="hidden lg:block absolute top-[28px] left-10 right-10 h-[1px] bg-white/20" />
+                  
+                  {timelineData.map((phase) => (
+                    <div key={phase.id} className="relative z-10 flex flex-col items-start text-left">
+                      {/* Dot */}
+                      <div className="w-4 h-4 rounded-full bg-[#121217] border-[3px] border-white mb-6 z-20 flex-shrink-0 lg:mx-0 shadow-[0_0_0_8px_#0a0a0c]" />
+                      
+                      {/* Phase Info */}
+                      <h4 className="text-xl font-serif text-white mb-1">{phase.phase}</h4>
+                      <p className="case-meta text-[#A7A7A7] mb-6 tracking-widest">{phase.week}</p>
+                      
+                      {/* Card */}
+                      <div className="bg-[#121217] border border-white/10 p-6 md:p-8 rounded-xl flex flex-col w-full min-h-[220px]">
+                        <div className="font-bold text-white mb-4 text-base">{phase.title}</div>
+                        <p className="text-[#A7A7A7] text-sm font-sans leading-relaxed mb-6">{phase.desc}</p>
+                        <div className="mt-auto text-[11px] font-mono text-[#5A5A5A] italic leading-relaxed">
+                          Output: {phase.output}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const AffinityMappingLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
   return (
     <AnimatePresence>
@@ -589,7 +695,7 @@ const CompetitiveAnalysisLightbox = ({ isOpen, onClose, title, metadata, layoutI
 };
 // ------------------------------------------
 
-const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play' | 'affinity_mapping', data: any[] }) => {
+const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play' | 'affinity_mapping' | 'timeline', data: any[] }) => {
   const isLit = type === 'literature';
   const displayData = data.slice(0, 3);
 
@@ -613,6 +719,11 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
           <>
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">SCENARIO</div>
             <div className="w-[70%] case-meta text-[8px] text-[#5A5A5A] truncate">DESCRIPTION</div>
+          </>
+        ) : type === 'timeline' ? (
+          <>
+            <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">PHASE</div>
+            <div className="w-[70%] case-meta text-[8px] text-[#5A5A5A] truncate">FOCUS</div>
           </>
         ) : (
           <>
@@ -642,6 +753,11 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
               <>
                 <div className="w-[30%] text-[9px] text-white font-sans font-semibold pr-3 line-clamp-2 leading-snug">{row.title}</div>
                 <div className="w-[70%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.desc}</div>
+              </>
+            ) : type === 'timeline' ? (
+              <>
+                <div className="w-[30%] text-[9px] text-white font-sans font-semibold pr-3 line-clamp-2 leading-snug">{row.phase}</div>
+                <div className="w-[70%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.title}</div>
               </>
             ) : (
               <>
@@ -702,7 +818,7 @@ export function ChemoBuddyCaseStudy() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState<string>('');
-  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play' | 'affinity_mapping', title: string, metadata: string} | null>(null);
+  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play' | 'affinity_mapping' | 'timeline', title: string, metadata: string} | null>(null);
   
   // Lock body scroll when lightboxes are open
   useEffect(() => {
@@ -1868,19 +1984,25 @@ export function ChemoBuddyCaseStudy() {
 
           {/* Timeline */}
           <div 
-            onClick={() => openImage(image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5, "Research Timeline")}
+            onClick={() => setTableLightboxOpen({type: 'timeline', title: "Research Timeline", metadata: "10 WEEKS"})}
             className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
           >
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand details <ArrowUpRight size={10} /></div>
             <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
               <div>
                 <span className="case-meta text-[11px] text-white block mb-0.5">RESEARCH TIMELINE</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">10 WEEKS</span>
               </div>
             </div>
-            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+            <motion.div 
+              layoutId="timeline-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
+            >
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
-              <img src={image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5} alt="Research Timeline" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
-            </div>
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="timeline" data={timelineData} />
+              </div>
+            </motion.div>
           </div>
           
         </div>
@@ -3139,6 +3261,13 @@ export function ChemoBuddyCaseStudy() {
         title={tableLightboxOpen?.title || ''} 
         metadata={tableLightboxOpen?.metadata || ''}
         layoutId="affinity-database" 
+      />
+      <TimelineLightbox 
+        isOpen={tableLightboxOpen?.type === 'timeline'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="timeline-database" 
       />
     </div>
   );
