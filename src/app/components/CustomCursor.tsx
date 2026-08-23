@@ -1,33 +1,50 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { useState, useEffect, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
 
 export function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHoveringHeading, setIsHoveringHeading] = useState(false);
   const [headingHeight, setHeadingHeight] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const { hideCursor, setHideCursor, isTextCursor, cursorText } = useCursor();
 
+  // Use refs to access latest state inside event listeners without re-binding
+  const isTextCursorRef = useRef(isTextCursor);
+  const isHoveringHeadingRef = useRef(isHoveringHeading);
+  const headingHeightRef = useRef(headingHeight);
+  
+  useEffect(() => { isTextCursorRef.current = isTextCursor; }, [isTextCursor]);
+  useEffect(() => { isHoveringHeadingRef.current = isHoveringHeading; }, [isHoveringHeading]);
+  useEffect(() => { headingHeightRef.current = headingHeight; }, [headingHeight]);
+
+  // High-performance motion values that bypass React's render cycle
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const textX = useMotionValue(-100);
+  const textY = useMotionValue(-100);
+  
+  const springConfig = { damping: 30, stiffness: 400, mass: 0.5 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+  const smoothTextX = useSpring(textX, springConfig);
+  const smoothTextY = useSpring(textY, springConfig);
+
   // Detect if device is mobile/touch
   useEffect(() => {
     const checkIfMobile = () => {
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth < 1024; // Hide on tablets and mobile
+      const isSmallScreen = window.innerWidth < 1024;
       setIsMobile(isTouchDevice || isSmallScreen);
     };
     
     checkIfMobile();
     window.addEventListener('resize', checkIfMobile);
-    
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
   useEffect(() => {
-    // Skip if mobile
     if (isMobile) return;
     
-    // Cache for rects to prevent layout thrashing during mousemove
     let currentTextRects: { rects: DOMRect[], actualLineHeight: number } | null = null;
     let currentEligibleElement: HTMLElement | null = null;
 
@@ -56,12 +73,10 @@ export function CustomCursor() {
         currentElement = currentElement.parentElement;
       }
       
-      // If we hover over a new eligible element
       if (headingElementFound !== currentEligibleElement) {
         currentEligibleElement = headingElementFound;
         
         if (headingElementFound) {
-          // Calculate rects ONCE when entering the element
           const computedStyle = window.getComputedStyle(headingElementFound);
           const isVisible = computedStyle.visibility !== 'hidden' && 
                            computedStyle.display !== 'none' && 
@@ -98,7 +113,6 @@ export function CustomCursor() {
               }
             }
           }
-          
           currentTextRects = { rects: allRects, actualLineHeight };
         } else {
           currentTextRects = null;
@@ -109,7 +123,6 @@ export function CustomCursor() {
     };
 
     const handleMouseOut = (e: MouseEvent) => {
-      // If we completely leave the document body
       if (e.relatedTarget === null) {
         currentEligibleElement = null;
         currentTextRects = null;
@@ -123,22 +136,12 @@ export function CustomCursor() {
       (window as any).mouseX = e.clientX;
       (window as any).mouseY = e.clientY;
       
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setMousePosition({ x: (window as any).mouseX, y: (window as any).mouseY });
-          ticking = false;
-        });
-        ticking = true;
-      }
+      let isOverText = false;
+      let matchedHeight = 0;
       
-      // Performant text precision check using cached rects
       if (currentTextRects) {
-        let isOverText = false;
-        let matchedHeight = 0;
-        
         for (let i = 0; i < currentTextRects.rects.length; i++) {
           const rect = currentTextRects.rects[i];
-          // Small tolerance for smoother hover feel
           if (
             e.clientX >= rect.left - 2 &&
             e.clientX <= rect.right + 2 &&
@@ -151,12 +154,38 @@ export function CustomCursor() {
           }
         }
         
-        setIsHoveringHeading(isOverText);
-        setHeadingHeight(isOverText ? matchedHeight : 0);
+        // Update React state safely if changed
+        if (isOverText !== isHoveringHeadingRef.current) {
+          setIsHoveringHeading(isOverText);
+        }
+        if (isOverText && matchedHeight !== headingHeightRef.current) {
+          setHeadingHeight(matchedHeight);
+        } else if (!isOverText && headingHeightRef.current !== 0) {
+          setHeadingHeight(0);
+        }
+      }
+
+      // Update MotionValues directly to avoid React re-renders on every pixel move
+      const isTextC = isTextCursorRef.current;
+      const isHovering = currentTextRects ? isOverText : false;
+      const hHeight = currentTextRects && isOverText ? matchedHeight : 0;
+      
+      const offsetX = (isHovering || isTextC) ? 1 : 16;
+      const offsetY = isHovering ? (hHeight / 2) : (isTextC ? 12 : 16);
+      
+      // Update coordinates dynamically without setState
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          mouseX.set(e.clientX - offsetX);
+          mouseY.set(e.clientY - offsetY);
+          textX.set(e.clientX - 60);
+          textY.set(e.clientY - 20);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    // Invalidate cache on scroll to recalculate positions correctly
     const handleScroll = () => {
        currentEligibleElement = null;
        currentTextRects = null;
@@ -174,10 +203,8 @@ export function CustomCursor() {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isMobile]);
+  }, [isMobile, mouseX, mouseY, textX, textY]);
 
-  // Safety net: if the cursor was hidden (e.g. on a link hover) and the
-  // user clicks or the mouse leaves the window, ensure it reappears unless still hovering a cursor-hide button.
   useEffect(() => {
     if (isMobile) return;
     const restoreCursor = (e: MouseEvent) => {
@@ -201,62 +228,40 @@ export function CustomCursor() {
     };
   }, [isMobile, setHideCursor]);
 
-  // Show text cursor when there's cursor text
   const showTextCursor = cursorText.length > 0;
-  
-  // Use vertical blue line when hovering over headings
   const shouldShowHeadingCursor = isHoveringHeading;
 
-  // Don't render cursor on mobile
   if (isMobile) {
     return null;
   }
 
   return (
     <>
-      {/* Regular cursor */}
       <motion.div
         className={`fixed top-0 left-0 pointer-events-none z-[9999] ${
-          shouldShowHeadingCursor || isTextCursor
-            ? 'bg-[#1CB4F5]' 
-            : 'rounded-full'
+          shouldShowHeadingCursor || isTextCursor ? 'bg-[#1CB4F5]' : 'rounded-full'
         }`}
         style={{
           opacity: hideCursor || showTextCursor ? 0 : (shouldShowHeadingCursor || isTextCursor) ? 1 : 0.5,
           width: (shouldShowHeadingCursor || isTextCursor) ? '2px' : '32px',
           height: shouldShowHeadingCursor ? `${headingHeight}px` : (isTextCursor ? '24px' : '32px'),
           backgroundColor: (shouldShowHeadingCursor || isTextCursor) ? '#1CB4F5' : '#8B8B8B',
-        }}
-        animate={{
-          x: (shouldShowHeadingCursor || isTextCursor) ? mousePosition.x - 1 : mousePosition.x - 16,
-          y: shouldShowHeadingCursor ? mousePosition.y - (headingHeight / 2) : (isTextCursor ? mousePosition.y - 12 : mousePosition.y - 16),
+          x: smoothX,
+          y: smoothY
         }}
         transition={{
-          type: "spring",
-          damping: 30,
-          stiffness: 400,
-          mass: 0.5,
           opacity: { duration: 0.2 },
         }}
       />
 
-      {/* Text cursor */}
       {showTextCursor && (
         <motion.div
           className="fixed top-0 left-0 pointer-events-none z-[9999] bg-white text-black px-6 py-3 rounded-full font-medium text-sm whitespace-nowrap"
           style={{
             fontFamily: "'IBM Plex Mono', monospace",
             letterSpacing: '0.02em',
-          }}
-          animate={{
-            x: mousePosition.x - 60,
-            y: mousePosition.y - 20,
-          }}
-          transition={{
-            type: "spring",
-            damping: 30,
-            stiffness: 400,
-            mass: 0.5,
+            x: smoothTextX,
+            y: smoothTextY
           }}
         >
           {cursorText}
