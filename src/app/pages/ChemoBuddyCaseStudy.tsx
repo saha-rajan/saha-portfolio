@@ -11,6 +11,7 @@ import image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b from 'figma:asset/5ca30773
 import image_2b8bffd76f419f68be1a74616b439c493c27366f from 'figma:asset/2b8bffd76f419f68be1a74616b439c493c27366f.png';
 import image_056f058b598dbb5ba9ed90f94b8880797dac30da from '../../assets/chemobuddy_command_center_dashboard.png';
 import image_hero_bento_dashboard from '../../assets/chemobuddy_hero_animated.gif';
+import video_cx_bento from '../../assets/CX Bento image.mp4';
 import image_fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe from 'figma:asset/fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe.png';
 import image_d43ea63d788cb45c53fb10f7153ed33027f96302 from 'figma:asset/d43ea63d788cb45c53fb10f7153ed33027f96302.png';
 import image_59d13c8214ad12598c9d2470478d8fa2004aad78 from '../../assets/chemobuddy_3d_symptom_tracker.png';
@@ -1171,9 +1172,12 @@ export function ChemoBuddyCaseStudy() {
             className="col-span-2 md:col-span-3 lg:col-span-2 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
           >
-            <img 
-              src={image_hero_bento_dashboard}
-              alt="Dashboard View"
+            <video 
+              src={video_cx_bento}
+              autoPlay
+              loop
+              muted
+              playsInline
               className="w-full h-full object-cover object-left transition-transform duration-350 group-hover:scale-105"
             />
           </motion.div>
