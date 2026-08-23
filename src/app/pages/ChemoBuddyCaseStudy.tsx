@@ -397,6 +397,118 @@ const TimelineLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOp
   );
 };
 
+const brainstormingData = [
+  {
+    id: 1,
+    category: "Healthcare App Features",
+    color: "#D4A1FF",
+    stickies: [
+      "Looking at AI insights of the recorded symptom",
+      "Downloading symptom into a document",
+      "Recording symptom",
+      "Dashboard overview",
+      "Reminders to log in symptom",
+      "Symptom chatbot, ask questions about particular symptom",
+      "Consult physician if the symptom is redflag",
+      "Share particular symptom with caregiver/ physician"
+    ]
+  },
+  {
+    id: 2,
+    category: "Appointment and Medication Management",
+    color: "#A1D6FF",
+    stickies: [
+      "manage appointments",
+      "Caretaker invitation",
+      'Ordering / refilling medication via app "if possible"',
+      "Add personal details, medical history, medications",
+      "Medication details/ information"
+    ]
+  },
+  {
+    id: 3,
+    category: "Treatment Information",
+    color: "#A1FFAA",
+    stickies: [
+      "Looking at Multimodal edu videos/ resources for consistent symptom",
+      "Chemotherapy progress, how many cycles done, how many left",
+      "Ice-breaker questions",
+      "voice and text navigation",
+      "Onboarding education",
+      "Follow up questions on certain topic"
+    ]
+  }
+];
+
+const BrainstormingLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Concept Generation</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar p-6 md:p-12 bg-[#0a0a0c]">
+              <div className="max-w-[1200px] mx-auto space-y-16">
+                
+                {brainstormingData.map(group => (
+                  <div key={group.id}>
+                    <h4 className="text-xl md:text-2xl font-serif text-white mb-6 flex items-center gap-3">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: group.color }} />
+                      {group.category}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {group.stickies.map((sticky, idx) => (
+                        <div 
+                          key={idx} 
+                          className="bg-[#121217] p-8 rounded-xl flex flex-col relative overflow-hidden group min-h-[160px]"
+                          style={{ borderTop: `2px solid ${group.color}40`, borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                        >
+                          <div className="absolute top-0 left-0 right-0 h-16 opacity-5 bg-gradient-to-b from-current to-transparent pointer-events-none" style={{ color: group.color }} />
+                          <p className="text-[#A7A7A7] text-sm font-sans leading-relaxed relative z-10">{sticky}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const AffinityMappingLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
   return (
     <AnimatePresence>
@@ -695,7 +807,7 @@ const CompetitiveAnalysisLightbox = ({ isOpen, onClose, title, metadata, layoutI
 };
 // ------------------------------------------
 
-const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play' | 'affinity_mapping' | 'timeline', data: any[] }) => {
+const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play' | 'affinity_mapping' | 'timeline' | 'brainstorming', data: any[] }) => {
   const isLit = type === 'literature';
   const displayData = data.slice(0, 3);
 
@@ -725,10 +837,15 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">PHASE</div>
             <div className="w-[70%] case-meta text-[8px] text-[#5A5A5A] truncate">FOCUS</div>
           </>
-        ) : (
+        ) : type === 'affinity_mapping' ? (
           <>
             <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">THEME</div>
             <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate">INSIGHTS</div>
+          </>
+        ) : (
+          <>
+            <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">FEATURE CATEGORY</div>
+            <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate">IDEAS GENERATED</div>
           </>
         )}
       </div>
@@ -765,7 +882,7 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
                   <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: row.color }} />
                   <span className="truncate">{row.category}</span>
                 </div>
-                <div className="w-[50%] text-[9px] text-[#A7A7A7]">{row.stickies?.length || 0} key insights</div>
+                <div className="w-[50%] text-[9px] text-[#A7A7A7]">{row.stickies?.length || 0} {type === 'brainstorming' ? 'ideas' : 'key insights'}</div>
               </>
             )}
           </div>
@@ -818,7 +935,7 @@ export function ChemoBuddyCaseStudy() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState<string>('');
-  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play' | 'affinity_mapping' | 'timeline', title: string, metadata: string} | null>(null);
+  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play' | 'affinity_mapping' | 'timeline' | 'brainstorming', title: string, metadata: string} | null>(null);
   
   // Lock body scroll when lightboxes are open
   useEffect(() => {
@@ -1967,19 +2084,25 @@ export function ChemoBuddyCaseStudy() {
 
           {/* Brainstorming */}
           <div 
-            onClick={() => openImage(image_a932146b4da5fd39394bd08dc371833a947bf031, "Brainstorming")}
+            onClick={() => setTableLightboxOpen({type: 'brainstorming', title: "Brainstorming & Concept Generation", metadata: "19 IDEAS"})}
             className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
           >
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand details <ArrowUpRight size={10} /></div>
             <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
               <div>
                 <span className="case-meta text-[11px] text-white block mb-0.5">BRAINSTORMING & CONCEPT GENERATION</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">19 IDEAS</span>
               </div>
             </div>
-            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+            <motion.div 
+              layoutId="brainstorming-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
+            >
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
-              <img src={image_a932146b4da5fd39394bd08dc371833a947bf031} alt="Brainstorming" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
-            </div>
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="brainstorming" data={brainstormingData} />
+              </div>
+            </motion.div>
           </div>
 
           {/* Timeline */}
@@ -3268,6 +3391,13 @@ export function ChemoBuddyCaseStudy() {
         title={tableLightboxOpen?.title || ''} 
         metadata={tableLightboxOpen?.metadata || ''}
         layoutId="timeline-database" 
+      />
+      <BrainstormingLightbox 
+        isOpen={tableLightboxOpen?.type === 'brainstorming'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="brainstorming-database" 
       />
     </div>
   );
