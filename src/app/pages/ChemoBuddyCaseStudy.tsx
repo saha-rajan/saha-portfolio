@@ -238,6 +238,128 @@ const rolePlayData = {
   ]
 };
 
+const affinityData = [
+  {
+    id: 1,
+    category: "Overwhelm & Fatigue",
+    color: "#FFDDA1",
+    stickies: [
+      "Cognitive overload when too much information is presented at once.",
+      "Fatigue causes patients to abandon long reading materials.",
+      "Anxiety increases when educational content lacks prioritization."
+    ]
+  },
+  {
+    id: 2,
+    category: '"Is This Normal?" - Symptom Confusion',
+    color: "#A1D6FF",
+    stickies: [
+      "Difficulty differentiating expected side-effects vs. medical emergencies.",
+      "Over-reliance on unverified online sources.",
+      "Stress from inconsistent advice between platforms."
+    ]
+  },
+  {
+    id: 3,
+    category: "Trust & Credibility",
+    color: "#D4A1FF",
+    stickies: [
+      "Users question the credibility of health apps.",
+      "AI skepticism, especially among older adults.",
+      "Preference for brand-linked or clinician-reviewed sources."
+    ]
+  },
+  {
+    id: 4,
+    category: 'Caregiver "Invisible Workload"',
+    color: "#FFA1D6",
+    stickies: [
+      "Caregivers juggle logistics with little formal guidance.",
+      "Emotional labor remains unacknowledged.",
+      "No structured digital channel to share updates or reminders."
+    ]
+  },
+  {
+    id: 5,
+    category: "Tech Comfort & Accessibility",
+    color: "#A1FFAA",
+    stickies: [
+      "Varying digital literacy levels among patients and caregivers.",
+      "Preference for large fonts, voice interfaces, or familiar platforms.",
+      "Accessibility needs heightened by fatigue or neuropathy."
+    ]
+  }
+];
+
+const AffinityMappingLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Research synthesis</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar p-6 md:p-12 bg-[#0a0a0c]">
+              <div className="max-w-[1200px] mx-auto space-y-16">
+                
+                {affinityData.map(group => (
+                  <div key={group.id}>
+                    <h4 className="text-xl md:text-2xl font-serif text-white mb-6 flex items-center gap-3">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: group.color }} />
+                      {group.category}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {group.stickies.map((sticky, idx) => (
+                        <div 
+                          key={idx} 
+                          className="bg-[#121217] p-8 rounded-xl flex flex-col relative overflow-hidden group min-h-[160px]"
+                          style={{ borderTop: `2px solid ${group.color}40`, borderLeft: '1px solid rgba(255,255,255,0.1)', borderRight: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
+                        >
+                          <div className="absolute top-0 left-0 right-0 h-16 opacity-5 bg-gradient-to-b from-current to-transparent pointer-events-none" style={{ color: group.color }} />
+                          <p className="text-[#A7A7A7] text-sm font-sans leading-relaxed relative z-10">{sticky}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const RolePlayLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
   return (
     <AnimatePresence>
@@ -467,7 +589,7 @@ const CompetitiveAnalysisLightbox = ({ isOpen, onClose, title, metadata, layoutI
 };
 // ------------------------------------------
 
-const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play', data: any[] }) => {
+const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play' | 'affinity_mapping', data: any[] }) => {
   const isLit = type === 'literature';
   const displayData = data.slice(0, 3);
 
@@ -487,10 +609,15 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
             <div className="w-[25%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">STRENGTHS</div>
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] pl-2 truncate">GAP IDENTIFIED</div>
           </>
-        ) : (
+        ) : type === 'role_play' ? (
           <>
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">SCENARIO</div>
             <div className="w-[70%] case-meta text-[8px] text-[#5A5A5A] truncate">DESCRIPTION</div>
+          </>
+        ) : (
+          <>
+            <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">THEME</div>
+            <div className="w-[50%] case-meta text-[8px] text-[#5A5A5A] truncate">INSIGHTS</div>
           </>
         )}
       </div>
@@ -511,10 +638,18 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
                 <div className="w-[25%] text-[9px] text-[#A7A7A7] pr-2 line-clamp-2 leading-snug">{row.strengths}</div>
                 <div className="w-[30%] text-[9px] text-white border-l border-[#1CB4F5]/30 pl-2 line-clamp-2 leading-snug">{row.gapIdentified}</div>
               </>
-            ) : (
+            ) : type === 'role_play' ? (
               <>
                 <div className="w-[30%] text-[9px] text-white font-sans font-semibold pr-3 line-clamp-2 leading-snug">{row.title}</div>
                 <div className="w-[70%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.desc}</div>
+              </>
+            ) : (
+              <>
+                <div className="w-[50%] text-[9px] text-white font-sans font-semibold pr-3 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: row.color }} />
+                  <span className="truncate">{row.category}</span>
+                </div>
+                <div className="w-[50%] text-[9px] text-[#A7A7A7]">{row.stickies?.length || 0} key insights</div>
               </>
             )}
           </div>
@@ -567,7 +702,7 @@ export function ChemoBuddyCaseStudy() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState<string>('');
-  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play', title: string, metadata: string} | null>(null);
+  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play' | 'affinity_mapping', title: string, metadata: string} | null>(null);
   
   // Lock body scroll when lightboxes are open
   useEffect(() => {
@@ -1693,19 +1828,25 @@ export function ChemoBuddyCaseStudy() {
 
           {/* Affinity Mapping */}
           <div 
-            onClick={() => openImage(image_872548eb54e3a9a24e2d9fe1ba3961431a895775, "Affinity Mapping")}
+            onClick={() => setTableLightboxOpen({type: 'affinity_mapping', title: "Affinity Mapping", metadata: "5 THEMES"})}
             className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
           >
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand details <ArrowUpRight size={10} /></div>
             <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
               <div>
                 <span className="case-meta text-[11px] text-white block mb-0.5">AFFINITY MAPPING & SYNTHESIS</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">5 THEMES</span>
               </div>
             </div>
-            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+            <motion.div 
+              layoutId="affinity-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
+            >
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
-              <img src={image_872548eb54e3a9a24e2d9fe1ba3961431a895775} alt="Affinity Mapping" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
-            </div>
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="affinity_mapping" data={affinityData} />
+              </div>
+            </motion.div>
           </div>
 
           {/* Brainstorming */}
@@ -2991,6 +3132,13 @@ export function ChemoBuddyCaseStudy() {
         title={tableLightboxOpen?.title || ''} 
         metadata={tableLightboxOpen?.metadata || ''}
         layoutId="roleplay-database" 
+      />
+      <AffinityMappingLightbox 
+        isOpen={tableLightboxOpen?.type === 'affinity_mapping'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="affinity-database" 
       />
     </div>
   );
