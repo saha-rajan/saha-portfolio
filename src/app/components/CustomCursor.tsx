@@ -27,126 +27,21 @@ export function CustomCursor() {
     // Skip if mobile
     if (isMobile) return;
     
+    let ticking = false;
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
       (window as any).mouseX = e.clientX;
       (window as any).mouseY = e.clientY;
       
-      // Reset state by default
-      let isOverHeadingText = false;
-      let headingElementFound: HTMLElement | null = null;
-      let lineHeight = 0;
-      
-      // First, find if cursor is over any text at the cursor position
-      const elementsAtPoint = document.elementsFromPoint(e.clientX, e.clientY);
-      
-      // Check each element at the cursor position
-      for (const elem of elementsAtPoint) {
-        if (elem instanceof HTMLElement) {
-          // Check if this element or any parent is a heading, paragraph, OR has cursor-line-effect class
-          let currentElement: HTMLElement | null = elem;
-          
-          while (currentElement) {
-            const tagName = currentElement.tagName;
-            if (
-              tagName === 'H1' || 
-              tagName === 'H2' || 
-              tagName === 'H3' ||
-              tagName === 'H4' ||
-              tagName === 'H5' ||
-              tagName === 'H6' ||
-              tagName === 'P' ||
-              currentElement.classList.contains('cursor-line-effect')
-            ) {
-              headingElementFound = currentElement;
-              break;
-            }
-            currentElement = currentElement.parentElement;
-          }
-          
-          if (headingElementFound) {
-            break;
-          }
-        }
-      }
-      
-      // If we found a heading or cursor-line-effect element, check if cursor is actually over text
-      if (headingElementFound) {
-        // Skip if element is invisible or hidden
-        const computedStyle = window.getComputedStyle(headingElementFound);
-        const isVisible = computedStyle.visibility !== 'hidden' && 
-                         computedStyle.display !== 'none' && 
-                         computedStyle.opacity !== '0' &&
-                         !headingElementFound.classList.contains('invisible');
-        
-        if (!isVisible) {
-          setIsHoveringHeading(false);
-          setHeadingHeight(0);
-          return;
-        }
-        
-        // Get computed style to check line-height
-        const fontSize = parseFloat(computedStyle.fontSize);
-        const computedLineHeight = parseFloat(computedStyle.lineHeight);
-        const actualLineHeight = isNaN(computedLineHeight) ? fontSize * 1.3 : computedLineHeight;
-        
-        // Get all text nodes from the heading
-        const textNodes: Node[] = [];
-        const getTextNodes = (node: Node) => {
-          if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
-            textNodes.push(node);
-          } else {
-            node.childNodes.forEach(getTextNodes);
-          }
-        };
-        getTextNodes(headingElementFound);
-        
-        // First try: Check if cursor is within any text node's bounding box (precise detection only)
-        for (const textNode of textNodes) {
-          const range = document.createRange();
-          range.selectNodeContents(textNode);
-          const rects = range.getClientRects();
-          
-          // Check all rectangles (text might wrap)
-          for (let i = 0; i < rects.length; i++) {
-            const rect = rects[i];
-            
-            // Skip empty or very small rectangles
-            if (rect.width < 1 || rect.height < 1) {
-              continue;
-            }
-            
-            // No tolerance - must be directly over text
-            if (
-              e.clientX >= rect.left &&
-              e.clientX <= rect.right &&
-              e.clientY >= rect.top &&
-              e.clientY <= rect.bottom
-            ) {
-              isOverHeadingText = true;
-              // Use the actual line height from CSS or the rect height, whichever is more accurate
-              lineHeight = Math.max(rect.height, actualLineHeight);
-              break;
-            }
-          }
-          
-          if (isOverHeadingText) {
-            break;
-          }
-        }
-      }
-      
-      // Update state
-      if (isOverHeadingText && headingElementFound && lineHeight > 0) {
-        setIsHoveringHeading(true);
-        setHeadingHeight(lineHeight);
-      } else {
-        setIsHoveringHeading(false);
-        setHeadingHeight(0);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setMousePosition({ x: (window as any).mouseX, y: (window as any).mouseY });
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
+    window.addEventListener("mousemove", updateMousePosition, { passive: true });
     return () => window.removeEventListener("mousemove", updateMousePosition);
   }, [isMobile]);
 
