@@ -315,7 +315,7 @@ export function About() {
         >
           MY EXPERTISE
         </motion.h3>
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-start gap-6">
           {expertise.map((item, index) => (
             <motion.div
               key={index}
