@@ -201,6 +201,120 @@ const ResearchTableRow = ({ row }: { row: ResearchPaper }) => {
   );
 };
 
+const rolePlayData = {
+  scenarios: [
+    {
+      id: 1,
+      title: "Scenario 1",
+      subtitle: "New Diagnosis",
+      desc: "A patient just beginning chemotherapy educational."
+    },
+    {
+      id: 2,
+      title: "Scenario 2",
+      subtitle: "Mid-Treatment Management",
+      desc: "A patient tracking side effects and trying to decide whether symptoms require medical attention."
+    },
+    {
+      id: 3,
+      title: "Scenario 3",
+      subtitle: "Caregiver Communication",
+      desc: "A family member seeking information about how to assist with medication timing and emotional reassurance."
+    }
+  ],
+  sessions: [
+    {
+      id: 1,
+      desc: "Dr. Umar acted as both patient and caregiver in separate sessions, demonstrating likely behaviors, questions, and emotional responses."
+    },
+    {
+      id: 2,
+      desc: "I acted as a facilitator, prompting interactions with draft wireframes, information cards, and mock chatbot conversations to observe where confusion or anxiety arose."
+    },
+    {
+      id: 3,
+      desc: "Sessions were conducted as guided think-aloud activities, discussing what felt helpful, what was missing, and what could increase clarity or comfort."
+    }
+  ]
+};
+
+const RolePlayLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+        >
+          <button onClick={onClose} className="absolute top-4 right-4 md:top-6 md:right-6 text-white/50 hover:text-white z-50 p-2">
+            <X size={28} />
+          </button>
+          <motion.div 
+            layoutId={layoutId}
+            initial={layoutId ? undefined : { scale: 0.98, opacity: 0, y: 20 }}
+            animate={layoutId ? undefined : { scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-[1500px] h-[85vh] bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-hidden shadow-2xl relative"
+          >
+            {/* Header */}
+            <div className="p-6 md:px-8 md:py-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-[#121217]">
+              <div>
+                <h3 className="text-xl md:text-2xl text-white font-bold font-sans uppercase tracking-tight">{title}</h3>
+                <span className="case-meta text-[#A7A7A7] mt-1.5 block">Role-play synthesis</span>
+              </div>
+              {metadata && (
+                <div className="case-meta px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-white/90">
+                  {metadata}
+                </div>
+              )}
+            </div>
+            
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-auto custom-scrollbar p-6 md:p-12 bg-[#0a0a0c]">
+              <div className="max-w-[1200px] mx-auto space-y-16">
+                
+                {/* Scenario Design */}
+                <div>
+                  <h4 className="text-2xl font-serif text-white mb-4">Scenario Design</h4>
+                  <p className="text-[#A7A7A7] mb-8 font-sans text-base leading-relaxed">
+                    Working with Dr. Umar, I developed three realistic use-case scripts based on real patient journeys he had encountered.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {rolePlayData.scenarios.map(s => (
+                      <div key={s.id} className="bg-[#121217] border border-white/10 p-8 rounded-xl flex flex-col">
+                        <div className="case-meta text-[#5A5A5A] mb-2">{s.title}</div>
+                        <div className="font-bold text-white mb-4 text-lg">{s.subtitle}</div>
+                        <p className="text-[#A7A7A7] text-sm font-sans leading-relaxed">{s.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Role-play Sessions */}
+                <div>
+                  <h4 className="text-2xl font-serif text-white mb-8">Role-play Sessions</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {rolePlayData.sessions.map(s => (
+                      <div key={s.id} className="bg-[#121217] border border-white/10 p-8 rounded-xl flex flex-col justify-center">
+                        <p className="text-[#A7A7A7] text-sm font-sans leading-relaxed">{s.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const TableLightbox = ({ isOpen, onClose, title, metadata, layoutId }: { isOpen: boolean, onClose: () => void, title: string, metadata: string, layoutId?: string }) => {
   return (
     <AnimatePresence>
@@ -353,7 +467,7 @@ const CompetitiveAnalysisLightbox = ({ isOpen, onClose, title, metadata, layoutI
 };
 // ------------------------------------------
 
-const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive', data: any[] }) => {
+const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competitive' | 'role_play', data: any[] }) => {
   const isLit = type === 'literature';
   const displayData = data.slice(0, 3);
 
@@ -366,12 +480,17 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">METHOD</div>
             <div className="w-[40%] case-meta text-[8px] text-[#5A5A5A] truncate">KEY LEARNING</div>
           </>
-        ) : (
+        ) : type === 'competitive' ? (
           <>
             <div className="w-[20%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">APP / PLATFORM</div>
             <div className="w-[25%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">PRIMARY FOCUS</div>
             <div className="w-[25%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">STRENGTHS</div>
             <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] pl-2 truncate">GAP IDENTIFIED</div>
+          </>
+        ) : (
+          <>
+            <div className="w-[30%] case-meta text-[8px] text-[#5A5A5A] truncate pr-2">SCENARIO</div>
+            <div className="w-[70%] case-meta text-[8px] text-[#5A5A5A] truncate">DESCRIPTION</div>
           </>
         )}
       </div>
@@ -385,12 +504,17 @@ const ResearchDatabasePreview = ({ type, data }: { type: 'literature' | 'competi
                 <div className="w-[30%] text-[9px] text-[#A7A7A7] pr-3 line-clamp-2 leading-snug">{row.method}</div>
                 <div className="w-[40%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.keyLearning}</div>
               </>
-            ) : (
+            ) : type === 'competitive' ? (
               <>
                 <div className="w-[20%] text-[9px] text-white font-sans font-semibold pr-2 truncate">{row.appName}</div>
                 <div className="w-[25%] text-[9px] text-[#A7A7A7] pr-2 line-clamp-2 leading-snug">{row.primaryFocus}</div>
                 <div className="w-[25%] text-[9px] text-[#A7A7A7] pr-2 line-clamp-2 leading-snug">{row.strengths}</div>
                 <div className="w-[30%] text-[9px] text-white border-l border-[#1CB4F5]/30 pl-2 line-clamp-2 leading-snug">{row.gapIdentified}</div>
+              </>
+            ) : (
+              <>
+                <div className="w-[30%] text-[9px] text-white font-sans font-semibold pr-3 line-clamp-2 leading-snug">{row.title}</div>
+                <div className="w-[70%] text-[9px] text-[#A7A7A7] line-clamp-3 leading-snug">{row.desc}</div>
               </>
             )}
           </div>
@@ -443,7 +567,7 @@ export function ChemoBuddyCaseStudy() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState<string>('');
-  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis', title: string, metadata: string} | null>(null);
+  const [tableLightboxOpen, setTableLightboxOpen] = useState<{type: 'lit_review' | 'comp_analysis' | 'role_play', title: string, metadata: string} | null>(null);
   
   // Lock body scroll when lightboxes are open
   useEffect(() => {
@@ -1546,19 +1670,25 @@ export function ChemoBuddyCaseStudy() {
 
           {/* Role-Play Scenarios */}
           <div 
-            onClick={() => openImage(image_7185839779b789cbfbfd75fdfef3c494ccafb053, "Role-Play Scenarios")}
+            onClick={() => setTableLightboxOpen({type: 'role_play', title: "Role-Play Scenarios", metadata: "3 SCENARIOS"})}
             className="flex flex-col border border-white/10 rounded-xl bg-[#121217] overflow-hidden group cursor-pointer h-[280px] hover:border-white/30 transition-colors relative"
           >
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">Expand details <ArrowUpRight size={10} /></div>
             <div className="flex justify-between items-start p-5 border-b border-white/10 shrink-0 bg-[#121217] relative z-10">
               <div>
                 <span className="case-meta text-[11px] text-white block mb-0.5">ROLE-PLAY SCENARIOS</span>
+                <span className="case-meta text-[#5A5A5A] text-[10px]">3 SCENARIOS</span>
               </div>
             </div>
-            <div className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]">
+            <motion.div 
+              layoutId="roleplay-database"
+              className="flex-1 relative overflow-hidden flex items-center justify-center p-5 bg-[#0a0a0c]"
+            >
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
-              <img src={image_7185839779b789cbfbfd75fdfef3c494ccafb053} alt="Role-Play Scenarios" className="w-full h-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-[1.01] transition-all duration-300" />
-            </div>
+              <div className="w-full h-full transform group-hover:scale-[1.01] transition-transform duration-300">
+                <ResearchDatabasePreview type="role_play" data={rolePlayData.scenarios} />
+              </div>
+            </motion.div>
           </div>
 
           {/* Affinity Mapping */}
@@ -2854,6 +2984,13 @@ export function ChemoBuddyCaseStudy() {
         title={tableLightboxOpen?.title || ''} 
         metadata={tableLightboxOpen?.metadata || ''}
         layoutId="competitive-database" 
+      />
+      <RolePlayLightbox 
+        isOpen={tableLightboxOpen?.type === 'role_play'} 
+        onClose={() => setTableLightboxOpen(null)} 
+        title={tableLightboxOpen?.title || ''} 
+        metadata={tableLightboxOpen?.metadata || ''}
+        layoutId="roleplay-database" 
       />
     </div>
   );
