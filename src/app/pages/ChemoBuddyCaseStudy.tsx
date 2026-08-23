@@ -1974,21 +1974,18 @@ export function ChemoBuddyCaseStudy() {
     </div>
   </div>
 
-  {/* DEEP RESEARCH (COLLAPSED) */}
-  <div className="mb-32">
-    <details className="group">
-      <summary className="cursor-pointer list-none flex items-center justify-between p-6 bg-[#121217] border border-white/10 rounded-xl hover:bg-[#1a1a24] transition-colors">
-        <div>
-          <span className="case-meta text-white block mb-1">DEEP RESEARCH</span>
-          <span className="case-caption text-[#A7A7A7]">Methodology, source review & supporting artifacts</span>
-        </div>
-        <div className="case-meta text-[#5A5A5A] group-open:hidden flex items-center gap-2">Explore <span className="text-xl">+</span></div>
-        <div className="case-meta text-[#5A5A5A] hidden group-open:flex items-center gap-2">Close <span className="text-xl">×</span></div>
-      </summary>
-      
-      <div className="p-8 border border-t-0 border-white/10 rounded-b-xl bg-[#0a0a0c] mt-[-10px] pt-12">
-        {/* Unified Artifact Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {/* DEEP RESEARCH */}
+  <div className="mb-32 border border-white/10 rounded-xl bg-[#0a0a0c] overflow-hidden">
+    <div className="flex items-center justify-between p-6 bg-[#121217] border-b border-white/10 shrink-0">
+      <div>
+        <span className="case-meta text-white block mb-1">DEEP RESEARCH</span>
+        <span className="case-caption text-[#A7A7A7]">Methodology, source review & supporting artifacts</span>
+      </div>
+    </div>
+    
+    <div className="p-6 md:p-8">
+      {/* Unified Artifact Gallery */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
           {/* Lit Review Shell */}
           <div 
@@ -2130,7 +2127,6 @@ export function ChemoBuddyCaseStudy() {
           
         </div>
       </div>
-    </details>
   </div>
 </motion.section>
 
