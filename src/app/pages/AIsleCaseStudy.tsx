@@ -254,7 +254,14 @@ export function AIsleCaseStudy() {
 
   return (
     <div className="min-h-screen font-sans bg-black text-white selection:bg-white selection:text-black">
-      <CaseStudyNav sections={AISLE_NAV_SECTIONS} />
+      <CaseStudyNav 
+        metaText="AISLE"
+        sections={AISLE_NAV_SECTIONS} 
+        activeColorClass="text-[#34D399]" 
+        progressBarColor="bg-transparent"
+        progressBarStyle={{ backgroundImage: 'repeating-linear-gradient(to right, #34D399, #34D399 2px, transparent 2px, transparent 6px)' }}
+        headGlowColor="#34D399"
+      />
 
       {/* ── SCROLL TO TOP ─────────────── */}
       <motion.button

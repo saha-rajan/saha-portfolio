@@ -8,23 +8,27 @@ export interface NavSection {
 }
 
 export interface CaseStudyNavProps {
-  metaText: string;
+  metaText?: string;
   sections: NavSection[];
   activeColorClass?: string;
   activeBgClass?: string;
   progressBarColor?: string;
   progressBarGradient?: string;
+  progressBarStyle?: React.CSSProperties;
+  headGlowColor?: string;
   contentId?: string;
   containerMaxWidth?: string;
 }
 
 export function CaseStudyNav({
-  metaText,
+  metaText = "CASE STUDY",
   sections,
   activeColorClass = "text-white",
   activeBgClass = "bg-white/5",
   progressBarColor = "bg-white",
   progressBarGradient,
+  progressBarStyle,
+  headGlowColor,
   contentId = "case-study-content",
   containerMaxWidth = "max-w-[1440px]",
 }: CaseStudyNavProps) {
@@ -187,19 +191,24 @@ export function CaseStudyNav({
       </div>
 
       {/* Progress Bar Track */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-full bg-white/5 pointer-events-none overflow-hidden">
+      <div className="absolute bottom-0 left-0 h-[2px] w-full bg-white/5 pointer-events-none">
         <motion.div
-          className="h-full relative overflow-hidden"
+          className="h-full relative overflow-visible"
           style={{ width: `${progress}%` }}
           transition={{ ease: "linear", duration: 0.1 }}
         >
           {progressBarGradient ? (
-            <div
-              className={`h-full absolute top-0 left-0 ${progressBarGradient}`}
-              style={{ width: "100vw" }}
-            />
+            <div className="h-full w-full overflow-hidden relative">
+              <div
+                className={`h-full absolute top-0 left-0 ${progressBarGradient}`}
+                style={{ width: "100vw" }}
+              />
+            </div>
           ) : (
-            <div className={`h-full w-full ${progressBarColor}`} />
+            <div className={`h-full w-full ${progressBarColor}`} style={progressBarStyle} />
+          )}
+          {headGlowColor && (
+             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-[8px] blur-[4px] rounded-full z-10" style={{ backgroundColor: headGlowColor }} />
           )}
         </motion.div>
       </div>
