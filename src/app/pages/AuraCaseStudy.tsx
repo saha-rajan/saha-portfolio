@@ -1112,7 +1112,7 @@ export function AuraCaseStudy() {
           Seamless dark portfolio canvas continuation.
       ══════════════════════════════════════════════════════════════════ */}
       <section
-        id="research"
+        id="overview"
         className="pb-16 md:pb-24 px-6 md:px-12 lg:px-24 min-[1440px]:px-12 max-w-[1440px] mx-auto scroll-mt-[140px]"
       >
         <div className="max-w-[1190px] mx-auto">
