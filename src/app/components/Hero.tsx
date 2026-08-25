@@ -243,7 +243,7 @@ export function Hero() {
                   />
                 )}
                 
-                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl ${index === 2 ? 'bg-black/60' : 'bg-black/30'} ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}>
+                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}>
                   <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
                   {index === 0 && (
                     <motion.div 
