@@ -263,6 +263,7 @@ export function AIsleCaseStudy() {
         headGlowColor="#34D399"
       />
 
+      <div id="case-study-content">
       {/* ── SCROLL TO TOP ─────────────── */}
       <motion.button
         onClick={scrollToTop}
@@ -1539,6 +1540,7 @@ export function AIsleCaseStudy() {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }
