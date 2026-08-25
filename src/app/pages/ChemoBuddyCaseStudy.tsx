@@ -4,7 +4,6 @@ import image_9b84f1632d73307214f57b506cb409eae84c6c75 from 'figma:asset/9b84f163
 import image_9cb1021147062033ad95ff4b70af680d32459dae from 'figma:asset/9cb1021147062033ad95ff4b70af680d32459dae.png';
 import image_e2875e290d4a2b2ca4bed813b199115b1bdae041 from 'figma:asset/e2875e290d4a2b2ca4bed813b199115b1bdae041.png';
 import image_9f4544a8d094d8410e9128397e8e0c58340578b6 from 'figma:asset/9f4544a8d094d8410e9128397e8e0c58340578b6.png';
-import image_eb187deb8f81d162075cc22324c64e79f06dee2f from 'figma:asset/eb187deb8f81d162075cc22324c64e79f06dee2f.png';
 import image_da7b297ce73182028f4f1661a78bfc061d68c793 from 'figma:asset/da7b297ce73182028f4f1661a78bfc061d68c793.png';
 import image_73be314deac034d00b65d7a9d4bb46c5f3c0272f from 'figma:asset/73be314deac034d00b65d7a9d4bb46c5f3c0272f.png';
 import image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b from 'figma:asset/5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b.png';
@@ -1253,29 +1252,6 @@ export function ChemoBuddyCaseStudy() {
             />
           </motion.div>
 
-          {/* Caregiver - Medium */}
-          <motion.div 
-            className="col-span-1 md:col-span-2 lg:col-span-2 h-[180px] md:h-[200px] lg:h-[240px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_9a41f841d18e2e15b19fa5b42310fca9fe85eb4d}
-              alt="Caregiver Access"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Community & Resources - Wide merged */}
-          <motion.div 
-            className="col-span-2 md:col-span-4 lg:col-span-4 h-[180px] md:h-[200px] lg:h-[240px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_eb187deb8f81d162075cc22324c64e79f06dee2f}
-              alt="Community & Resources"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
         </motion.div>
       </section>
 
