@@ -629,60 +629,58 @@ export function AIsleCaseStudy() {
 
           {/* 6. Research Synthesis */}
           <FadeInView y={30} className="flex flex-col items-center mb-12 md:mb-20">
-            <div className="w-full xl:w-[90%] mb-6">
-              <div className="w-full bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-x-auto hide-scrollbar shadow-2xl relative">
-                <div className="min-w-[1100px] p-6 md:p-10 flex flex-col gap-6">
+            <div className="w-full xl:w-[95%] mb-6">
+              <div className="w-full bg-[#0a0a0c] border border-white/5 rounded-xl flex flex-col overflow-x-auto hide-scrollbar shadow-2xl relative">
+                <div className="min-w-[1100px] flex flex-col">
                   {/* Header Row */}
-                  <div className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 px-2">
+                  <div className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 px-10 pt-10 pb-8 border-b border-white/5 items-center">
                     <div></div>
-                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Raw interview notes</h4>
-                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Themes</h4>
-                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Pain points</h4>
-                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Insights & Opportunities</h4>
+                    <h4 className="text-white/90 font-serif text-[19px] tracking-tight">Raw interview notes</h4>
+                    <h4 className="text-white/90 font-serif text-[19px] tracking-tight">Themes</h4>
+                    <h4 className="text-white/90 font-serif text-[19px] tracking-tight">Pain points</h4>
+                    <h4 className="text-white/90 font-serif text-[19px] tracking-tight leading-snug">Insights &<br/>Opportunities</h4>
                   </div>
                   
                   {/* Rows */}
-                  {aisleAffinityData.map((row, idx) => (
-                    <div key={idx} className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 px-2 items-start border-t border-white/5 pt-8">
-                      <h5 className="text-white/60 font-mono text-[11px] tracking-[0.2em] uppercase mt-4">{row.category}</h5>
-                      
-                      <div className="flex flex-col gap-4">
-                        {row.raw_notes.map((note, nIdx) => (
-                          <div key={`raw-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #FFDDA140`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#FFDDA1] to-transparent pointer-events-none" />
-                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
-                          </div>
-                        ))}
+                  <div className="flex flex-col px-10 pb-10">
+                    {aisleAffinityData.map((row, idx) => (
+                      <div key={idx} className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 items-start py-8 border-b border-white/5 last:border-0">
+                        <h5 className="text-white/40 font-mono text-[10px] tracking-widest uppercase mt-4 font-semibold">{row.category}</h5>
+                        
+                        <div className="flex flex-col gap-4">
+                          {row.raw_notes.map((note, nIdx) => (
+                            <div key={`raw-${nIdx}`} className="p-5 md:p-6 rounded-xl border border-white/5 relative overflow-hidden group min-h-[120px] transition-transform hover:scale-[1.02]" style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(251, 191, 36, 0.12) 0%, rgba(18, 18, 21, 1) 100%)' }}>
+                              <p className="text-[#A7A7A7] text-[13px] md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="flex flex-col gap-4">
+                          {row.themes.map((note, nIdx) => (
+                            <div key={`theme-${nIdx}`} className="p-5 md:p-6 rounded-xl border border-white/5 relative overflow-hidden group min-h-[120px] transition-transform hover:scale-[1.02]" style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(96, 165, 250, 0.12) 0%, rgba(18, 18, 21, 1) 100%)' }}>
+                              <p className="text-[#A7A7A7] text-[13px] md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="flex flex-col gap-4">
+                          {row.pain_points.map((note, nIdx) => (
+                            <div key={`pain-${nIdx}`} className="p-5 md:p-6 rounded-xl border border-white/5 relative overflow-hidden group min-h-[120px] transition-transform hover:scale-[1.02]" style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(248, 113, 113, 0.12) 0%, rgba(18, 18, 21, 1) 100%)' }}>
+                              <p className="text-[#A7A7A7] text-[13px] md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="flex flex-col gap-4">
+                          {row.insights.map((note, nIdx) => (
+                            <div key={`insight-${nIdx}`} className="p-5 md:p-6 rounded-xl border border-white/5 relative overflow-hidden group min-h-[120px] transition-transform hover:scale-[1.02]" style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(52, 211, 153, 0.12) 0%, rgba(18, 18, 21, 1) 100%)' }}>
+                              <p className="text-[#A7A7A7] text-[13px] md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      
-                      <div className="flex flex-col gap-4">
-                        {row.themes.map((note, nIdx) => (
-                          <div key={`theme-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #A1D6FF40`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#A1D6FF] to-transparent pointer-events-none" />
-                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="flex flex-col gap-4">
-                        {row.pain_points.map((note, nIdx) => (
-                          <div key={`pain-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #FFA1A140`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#FFA1A1] to-transparent pointer-events-none" />
-                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="flex flex-col gap-4">
-                        {row.insights.map((note, nIdx) => (
-                          <div key={`insight-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #A1FFAA40`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#A1FFAA] to-transparent pointer-events-none" />
-                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="mt-8 flex flex-col items-center text-center">
