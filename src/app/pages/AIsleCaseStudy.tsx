@@ -13,6 +13,44 @@ import aisleResume from "../../assets/aisle_resume.png";
 import aisleTrace from "../../assets/aisle_trace.png";
 import aisleProblemVideo from "../../assets/aisle_problem.mp4";
 
+const aisleAffinityData = [
+  {
+    category: "Workflow",
+    raw_notes: ["Uses ChatGPT + Claude + Copilot on one project", "Switches AI tools many times per hour", "So many AI tabs open"],
+    themes: ["AI work spread across tools", "No project-level view"],
+    pain_points: ["Too many tools to manage", "Loses context between AIs"],
+    insights: ["Organize AI work by project", "Connect outputs across tools"]
+  },
+  {
+    category: "Retrieval",
+    raw_notes: ["Searching past chats takes too long", "Gives up on old conversations", "Re-prompts instead of searching"],
+    themes: ["Search is slow or unreliable", "Re-prompting replaces finding"],
+    pain_points: ["Can't find past AI answers", "Important insights get lost"],
+    insights: ["Make search faster than re-prompting", "Enable cross-agent search"]
+  },
+  {
+    category: "Documentation",
+    raw_notes: ["Keeps prompt journal / decision log", "Copies AI output into docs manually"],
+    themes: ["Screenshots and copy-paste", "Personal tracking systems"],
+    pain_points: ["Manual tracking is fragile", "No record of decisions"],
+    insights: ["Auto-save AI decisions", "Show 'which AI did what'"]
+  },
+  {
+    category: "Accountability",
+    raw_notes: ["Can't tell which AI gave which output", "Difficult to cite AI work", "No timestamps on reasoning trail"],
+    themes: ["No attribution or audit trail", "Hard to justify AI use"],
+    pain_points: ["Stress from uncertainty", "Low confidence in AI workflow"],
+    insights: ["Reduce mental load", "Increase confidence and trust"]
+  },
+  {
+    category: "Feelings",
+    raw_notes: ["Feels mentally overloaded", "Frustrated when search fails", "Anxious about losing insights"],
+    themes: ["Mental fatigue"],
+    pain_points: [],
+    insights: []
+  }
+];
+
 // ─── Fade In on Scroll ─────────────────────────────────────────────────────────
 function FadeInView({
   children,
@@ -591,19 +629,67 @@ export function AIsleCaseStudy() {
 
           {/* 6. Research Synthesis */}
           <FadeInView y={30} className="flex flex-col items-center mb-12 md:mb-20">
-            <div className="w-full md:w-[75%] mb-6">
-              <div className="h-48 md:h-64 w-full bg-[#121215] border border-white/10 rounded-xl flex flex-col items-center justify-center overflow-hidden relative group">
-                 <img src="aisle_research_artifact.png" alt="Research Synthesis artifact" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-                 <div className="z-10 flex flex-col items-center justify-center text-center p-6 bg-black/40 backdrop-blur-sm rounded-lg border border-white/5">
-                   <span className="text-white/30 text-[10px] font-mono mb-2 uppercase">Placeholder</span>
-                   <span className="text-white/50 font-mono text-xs">aisle_research_artifact.png</span>
-                 </div>
+            <div className="w-full xl:w-[90%] mb-6">
+              <div className="w-full bg-[#0a0a0c] border border-white/10 rounded-xl flex flex-col overflow-x-auto hide-scrollbar shadow-2xl relative">
+                <div className="min-w-[1100px] p-6 md:p-10 flex flex-col gap-6">
+                  {/* Header Row */}
+                  <div className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 px-2">
+                    <div></div>
+                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Raw interview notes</h4>
+                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Themes</h4>
+                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Pain points</h4>
+                    <h4 className="text-white/80 font-serif text-xl tracking-tight">Insights & Opportunities</h4>
+                  </div>
+                  
+                  {/* Rows */}
+                  {aisleAffinityData.map((row, idx) => (
+                    <div key={idx} className="grid grid-cols-[140px_1fr_1fr_1fr_1fr] gap-6 px-2 items-start border-t border-white/5 pt-8">
+                      <h5 className="text-white/60 font-mono text-[11px] tracking-[0.2em] uppercase mt-4">{row.category}</h5>
+                      
+                      <div className="flex flex-col gap-4">
+                        {row.raw_notes.map((note, nIdx) => (
+                          <div key={`raw-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #FFDDA140`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#FFDDA1] to-transparent pointer-events-none" />
+                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="flex flex-col gap-4">
+                        {row.themes.map((note, nIdx) => (
+                          <div key={`theme-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #A1D6FF40`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#A1D6FF] to-transparent pointer-events-none" />
+                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="flex flex-col gap-4">
+                        {row.pain_points.map((note, nIdx) => (
+                          <div key={`pain-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #FFA1A140`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#FFA1A1] to-transparent pointer-events-none" />
+                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="flex flex-col gap-4">
+                        {row.insights.map((note, nIdx) => (
+                          <div key={`insight-${nIdx}`} className="bg-[#121217] p-5 md:p-6 rounded-xl flex flex-col relative overflow-hidden group min-h-[120px] transition-colors hover:bg-[#1a1a20]" style={{ borderTop: `2px solid #A1FFAA40`, borderLeft: '1px solid rgba(255,255,255,0.05)', borderRight: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="absolute top-0 left-0 right-0 h-12 opacity-10 bg-gradient-to-b from-[#A1FFAA] to-transparent pointer-events-none" />
+                            <p className="text-[#A7A7A7] text-xs md:text-sm font-sans leading-relaxed relative z-10">{note}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-6 flex flex-col items-center text-center">
+              <div className="mt-8 flex flex-col items-center text-center">
                 <p className="text-[13px] font-mono text-white/50 max-w-md leading-relaxed uppercase">
                   Affinity mapping consolidated recurring workflow tensions into three themes.
                 </p>
-                <span className="block mt-8 text-[11px] font-mono text-[#7FAF9B] tracking-widest uppercase">
+                <span className="block mt-6 text-[11px] font-mono text-[#7FAF9B] tracking-widest uppercase">
                   SYNTHESIS → THREE RECURRING TENSIONS
                 </span>
               </div>
