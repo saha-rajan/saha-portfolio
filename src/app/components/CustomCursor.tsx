@@ -6,7 +6,7 @@ export function CustomCursor() {
   const [isHoveringHeading, setIsHoveringHeading] = useState(false);
   const [headingHeight, setHeadingHeight] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const { hideCursor, setHideCursor, isTextCursor, cursorText } = useCursor();
+  const { hideCursor, setHideCursor, isTextCursor, cursorText, cursorProgress, cursorTimeLeft } = useCursor();
 
   // Use refs to access latest state inside event listeners without re-binding
   const isTextCursorRef = useRef(isTextCursor);
@@ -256,15 +256,30 @@ export function CustomCursor() {
 
       {showTextCursor && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9999] bg-white text-black px-6 py-3 rounded-full font-medium text-sm whitespace-nowrap"
+          className={`fixed top-0 left-0 pointer-events-none z-[9999] bg-white text-black pl-6 ${cursorProgress !== null ? 'pr-2' : 'pr-6'} py-3 rounded-full font-medium text-sm flex items-center gap-3`}
           style={{
             fontFamily: "'IBM Plex Mono', monospace",
             letterSpacing: '0.02em',
             x: smoothTextX,
-            y: smoothTextY
+            y: smoothTextY,
+            width: 'max-content'
           }}
         >
-          {cursorText}
+          <span className="whitespace-nowrap">{cursorText}</span>
+          
+          {cursorProgress !== null && cursorTimeLeft !== null && (
+            <div className="relative w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-full">
+              <svg className="absolute inset-0 w-full h-full -rotate-90">
+                <circle cx="16" cy="16" r="14" fill="none" stroke="rgba(0,0,0,0.1)" strokeWidth="2" />
+                <circle cx="16" cy="16" r="14" fill="none" stroke="black" strokeWidth="2" 
+                  strokeDasharray={`${2 * Math.PI * 14}`} 
+                  strokeDashoffset={`${2 * Math.PI * 14 * (1 - cursorProgress)}`} 
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="text-[10px] font-bold mt-[1px]">{cursorTimeLeft}s</span>
+            </div>
+          )}
         </motion.div>
       )}
     </>

@@ -12,7 +12,7 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
   const [isMuted, setIsMuted] = useState(true);
   const [isFading, setIsFading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { setCursorText } = useCursor();
+  const { setCursorText, setCursorProgress, setCursorTimeLeft } = useCursor();
 
   // Play video on mount
   useEffect(() => {
@@ -21,13 +21,29 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
     }
     
     // Cleanup cursor on unmount
-    return () => setCursorText("");
-  }, [setCursorText]);
+    return () => {
+      setCursorText("");
+      setCursorProgress(null);
+      setCursorTimeLeft(null);
+    };
+  }, [setCursorText, setCursorProgress, setCursorTimeLeft]);
 
   const handleEnter = () => {
     setIsFading(true);
     setCursorText("");
+    setCursorProgress(null);
+    setCursorTimeLeft(null);
     onLoadingComplete();
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const { currentTime, duration } = videoRef.current;
+      if (duration > 0) {
+        setCursorProgress(currentTime / duration);
+        setCursorTimeLeft(Math.ceil(duration - currentTime));
+      }
+    }
   };
 
   return (
@@ -47,6 +63,7 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
         muted={isMuted}
         playsInline
         onEnded={handleEnter}
+        onTimeUpdate={handleTimeUpdate}
         initial={{ scale: 1.05, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 1.05, opacity: 0 }}

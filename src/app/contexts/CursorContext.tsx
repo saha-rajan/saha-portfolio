@@ -7,6 +7,10 @@ interface CursorContextType {
   setIsTextCursor: (isText: boolean) => void;
   cursorText: string;
   setCursorText: (text: string) => void;
+  cursorProgress: number | null;
+  setCursorProgress: (progress: number | null) => void;
+  cursorTimeLeft: number | null;
+  setCursorTimeLeft: (time: number | null) => void;
 }
 
 const CursorContext = createContext<CursorContextType | undefined>(undefined);
@@ -15,6 +19,8 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   const [hideCursor, setHideCursor] = useState(false);
   const [isTextCursor, setIsTextCursor] = useState(false);
   const [cursorText, setCursorText] = useState('');
+  const [cursorProgress, setCursorProgress] = useState<number | null>(null);
+  const [cursorTimeLeft, setCursorTimeLeft] = useState<number | null>(null);
 
   const value = {
     hideCursor,
@@ -23,6 +29,10 @@ export function CursorProvider({ children }: { children: ReactNode }) {
     setIsTextCursor,
     cursorText,
     setCursorText,
+    cursorProgress,
+    setCursorProgress,
+    cursorTimeLeft,
+    setCursorTimeLeft,
   };
 
   return (
