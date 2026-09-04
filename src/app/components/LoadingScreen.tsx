@@ -61,6 +61,7 @@ export function LoadingScreen({ onLoadingComplete }: LoadingScreenProps) {
         src={videoPitch}
         autoPlay
         muted={isMuted}
+        defaultMuted
         playsInline
         onEnded={handleEnter}
         onTimeUpdate={handleTimeUpdate}

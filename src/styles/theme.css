@@ -201,4 +201,12 @@
   .animate-shimmer {
     animation: shimmer 3s linear infinite;
   }
+
+  /* Hide Safari default video controls overlay when autoplay is blocked */
+  video::-webkit-media-controls {
+    display: none !important;
+  }
+  video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+  }
 }

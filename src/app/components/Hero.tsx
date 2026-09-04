@@ -230,6 +230,7 @@ export function Hero() {
                     autoPlay
                     loop
                     muted
+                    defaultMuted
                     playsInline
                     className={`w-full h-full transition-transform duration-700 ${
                       project.id === 'arizona-yoga-studio' ? 'object-contain scale-125 group-hover:scale-[1.30]' : 'object-cover group-hover:scale-105'
