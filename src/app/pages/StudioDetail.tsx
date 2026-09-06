@@ -6,6 +6,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import robotImg from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
 import sketchImg from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
+import futureFabLogo from "../../assets/future_fab_heroes_logo.png";
 
 // Studio images with rotation and closer positioning
 const studioImages = [
@@ -34,6 +35,16 @@ const studioImages = [
     rotation: 8,
     backgroundColor: "#E5E5E5",
     size: "wide", // Use wider format to fit full logo
+  },
+  {
+    id: 4,
+    url: futureFabLogo,
+    label: "Adobe Illustrator\nLogo Design",
+    initialX: 300,
+    initialY: -50,
+    rotation: -4,
+    backgroundColor: "#FFFFFF",
+    size: "wide",
   },
 ];
 
