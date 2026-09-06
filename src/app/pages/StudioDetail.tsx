@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { ArrowLeft, Move } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowLeft, Move, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import robotImg from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
 import sketchImg from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
 import futureFabLogo from "../../assets/future_fab_heroes_logo.png";
+import trailerVideo from "../../assets/future_fab_heroes_trailer.mp4";
 
 // Studio images with rotation and closer positioning
 const studioImages = [
@@ -46,18 +47,37 @@ const studioImages = [
     backgroundColor: "#000000",
     size: "wide",
   },
+  {
+    id: 5,
+    url: trailerVideo,
+    label: "HIGGSFIELD · GEMINI · ELEVENLABS · CHATGPT · AFTER EFFECTS\nAI-Crafted Game Trailer",
+    initialX: -300,
+    initialY: -250,
+    rotation: 2,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
 ];
 
 interface ImageCardProps {
   image: typeof studioImages[0];
   onBringToFront: () => void;
   zIndex: number;
+  onExpand?: () => void;
 }
 
-function ImageCard({ image, onBringToFront, zIndex }: ImageCardProps) {
+function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent canvas drag from starting
     onBringToFront();
+  };
+
+  const handleDragEnd = (e: any, info: any) => {
+    // If it was just a tiny movement (a click), trigger expand
+    if (image.isVideo && Math.abs(info.offset.x) < 5 && Math.abs(info.offset.y) < 5) {
+      if (onExpand) onExpand();
+    }
   };
 
   // Determine size based on image.size property
@@ -73,6 +93,7 @@ function ImageCard({ image, onBringToFront, zIndex }: ImageCardProps) {
       whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
       whileDrag={{ scale: 1.05, cursor: "grabbing" }}
       onMouseDown={handleMouseDown}
+      onDragEnd={handleDragEnd}
       style={{
         position: "absolute",
         zIndex: zIndex,
@@ -83,18 +104,38 @@ function ImageCard({ image, onBringToFront, zIndex }: ImageCardProps) {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <div className="bg-white p-3 shadow-2xl rounded-sm hover:shadow-lg transition-shadow duration-200">
-        <div
-          className={`${containerClass} overflow-hidden flex items-center justify-center`}
+        <motion.div
+          layoutId={image.isVideo ? `studio-video-${image.id}` : undefined}
+          className={`${containerClass} overflow-hidden flex items-center justify-center relative cursor-pointer`}
           style={image.backgroundColor ? { backgroundColor: image.backgroundColor } : {}}
+          onClick={() => { if (image.isVideo && onExpand) onExpand(); }}
         >
-          <ImageWithFallback
-            src={image.url}
-            alt={image.label}
-            className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none`}
-            draggable={false}
-            style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
-          />
-        </div>
+          {image.isVideo ? (
+            <>
+              <video
+                src={image.url}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none opacity-80 group-hover:opacity-100 transition-opacity`}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors pointer-events-none">
+                <div className="bg-black/50 text-white rounded-full p-3 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100">
+                  <Play fill="white" size={20} className="ml-1" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <ImageWithFallback
+              src={image.url}
+              alt={image.label}
+              className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none`}
+              draggable={false}
+              style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
+            />
+          )}
+        </motion.div>
         <div className="mt-3 flex flex-col items-center text-center font-mono">
           <span className="text-black/50 text-[10px] uppercase tracking-[0.2em] font-medium">{image.label.split('\n')[0]}</span>
           <span className="text-black text-xs font-bold tracking-wider leading-relaxed mt-1">{image.label.split('\n')[1] || ''}</span>
@@ -112,6 +153,7 @@ export function StudioDetail() {
   const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [expandedVideoId, setExpandedVideoId] = useState<number | null>(null);
 
   // Detect mobile
   useEffect(() => {
@@ -184,6 +226,8 @@ export function StudioDetail() {
   const handleCanvasMouseLeave = () => {
     setIsDraggingCanvas(false);
   };
+  
+  const expandedVideo = studioImages.find(img => img.id === expandedVideoId);
 
   return (
     <div 
@@ -261,11 +305,47 @@ export function StudioDetail() {
                 image={image}
                 onBringToFront={() => bringToFront(image.id)}
                 zIndex={zIndex}
+                onExpand={image.isVideo ? () => setExpandedVideoId(image.id) : undefined}
               />
             );
           })}
         </div>
       </div>
+      
+      {/* Expanded Video Modal */}
+      <AnimatePresence>
+        {expandedVideoId !== null && expandedVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-pointer"
+            onClick={() => setExpandedVideoId(null)}
+          >
+            <motion.div
+              layoutId={`studio-video-${expandedVideoId}`}
+              className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black"
+              onClick={(e) => e.stopPropagation()} // Prevent clicks on video from closing modal
+            >
+              <video
+                src={expandedVideo.url}
+                autoPlay
+                controls
+                className="w-full h-full object-contain"
+              />
+              <button 
+                onClick={() => setExpandedVideoId(null)}
+                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors z-10"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
