@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import threeDGif from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
 import layoutGif from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import typographyImage from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
-import trailerVideo from "../../assets/Future Fab Heroes_Trailer.mp4";
+import trailerVideo from "../../assets/future_fab_heroes_trailer.mp4";
 
 const experiments = [
   {
