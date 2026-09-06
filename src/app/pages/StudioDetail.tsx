@@ -84,8 +84,9 @@ function ImageCard({ image, onBringToFront, zIndex }: ImageCardProps) {
             style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
           />
         </div>
-        <div className="mt-2 text-black text-xs font-medium tracking-wider text-center font-mono whitespace-pre-line leading-relaxed">
-          {image.label}
+        <div className="mt-3 flex flex-col items-center text-center font-mono">
+          <span className="text-black/50 text-[10px] uppercase tracking-[0.2em] font-medium">{image.label.split('\n')[0]}</span>
+          <span className="text-black text-xs font-bold tracking-wider leading-relaxed mt-1">{image.label.split('\n')[1] || ''}</span>
         </div>
       </div>
     </motion.div>

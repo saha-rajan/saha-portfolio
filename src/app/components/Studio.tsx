@@ -145,7 +145,10 @@ export function Studio() {
                 
                 {/* Title overlay - appears on hover in center */}
                 <div className="absolute inset-0 bg-black/50 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl px-4 text-center">
-                  <span className="text-white text-lg font-bold tracking-widest whitespace-pre-line leading-tight">{item.label}</span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium">{item.label.split('\n')[0]}</span>
+                    <span className="text-white text-lg font-bold tracking-wide leading-tight">{item.label.split('\n')[1] || ''}</span>
+                  </div>
                 </div>
               </motion.div>
             </Link>
