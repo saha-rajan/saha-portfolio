@@ -137,8 +137,8 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) 
           )}
         </motion.div>
         <div className="mt-3 flex flex-col items-center text-center font-mono">
-          <span className="text-black/50 text-[10px] uppercase tracking-[0.2em] font-medium">{image.label.split('\n')[0]}</span>
-          <span className="text-black text-xs font-bold tracking-wider leading-relaxed mt-1">{image.label.split('\n')[1] || ''}</span>
+          <span className="text-black/50 text-[10px] uppercase tracking-[0.2em] font-medium leading-relaxed max-w-[90%]">{image.label.split('\n')[0]}</span>
+          <span className="text-black text-xs font-bold tracking-wider leading-relaxed mt-2">{image.label.split('\n')[1] || ''}</span>
         </div>
       </div>
     </motion.div>
@@ -271,7 +271,7 @@ export function StudioDetail() {
         />
 
         {/* Title - centered in viewport initially */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] text-center pointer-events-none">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[0] text-center pointer-events-none">
           <h1
             className="text-2xl md:text-3xl font-light tracking-tight text-white italic mb-2"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
