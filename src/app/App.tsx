@@ -1,10 +1,8 @@
 import { createBrowserRouter, RouterProvider, useLocation, Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { AnimatePresence } from "motion/react";
+import { useEffect } from "react";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { CustomCursor } from "./components/CustomCursor";
-import { LoadingScreen } from "./components/LoadingScreen";
 import { VoiceAssistant } from "./components/VoiceAssistant";
 import { CursorProvider } from "./contexts/CursorContext";
 import { useCursor } from "./contexts/CursorContext";
@@ -29,15 +27,7 @@ declare global {
 function Layout() {
   const location = useLocation();
   const isStudioPage = location.pathname === "/studio";
-  const [isLoading, setIsLoading] = useState(true);
   const { setHideCursor } = useCursor();
-
-  const handleLoadingComplete = () => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 100);
-  };
-
   // Reset cursor visibility on route change UNLESS mouse is over a cursor-hide element
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,12 +57,6 @@ function Layout() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black relative">
-      <AnimatePresence mode="wait">
-        {isLoading && (
-          <LoadingScreen key="loading" onLoadingComplete={handleLoadingComplete} />
-        )}
-      </AnimatePresence>
-
       <CustomCursor />
 
       {!isStudioPage && (
