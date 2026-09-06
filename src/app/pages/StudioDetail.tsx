@@ -43,7 +43,7 @@ const studioImages = [
     initialX: 300,
     initialY: -50,
     rotation: -4,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#000000",
     size: "wide",
   },
 ];
