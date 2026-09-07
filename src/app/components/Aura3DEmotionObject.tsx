@@ -208,7 +208,7 @@ export function Aura3DEmotionObject({
           let targetX = 0;
           let targetY = 0;
 
-          // Target position is derived purely from cursor position
+          // Target position is derived from cursor position
           if (globalCursor.isActive) {
             if (interactive) {
               targetY = globalCursor.x * Math.PI;
@@ -217,6 +217,16 @@ export function Aura3DEmotionObject({
               targetY = globalCursor.x * (Math.PI * 0.15); // limit to small left/right
               targetX = -globalCursor.y * (Math.PI * 0.10); // limit to small up/down
             }
+          }
+
+          // Add continuous scroll-based rotation
+          const scrollAmount = window.scrollY || 0;
+          if (interactive) {
+            targetY += scrollAmount * 0.003;
+            targetX += scrollAmount * 0.001;
+          } else {
+            targetY += scrollAmount * 0.0015;
+            targetX += scrollAmount * 0.0005;
           }
 
           // Calculate distance to target (spring force)
