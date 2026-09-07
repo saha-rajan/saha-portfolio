@@ -105,7 +105,6 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) 
     >
       <div className="bg-white p-3 shadow-2xl rounded-sm hover:shadow-lg transition-shadow duration-200">
         <motion.div
-          layoutId={image.isVideo ? `studio-video-${image.id}` : undefined}
           className={`${containerClass} overflow-hidden flex items-center justify-center relative cursor-pointer`}
           style={image.backgroundColor ? { backgroundColor: image.backgroundColor } : {}}
           onClick={() => { if (image.isVideo && onExpand) onExpand(); }}
@@ -323,7 +322,10 @@ export function StudioDetail() {
             onClick={() => setExpandedVideoId(null)}
           >
             <motion.div
-              layoutId={`studio-video-${expandedVideoId}`}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black"
               onClick={(e) => e.stopPropagation()} // Prevent clicks on video from closing modal
             >
