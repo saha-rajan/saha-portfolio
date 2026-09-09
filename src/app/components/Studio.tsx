@@ -90,7 +90,7 @@ export function Studio() {
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
-            Photographs, experiments, and works in progress. A space for storytelling, exploration, and creative experimentation with new technologies.
+            A space for storytelling, exploration and creative experimentation with new technologies.
           </p>
         </div>
 
