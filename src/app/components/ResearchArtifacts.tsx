@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const StickyNote = ({ color, title, body, author = "Deepika" }: { color: string, title?: string, body: string, author?: string }) => {
+export const StickyNote = ({ color, title, body, author = "Saha" }: { color: string, title?: string, body: string, author?: string }) => {
   const colorMap: Record<string, string> = {
     yellow: "bg-[#FFE79A] text-[#4A3B00]",
     blue: "bg-[#A7D8FF] text-[#003B6D]",
