@@ -67,6 +67,7 @@ import Frame1686557570 from "../../imports/Frame1686557570";
 import CompetetiveAnalysis from "../../imports/CompetetiveAnalysis";
 import { HighlightOnScroll } from "../components/HighlightOnScroll";
 import { CaseStudyNav } from "../components/CaseStudyNav";
+import { UserResearchArtifact, AffinityMappingArtifact } from "../components/ResearchArtifacts";
 
 // Animated Counter Component
 function AnimatedCounter({ value, decimals = 0 }: { value: number; decimals?: number }) {
@@ -1768,17 +1769,7 @@ export function ChemoBuddyCaseStudy() {
       
       <div className="w-full">
         <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / FINDINGS</div>
-        <div 
-          className="relative rounded-2xl overflow-hidden cursor-pointer group"
-          onClick={() => openImage(image_975eb820b2db35fb5fac046d478d0954033f591e, "Role-play research findings")}
-        >
-          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none flex items-center gap-1">View artifact <ArrowUpRight size={12} /></div>
-          <img
-            src={image_975eb820b2db35fb5fac046d478d0954033f591e}
-            alt="Role-play research findings"
-            className="w-full h-auto group-hover:scale-[1.01] transition-transform duration-500 object-contain"
-          />
-        </div>
+        <UserResearchArtifact />
       </div>
     </div>
 
@@ -1812,17 +1803,7 @@ export function ChemoBuddyCaseStudy() {
 
       <div className="w-full">
         <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / AFFINITY MAPPING</div>
-        <div 
-          className="relative rounded-2xl overflow-hidden cursor-pointer group"
-          onClick={() => openImage(image_1359c5d57ea418d545cb77a8af23298b569b64c5, "Affinity mapping clusters")}
-        >
-          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none flex items-center gap-1">View artifact <ArrowUpRight size={12} /></div>
-          <img
-            src={image_1359c5d57ea418d545cb77a8af23298b569b64c5}
-            alt="Affinity mapping clusters"
-            className="w-full h-auto group-hover:scale-[1.01] transition-transform duration-500 object-contain"
-          />
-        </div>
+        <AffinityMappingArtifact />
       </div>
     </div>
 
