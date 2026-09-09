@@ -1738,8 +1738,8 @@ export function ChemoBuddyCaseStudy() {
     </h3>
 
     {/* INSIGHT 01 */}
-    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-      <div className="lg:col-span-8">
+    <div className="mb-20">
+      <div className="mb-12">
         <div className="case-meta text-[#1CB4F5] mb-4">01 / INSIGHT</div>
         <h4 className="case-subsection-title mb-6">
           Cognitive overload demands directive, bite-sized guidance.
@@ -1748,7 +1748,7 @@ export function ChemoBuddyCaseStudy() {
           Patients are frequently overwhelmed by generalized medical materials. During treatment, cognitive fatigue severely limits information retention, making standard medical encyclopedias ineffective.
         </p>
 
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
             <ul className="space-y-3 border-l border-white/10 pl-6">
@@ -1757,7 +1757,7 @@ export function ChemoBuddyCaseStudy() {
               <li className="case-body">Videos and infographics help fatigued patients retain information more effectively than text alone.</li>
             </ul>
           </div>
-          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5 h-fit">
             <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
             <p className="case-body text-white">
               Deliver personalized, progressive, and multimodal education modules tailored to the user's specific treatment protocol rather than a static library of articles.
@@ -1766,42 +1766,25 @@ export function ChemoBuddyCaseStudy() {
         </div>
       </div>
       
-      <div className="lg:col-span-4 mt-8 lg:mt-0">
+      <div className="w-full">
         <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / FINDINGS</div>
         <div 
-          className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] cursor-pointer group hover:border-white/30 transition-colors"
+          className="relative rounded-2xl overflow-hidden cursor-pointer group"
           onClick={() => openImage(image_975eb820b2db35fb5fac046d478d0954033f591e, "Role-play research findings")}
         >
-          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
+          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none flex items-center gap-1">View artifact <ArrowUpRight size={12} /></div>
           <img
             src={image_975eb820b2db35fb5fac046d478d0954033f591e}
             alt="Role-play research findings"
-            className="w-full h-auto opacity-80 mix-blend-screen group-hover:scale-[1.01] group-hover:opacity-100 transition-all duration-300 object-contain"
+            className="w-full h-auto group-hover:scale-[1.01] transition-transform duration-500 object-contain"
           />
         </div>
       </div>
     </div>
 
     {/* INSIGHT 02 */}
-    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-      <div className="lg:col-span-4 order-2 lg:order-1 mt-8 lg:mt-0">
-        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / AFFINITY MAPPING</div>
-        <div 
-          className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] cursor-pointer group hover:border-white/30 transition-colors"
-          onClick={() => openImage(image_1359c5d57ea418d545cb77a8af23298b569b64c5, "Affinity mapping clusters")}
-        >
-          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none border border-white/10 flex items-center gap-1">View artifact <ArrowUpRight size={10} /></div>
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors z-10 pointer-events-none" />
-          <img
-            src={image_1359c5d57ea418d545cb77a8af23298b569b64c5}
-            alt="Affinity mapping clusters"
-            className="w-full h-auto opacity-80 mix-blend-screen group-hover:scale-[1.01] group-hover:opacity-100 transition-all duration-300 object-contain"
-          />
-        </div>
-      </div>
-      
-      <div className="lg:col-span-8 order-1 lg:order-2">
+    <div className="mb-20">
+      <div className="mb-12">
         <div className="case-meta text-[#1CB4F5] mb-4">02 / INSIGHT</div>
         <h4 className="case-subsection-title mb-6">
           The persistent anxiety of "Is this normal?"
@@ -1810,7 +1793,7 @@ export function ChemoBuddyCaseStudy() {
           Patients frequently experience symptom uncertainty, having difficulty differentiating expected chemotherapy side effects from critical symptoms that require immediate medical attention.
         </p>
 
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
             <ul className="space-y-3 border-l border-white/10 pl-6">
@@ -1818,12 +1801,27 @@ export function ChemoBuddyCaseStudy() {
               <li className="case-body">Literature review highlighted the need for better symptom management and patient-reported outcome tracking.</li>
             </ul>
           </div>
-          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5 h-fit">
             <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
             <p className="case-body text-white">
               Implement a visual symptom tracker that provides instant, clear guidance on expected side effects and appropriate next steps.
             </p>
           </div>
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / AFFINITY MAPPING</div>
+        <div 
+          className="relative rounded-2xl overflow-hidden cursor-pointer group"
+          onClick={() => openImage(image_1359c5d57ea418d545cb77a8af23298b569b64c5, "Affinity mapping clusters")}
+        >
+          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-[10px] font-['IBM_Plex_Mono'] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none flex items-center gap-1">View artifact <ArrowUpRight size={12} /></div>
+          <img
+            src={image_1359c5d57ea418d545cb77a8af23298b569b64c5}
+            alt="Affinity mapping clusters"
+            className="w-full h-auto group-hover:scale-[1.01] transition-transform duration-500 object-contain"
+          />
         </div>
       </div>
     </div>
