@@ -208,16 +208,16 @@ export function Hero() {
               className="group flex items-center text-sm w-fit self-start mt-4 gap-3 cursor-pointer"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <div className="flex items-center border-b border-[#333] group-hover:border-[#8A8A8A] pb-[2px] transition-colors duration-300">
-                <span className="text-[#D4D4D4] mr-2">✦</span>
+              <div className="flex items-center">
+                <span className="text-[#E5E5E5] mr-2">✦</span>
                 <motion.span 
-                  className="bg-gradient-to-r from-[#8A8A8A] via-[#F5F5F5] to-[#8A8A8A] bg-clip-text text-transparent bg-[length:200%_auto] font-medium"
-                  animate={{ backgroundPosition: ["0% center", "200% center"] }}
-                  transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                  className="bg-[linear-gradient(110deg,#b3b3b3_35%,#ffffff_50%,#b3b3b3_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium"
+                  animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
+                  transition={{ duration: 3, ease: "linear", repeat: Infinity }}
                 >
                   meet chakku
                 </motion.span>
-                <span className="text-[#8A8A8A] group-hover:text-[#F5F5F5] transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
+                <span className="text-[#E5E5E5] group-hover:text-white transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
                   ↗
                 </span>
               </div>
