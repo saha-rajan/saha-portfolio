@@ -3,3 +3,6 @@ dist/
 .DS_Store
 .env
 *.swp
+.env.local
+.vercel
+.env*

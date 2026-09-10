@@ -887,7 +887,7 @@ export function AuraCaseStudy() {
           {/* Right: Prev/Next nav — dark portfolio style */}
           <div className="hidden md:flex gap-3 shrink-0 pt-4">
             <Link
-              to="/works/fintech-dashboard"
+              to="/works/chemobuddy"
               data-cursor-hide="true"
               className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white transition-all duration-300 opacity-70 hover:opacity-100 hover:bg-[#282834] hover:border-transparent overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
@@ -1958,7 +1958,7 @@ export function AuraCaseStudy() {
             style={{ borderTop: `1px solid ${AURA.border}` }}
           >
             <Link
-              to="/works/fintech-dashboard"
+              to="/works/chemobuddy"
               data-cursor-hide="true"
               className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white transition-all duration-300 opacity-70 hover:opacity-100 hover:bg-[#282834] hover:border-transparent overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}

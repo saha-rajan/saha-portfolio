@@ -265,7 +265,7 @@ export function ArizonaYogaCaseStudy() {
                   </motion.div>
                 </Link>
                 <Link 
-                  to="/works/fintech-dashboard" 
+                  to="/works/chemobuddy" 
                   data-cursor-hide="true"
                   className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                   onMouseEnter={() => setHideCursor(true)}
@@ -660,7 +660,7 @@ export function ArizonaYogaCaseStudy() {
                </motion.div>
              </Link>
              <Link 
-               to="/works/fintech-dashboard" 
+               to="/works/chemobuddy" 
                data-cursor-hide="true"
                className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowUpRight, ArrowRight, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCursor } from "../contexts/CursorContext";
+import { useChakku } from "../contexts/ChakkuContext";
 
 import image_9eba4ef78c719ff307dfa84e927ac719277023fb from 'figma:asset/9eba4ef78c719ff307dfa84e927ac719277023fb.png';
 import chemoVideo from '../../assets/Chemo thumbnail.mp4';
@@ -12,7 +13,7 @@ import aisleVideo from '../../assets/AIsle.mp4';
 
 const projects = [
   {
-    id: "fintech-dashboard",
+    id: "chemobuddy",
     title: "Chemotherapy education platform",
     category: "UX Case Study",
     video: chemoVideo,
@@ -42,9 +43,10 @@ const projects = [
 ];
 
 export function Hero() {
-  const [currentGreeting, setCurrentGreeting] = useState(0);
+    const [currentGreeting, setCurrentGreeting] = useState(0);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const { setHideCursor, setIsTextCursor, setCursorText } = useCursor();
+  const { startSession, isSessionActive } = useChakku();
 
   const greetings = [
     "Hello",
@@ -180,35 +182,19 @@ export function Hero() {
           </p>
           
           {/* Say Hi Button */}
-          <Link to="/contact">
+          {!isSessionActive && (
             <motion.button
+              onClick={startSession}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="group flex items-center gap-2 px-8 py-4 border border-white/20 rounded-full text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300"
+              className="group flex items-center text-sm text-[#A7A7A7] hover:text-white transition-colors w-fit self-start mt-2"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
-              onMouseMove={handleMouseMove}
-              onMouseEnter={() => setHideCursor(true)}
-              onMouseLeave={() => {
-                setHideCursor(false);
-                setTextPosition({ x: 0, y: 0 });
-              }}
             >
-              <motion.div
-                className="flex items-center gap-2"
-                animate={{ x: textPosition.x, y: textPosition.y }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300, 
-                  damping: 20,
-                  mass: 0.5
-                }}
-              >
-                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-                <span>say hi</span>
-              </motion.div>
+              <span className="text-white mr-2">✦</span>
+              <span>This portfolio talks. Meet Chakku →</span>
             </motion.button>
-          </Link>
+          )}
         </motion.div>
 
         {/* Works Grid */}

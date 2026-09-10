@@ -9,7 +9,7 @@ import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
 
 const projects = [
   {
-    id: "fintech-dashboard",
+    id: "chemobuddy",
     title: "Chemotherapy education platform",
     category: "In collaboration with Mayo Clinic",
     video: chemoVideo,

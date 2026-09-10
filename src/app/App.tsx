@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { CustomCursor } from "./components/CustomCursor";
-import { VoiceAssistant } from "./components/VoiceAssistant";
+import { ChakkuProvider, ChakkuOverlay } from "./contexts/ChakkuContext";
 import { CursorProvider } from "./contexts/CursorContext";
 import { useCursor } from "./contexts/CursorContext";
 import { Home } from "./pages/Home";
@@ -56,6 +56,7 @@ function Layout() {
   }, [location]);
 
   return (
+    <ChakkuProvider>
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black relative">
       <CustomCursor />
 
@@ -75,8 +76,9 @@ function Layout() {
         {!isStudioPage && <Footer />}
       </div>
 
-      {/* <VoiceAssistant /> */}
-    </div>
+      </div>
+      <ChakkuOverlay />
+    </ChakkuProvider>
   );
 }
 
@@ -101,7 +103,7 @@ const router = createBrowserRouter([
         element: <StudioDetail />,
       },
       {
-        path: "/works/fintech-dashboard",
+        path: "/works/chemobuddy",
         element: <ChemoBuddyCaseStudy />,
       },
       {
