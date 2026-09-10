@@ -160,7 +160,7 @@ export function Write() {
             <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">WRITE</h2>
           </div>
           <p 
-            className="text-[#A7A7A7] max-w-xl"
+            className="text-[#A7A7A7] text-sm sm:text-base md:text-xl leading-relaxed max-w-xl"
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
@@ -225,7 +225,7 @@ export function Write() {
 
                 {/* Title below card - using body text properties */}
                 <h3 
-                  className="text-lg font-normal leading-[1.7] tracking-[0] text-white"
+                  className="text-sm sm:text-base md:text-lg font-normal leading-[1.7] tracking-[0] text-white"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                   onMouseEnter={() => setIsTextCursor(true)}
                   onMouseLeave={() => setIsTextCursor(false)}

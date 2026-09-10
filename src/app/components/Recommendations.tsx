@@ -58,7 +58,7 @@ export function Recommendations() {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-6">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#111] overflow-hidden border border-white/10">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover object-top transition-all duration-500" />
+                    <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1 sm:p-2 transition-all duration-500" />
                   </div>
                   <div className="flex flex-col">
                     <h4 className="text-white text-xl sm:text-2xl font-bold tracking-tight mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.name}</h4>

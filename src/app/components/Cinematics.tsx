@@ -112,7 +112,7 @@ export function Cinematics() {
         <div className="mb-16">
           <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4">CINEMATICS</h2>
           <p 
-            className="text-[#A7A7A7] max-w-xl"
+            className="text-[#A7A7A7] text-sm sm:text-base md:text-xl leading-relaxed max-w-xl"
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >

@@ -86,7 +86,7 @@ export function Studio() {
         <div className="mb-16">
           <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4">THE STUDIO</h2>
           <p 
-            className="text-[#A7A7A7] max-w-xl"
+            className="text-[#A7A7A7] text-sm sm:text-base md:text-xl leading-relaxed max-w-xl"
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
@@ -146,8 +146,8 @@ export function Studio() {
                 {/* Title overlay - appears on hover in center */}
                 <div className="absolute inset-0 bg-black/50 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl px-4 text-center">
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium">{item.label.split('\n')[0]}</span>
-                    <span className="text-white text-lg font-bold tracking-wide leading-tight">{item.label.split('\n')[1] || ''}</span>
+                    <span className="text-white/60 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-medium">{item.label.split('\n')[0]}</span>
+                    <span className="text-white text-sm sm:text-lg font-bold tracking-wide leading-tight">{item.label.split('\n')[1] || ''}</span>
                   </div>
                 </div>
               </motion.div>

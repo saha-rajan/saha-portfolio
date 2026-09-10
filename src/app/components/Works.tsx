@@ -139,8 +139,8 @@ export function Works() {
                 </div>
 
                 <div className="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black via-black/50 to-transparent">
-                  <h3 className="text-2xl font-medium mb-1 text-white">{project.title}</h3>
-                  <p className="text-[#A7A7A7] text-sm uppercase tracking-wider">{project.category}</p>
+                  <h3 className="text-base sm:text-2xl font-medium mb-1 text-white">{project.title}</h3>
+                  <p className="text-[#A7A7A7] text-[10px] sm:text-sm uppercase tracking-wider">{project.category}</p>
                 </div>
               </motion.div>
             </Link>
