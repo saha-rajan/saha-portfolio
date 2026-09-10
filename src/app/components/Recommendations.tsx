@@ -55,27 +55,28 @@ export function Recommendations() {
               className="bg-[#0A0A0A] p-10 border border-white/5 relative group transition-all duration-500 rounded-lg max-w-5xl mx-auto w-full"
             >
               {/* Card Header */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg bg-[#111] overflow-hidden border border-white/10">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-all duration-500" />
-                  </div>
-                  <div className="flex flex-col">
-                    <h4 className="text-white text-xl sm:text-2xl font-bold tracking-tight mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.name}</h4>
-                    <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
-                    <p className="text-[#666] text-[10px] sm:text-xs font-medium mb-1.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
-                    <p className="text-[#444] text-[10px] uppercase tracking-[0.05em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
-                  </div>
+              <div className="flex items-start sm:items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 shrink-0 rounded-lg bg-[#111] overflow-hidden border border-white/10">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-all duration-500" />
                 </div>
-                
-                <a 
-                  href={item.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="p-2 text-[#444] hover:text-white transition-colors"
-                >
-                  <Linkedin size={24} />
-                </a>
+                <div className="flex flex-col flex-1">
+                  <h4 className="text-white text-base sm:text-2xl font-bold tracking-tight mb-0.5 sm:mb-1 flex items-center gap-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    {item.name}
+                    <a 
+                      href={item.linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#444] hover:text-white transition-colors"
+                    >
+                      <Linkedin size={16} className="sm:w-5 sm:h-5" />
+                    </a>
+                  </h4>
+                  <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
+                  <p className="text-[#666] text-[10px] sm:text-xs font-medium" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
+                  {item.tagline && (
+                    <p className="text-[#444] text-[8px] sm:text-[10px] uppercase tracking-[0.05em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
+                  )}
+                </div>
               </div>
 
               {/* Separator */}
@@ -86,7 +87,7 @@ export function Recommendations() {
                 {item.content.map((paragraph, pIndex) => (
                   <p 
                     key={pIndex} 
-                    className="text-[#A7A7A7] text-lg leading-relaxed font-light"
+                    className="text-[#A7A7A7] text-sm sm:text-base md:text-xl leading-relaxed font-light"
                     style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '-0.01em' }}
                   >
                     {paragraph}
