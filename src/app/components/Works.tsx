@@ -103,7 +103,7 @@ export function Works() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[300px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 auto-rows-[160px] sm:auto-rows-[300px]">
           {projects.map((project, index) => (
             <Link to={`/works/${project.id}`} key={index} className={`${project.size} block`}>
               <motion.div

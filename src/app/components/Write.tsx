@@ -168,7 +168,7 @@ export function Write() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6">
           {articles.map((article, index) => (
             <a 
               href={article.link} 

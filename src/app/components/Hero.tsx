@@ -164,10 +164,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col mt-24 mb-16"
+          className="flex flex-col mt-16 sm:mt-24 mb-10 sm:mb-16"
         >
           <h1 
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter mb-8 sm:mb-10 md:mb-12 max-w-5xl font-normal"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter mb-6 sm:mb-10 md:mb-12 max-w-5xl font-normal"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             <div className="h-[1.2em] overflow-hidden relative mb-1 sm:mb-2 min-w-[300px] sm:min-w-[400px] md:min-w-[500px]">
@@ -190,7 +190,7 @@ export function Hero() {
             <span className="text-[#A7A7A7]">thiruvenkata saha.</span>
           </h1>
           <p 
-            className="text-[#A7A7A7] text-base md:text-xl max-w-[95%] lg:max-w-[90%] leading-relaxed text-left mb-8"
+            className="text-[#A7A7A7] text-sm sm:text-base md:text-xl max-w-[95%] lg:max-w-[90%] leading-relaxed text-left mb-8"
             style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: '1.7' }}
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
@@ -241,7 +241,7 @@ export function Hero() {
         </motion.div>
 
         {/* Works Grid */}
-        <div id="works" className="grid grid-cols-1 md:grid-cols-4 gap-2 auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+        <div id="works" className="grid grid-cols-2 md:grid-cols-4 gap-1 sm:gap-2 auto-rows-[200px] sm:auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
           {projects.map((project, index) => {
             const cardContent = (
                 <motion.div
@@ -251,7 +251,7 @@ export function Hero() {
                 className={`relative group cursor-pointer overflow-hidden h-full w-full ${
                   project.id === 'arizona-yoga-studio' ? 'bg-white' : 
                   index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'
-                } ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}
+                } ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}
               >
                 {project.video ? (
                   <video
@@ -273,7 +273,7 @@ export function Hero() {
                   />
                 )}
                 
-                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'rounded-tl-lg rounded-bl-lg' : index === 3 ? 'rounded-tr-lg rounded-br-lg' : ''}`}>
+                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
                   <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
                   {index === 0 && (
                     <motion.div 
