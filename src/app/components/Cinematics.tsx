@@ -1,5 +1,5 @@
-import { motion } from "motion/react";
-import { Play } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Play, X } from "lucide-react";
 import { useCursor } from "../contexts/CursorContext";
 import { useState } from "react";
 import fluxImage from "figma:asset/11ea18eb3ee2bcba4dc6d58accbfb6f42874db71.png";
@@ -53,7 +53,7 @@ const cinematics = [
 
 export function Cinematics() {
   const { setIsTextCursor, setHideCursor } = useCursor();
-  const [videoId, setVideoId] = useState("");
+  const [activeVideo, setActiveVideo] = useState<any>(null);
 
   return (
     <section id="cinematics" className="relative py-16 md:py-24 bg-black overflow-hidden">
@@ -128,59 +128,76 @@ export function Cinematics() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={`relative group overflow-hidden bg-[#111] ${item.size} cursor-none`}
+              className={`relative group overflow-hidden bg-[#111] ${item.size} cursor-pointer`}
               onMouseEnter={() => setHideCursor(true)}
               onMouseLeave={() => setHideCursor(false)}
-              onClick={() => {
-                if (item.youtubeId) {
-                  setVideoId(item.youtubeId);
-                } else if (item.driveId) {
-                  setVideoId(item.driveId);
-                }
-              }}
+              onClick={() => setActiveVideo(item)}
             >
-              {videoId === item.youtubeId ? (
-                // YouTube Player
-                <iframe
-                  src={`https://www.youtube.com/embed/${item.youtubeId}?autoplay=1`}
-                  title={item.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                  allowFullScreen
-                  className="w-full h-full absolute inset-0"
-                  style={{ border: 'none' }}
-                />
-              ) : videoId === item.driveId ? (
-                // Google Drive Player
-                <iframe
-                  src={`https://drive.google.com/file/d/${item.driveId}/preview`}
-                  title={item.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                  allowFullScreen
-                  className="w-full h-full absolute inset-0"
-                  style={{ border: 'none' }}
-                />
-              ) : (
-                <>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                  />
-                  
-                  {/* Play Button Overlay for Videos */}
-                  {item.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm bg-black/20">
-                        <Play size={24} fill="white" className="ml-1" />
-                      </div>
-                    </div>
-                  )}
-                </>
+              <img src={item.image}
+                alt={item.title}
+                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+              />
+              
+              {/* Play Button Overlay for Videos */}
+              {item.type === "video" && (
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm bg-black/20">
+                    <Play size={24} fill="white" className="ml-1" />
+                  </div>
+                </div>
               )}
             </motion.div>
           ))}
         </div>
       </div>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 sm:p-8"
+            onClick={() => setActiveVideo(null)}
+          >
+            <button
+              onClick={() => setActiveVideo(null)}
+              className="absolute top-4 right-4 sm:top-8 sm:right-8 text-white/50 hover:text-white transition-colors z-[60]"
+            >
+              <X size={32} />
+            </button>
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ delay: 0.1 }}
+              className="w-full max-w-5xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {activeVideo.youtubeId ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1`}
+                  title={activeVideo.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  className="w-full h-full absolute inset-0"
+                  style={{ border: 'none' }}
+                />
+              ) : activeVideo.driveId ? (
+                <iframe
+                  src={`https://drive.google.com/file/d/${activeVideo.driveId}/preview`}
+                  title={activeVideo.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allowFullScreen
+                  className="w-full h-full absolute inset-0"
+                  style={{ border: 'none' }}
+                />
+              ) : null}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
