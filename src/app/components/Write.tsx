@@ -102,7 +102,7 @@ export function Write() {
   };
 
   return (
-    <section id="write" className="relative py-24 bg-black overflow-hidden">
+    <section id="write" className="relative py-16 md:py-24 bg-black overflow-hidden">
       {/* 6-Column Grid Background - Center Aligned - Double Lines */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
@@ -199,7 +199,7 @@ export function Write() {
                 {/* Image Card */}
                 <div 
                   ref={(el) => (imageRefs.current[index] = el)}
-                  className={`relative cursor-pointer overflow-hidden h-[400px] w-full rounded-xl group-hover:-translate-y-1 transition-transform duration-300 ${
+                  className={`relative cursor-pointer overflow-hidden aspect-square w-full rounded-xl group-hover:-translate-y-1 transition-transform duration-300 ${
                     article.title === "AI Is the Kitchen. You're the Chef." 
                       ? "bg-[#1A1A1A]" 
                       : "bg-[#111]"

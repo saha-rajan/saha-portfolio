@@ -15,7 +15,7 @@ const cinematics = [
     duration: "02:14",
     image: nocturnalImage,
     driveId: "1N6_h3BgYdOQkHCbC5Re0stoDzyafL1nZ",
-    size: "col-span-1 md:col-span-2 row-span-2",
+    size: "col-span-1 md:col-span-2 md:row-span-2",
   },
   {
     title: "GRAIN",
@@ -23,7 +23,7 @@ const cinematics = [
     duration: "01:30",
     image: grainImage,
     driveId: "1PGo9yQRYxvDW27h-UOt2j9gwo7C4K_gp",
-    size: "col-span-1 md:col-span-1 row-span-1",
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     title: "Music Video Direction",
@@ -31,7 +31,7 @@ const cinematics = [
     duration: "5:05",
     image: fluxImage,
     youtubeId: "mYvJ30aQk50",
-    size: "col-span-1 md:col-span-1 row-span-1",
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     title: "SOLITUDE",
@@ -39,7 +39,7 @@ const cinematics = [
     duration: "01:45",
     image: solitudeImage,
     driveId: "1zUOH-4NtMw0LGx5IqGjQNO-MLoxKDRha",
-    size: "col-span-1 md:col-span-1 row-span-1",
+    size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
     title: "ECHO",
@@ -47,7 +47,7 @@ const cinematics = [
     duration: "03:45",
     image: echoImage,
     driveId: "1A8VLzNFg8Pib7vkg6z5tnNmDhXd_ghUJ",
-    size: "col-span-1 md:col-span-2 row-span-1",
+    size: "col-span-1 md:col-span-2 md:row-span-1",
   },
 ];
 
@@ -56,7 +56,7 @@ export function Cinematics() {
   const [videoId, setVideoId] = useState("");
 
   return (
-    <section id="cinematics" className="relative py-24 bg-black overflow-hidden">
+    <section id="cinematics" className="relative py-16 md:py-24 bg-black overflow-hidden">
       {/* 6-Column Grid Background - Center Aligned - Double Lines */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
@@ -120,7 +120,7 @@ export function Cinematics() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[300px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 auto-rows-[160px] sm:auto-rows-[300px]">
           {cinematics.map((item, index) => (
             <motion.div
               key={index}

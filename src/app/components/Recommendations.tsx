@@ -32,7 +32,7 @@ const recommendations = [
 
 export function Recommendations() {
   return (
-    <section id="recommendations" className="relative py-24 bg-black overflow-hidden px-8 md:px-16 lg:px-24">
+    <section id="recommendations" className="relative py-16 md:py-24 bg-black overflow-hidden px-8 md:px-16 lg:px-24">
       <div className="max-w-[1200px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,13 +57,13 @@ export function Recommendations() {
               {/* Card Header */}
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 rounded-full bg-[#111] overflow-hidden border border-white/10">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-all duration-500" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#111] overflow-hidden border border-white/10">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover object-top transition-all duration-500" />
                   </div>
                   <div className="flex flex-col">
-                    <h4 className="text-white text-2xl font-bold tracking-tight mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.name}</h4>
-                    <p className="text-[#A7A7A7] text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
-                    <p className="text-[#666] text-xs font-medium mb-1.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
+                    <h4 className="text-white text-xl sm:text-2xl font-bold tracking-tight mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.name}</h4>
+                    <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
+                    <p className="text-[#666] text-[10px] sm:text-xs font-medium mb-1.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
                     <p className="text-[#444] text-[10px] uppercase tracking-[0.05em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
                   </div>
                 </div>

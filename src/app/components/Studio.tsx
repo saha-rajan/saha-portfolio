@@ -30,7 +30,7 @@ export function Studio() {
   const { setIsTextCursor } = useCursor();
 
   return (
-    <section id="studio" className="relative py-24 bg-black overflow-hidden">
+    <section id="studio" className="relative py-16 md:py-24 bg-black overflow-hidden">
       {/* 6-Column Grid Background - Center Aligned - Double Lines */}
       <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
         <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
