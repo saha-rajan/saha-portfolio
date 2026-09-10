@@ -205,20 +205,23 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="group flex items-center text-sm w-fit self-start mt-2 gap-2"
+              className="group flex items-center text-sm w-fit self-start mt-4 gap-3 cursor-pointer"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <div className="flex items-center">
+              <div className="flex items-center border-b border-[#333] group-hover:border-[#8A8A8A] pb-[2px] transition-colors duration-300">
                 <span className="text-[#D4D4D4] mr-2">✦</span>
                 <motion.span 
                   className="bg-gradient-to-r from-[#8A8A8A] via-[#F5F5F5] to-[#8A8A8A] bg-clip-text text-transparent bg-[length:200%_auto] font-medium"
                   animate={{ backgroundPosition: ["0% center", "200% center"] }}
                   transition={{ duration: 6, ease: "linear", repeat: Infinity }}
                 >
-                  meet chakku ↗
+                  meet chakku
                 </motion.span>
+                <span className="text-[#8A8A8A] group-hover:text-[#F5F5F5] transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
+                  ↗
+                </span>
               </div>
-              <div className="relative h-[1.2em] w-[200px] overflow-hidden text-left flex items-center">
+              <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={currentChakkuPhrase}
