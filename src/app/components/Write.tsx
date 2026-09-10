@@ -225,7 +225,7 @@ export function Write() {
 
                 {/* Title below card - using body text properties */}
                 <h3 
-                  className="text-sm sm:text-base md:text-lg font-normal leading-[1.7] tracking-[0] text-white"
+                  className="hidden sm:block text-sm sm:text-base md:text-lg font-normal leading-[1.7] tracking-[0] text-white"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                   onMouseEnter={() => setIsTextCursor(true)}
                   onMouseLeave={() => setIsTextCursor(false)}
