@@ -205,13 +205,13 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="group flex items-center text-sm w-fit self-start mt-4 gap-3 cursor-pointer"
+              className="group flex flex-col sm:flex-row items-start sm:items-center text-sm w-fit self-start mt-4 gap-1 sm:gap-3 cursor-pointer"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <div className="flex items-center">
+              <div className="flex items-center shrink-0">
                 <span className="text-[#E5E5E5] mr-2">✦</span>
                 <motion.span 
-                  className="bg-[linear-gradient(110deg,#b3b3b3_35%,#ffffff_50%,#b3b3b3_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium"
+                  className="bg-[linear-gradient(110deg,#b3b3b3_35%,#ffffff_50%,#b3b3b3_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium whitespace-nowrap"
                   animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
                   transition={{ duration: 3, ease: "linear", repeat: Infinity }}
                 >
@@ -221,7 +221,7 @@ export function Hero() {
                   ↗
                 </span>
               </div>
-              <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300 ml-[18px] sm:ml-0 mt-1 sm:mt-0">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={currentChakkuPhrase}
