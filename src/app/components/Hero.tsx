@@ -44,6 +44,16 @@ const projects = [
 
 export function Hero() {
     const [currentGreeting, setCurrentGreeting] = useState(0);
+  const [currentChakkuPhrase, setCurrentChakkuPhrase] = useState(0);
+  const chakkuPhrases = [
+    "he can talk",
+    "he can navigate",
+    "he can explain",
+    "he knows my work",
+    "he tells questionable jokes",
+    "he's still learning",
+    "try him"
+  ];
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const { setHideCursor, setIsTextCursor, setCursorText } = useCursor();
   const { startSession, isSessionActive } = useChakku();
@@ -64,6 +74,13 @@ export function Hero() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentGreeting((prev) => (prev + 1) % greetings.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentChakkuPhrase((prev) => (prev + 1) % chakkuPhrases.length);
     }, 2500);
     return () => clearInterval(interval);
   }, []);
@@ -188,15 +205,34 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="group flex items-center text-sm w-fit self-start mt-2"
+              className="group flex items-center text-sm w-fit self-start mt-2 gap-2"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <span className="text-[#D4D4D4] mr-2">✦</span>
-              <span 
-                className="bg-gradient-to-r from-[#8A8A8A] via-[#F5F5F5] to-[#8A8A8A] bg-clip-text text-transparent bg-[length:200%_auto] bg-[position:0%_center] group-hover:bg-[position:100%_center] transition-[background-position] duration-[1200ms] ease-in-out"
-              >
-                meet chakku ↗
-              </span>
+              <div className="flex items-center">
+                <span className="text-[#D4D4D4] mr-2">✦</span>
+                <motion.span 
+                  className="bg-gradient-to-r from-[#8A8A8A] via-[#F5F5F5] to-[#8A8A8A] bg-clip-text text-transparent bg-[length:200%_auto] font-medium"
+                  animate={{ backgroundPosition: ["0% center", "200% center"] }}
+                  transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+                >
+                  meet chakku ↗
+                </motion.span>
+              </div>
+              <div className="relative h-[1.2em] w-[200px] overflow-hidden text-left flex items-center">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentChakkuPhrase}
+                    initial={{ rotateX: -60, opacity: 0, y: 10 }}
+                    animate={{ rotateX: 0, opacity: 1, y: 0 }}
+                    exit={{ rotateX: 60, opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="absolute left-0 text-[#737373] whitespace-nowrap"
+                    style={{ transformOrigin: "center center" }}
+                  >
+                    {chakkuPhrases[currentChakkuPhrase]}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
             </motion.button>
           )}
         </motion.div>
