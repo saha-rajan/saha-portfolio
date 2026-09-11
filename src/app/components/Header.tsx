@@ -18,7 +18,6 @@ export function Header() {
     { name: "Works", href: "/#works" },
     { name: "Studio", href: "/#studio" },
     { name: "Write", href: "/#write" },
-    { name: "Cinematics", href: "/#cinematics" },
     { name: "Recommendations", href: "/#recommendations" },
   ];
 
