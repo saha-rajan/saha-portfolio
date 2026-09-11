@@ -32,8 +32,56 @@ const recommendations = [
 
 export function Recommendations() {
   return (
-    <section id="recommendations" className="relative py-16 md:py-24 bg-black overflow-hidden px-8 md:px-16 lg:px-24">
-      <div className="max-w-[1200px] mx-auto">
+    <section id="recommendations" className="relative py-16 md:py-24 bg-black overflow-hidden">
+      
+      {/* 6-Column Grid Background - Center Aligned - Double Lines */}
+      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+        <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
+          {/* Desktop: 7 columns - double lines for middle, single for first/last */}
+          <div className="hidden lg:flex w-full h-full justify-between">
+            {[...Array(7)].map((_, i) => (
+              <div key={i} className="flex gap-[16px]">
+                {i === 0 || i === 6 ? (
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                ) : (
+                  <>
+                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          {/* Tablet: 4 columns - double lines for middle, single for first/last */}
+          <div className="hidden md:flex lg:hidden w-full h-full justify-between">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-[16px]">
+                {i === 0 || i === 3 ? (
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                ) : (
+                  <>
+                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          {/* Mobile: 2 columns - all single lines */}
+          <div className="flex md:hidden w-full h-full justify-between">
+            {[...Array(2)].map((_, i) => (
+              <div key={i}>
+                <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Content Container */}
+      <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
