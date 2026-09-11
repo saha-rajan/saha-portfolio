@@ -156,13 +156,13 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
         rotate: image.rotation 
       }}
       whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
-      whileDrag={{ scale: 1.05, cursor: "grabbing" }}
+      whileDrag={{ scale: 1.05, cursor: "none" }}
       onMouseDown={handleMouseDown}
       onDragEnd={handleDragEnd}
       style={{
         position: "absolute",
         zIndex: zIndex,
-        cursor: "grab",
+        cursor: "none",
         touchAction: "none", // Prevent touch scrolling on mobile
       }}
       className="group draggable-image"
