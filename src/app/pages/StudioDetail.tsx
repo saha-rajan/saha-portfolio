@@ -125,9 +125,10 @@ interface ImageCardProps {
   onBringToFront: () => void;
   zIndex: number;
   onExpand?: () => void;
+  isMobile?: boolean;
 }
 
-function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) {
+function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageCardProps) {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent canvas drag from starting
     onBringToFront();
@@ -142,14 +143,18 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) 
 
   // Determine size based on image.size property
   const isWide = image.size === "wide";
-  const containerClass = isWide ? "w-80 h-48" : "w-48 h-48";
+  const containerClass = isWide ? "w-64 md:w-80 h-40 md:h-48" : "w-36 md:w-48 h-36 md:h-48";
 
   return (
     <motion.div
       drag
       dragMomentum={false}
       dragElastic={0}
-      initial={{ x: image.initialX, y: image.initialY, rotate: image.rotation }}
+      initial={{ 
+        x: isMobile ? image.initialX * 0.5 : image.initialX, 
+        y: isMobile ? image.initialY * 0.5 : image.initialY, 
+        rotate: image.rotation 
+      }}
       whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
       whileDrag={{ scale: 1.05, cursor: "grabbing" }}
       onMouseDown={handleMouseDown}
@@ -196,8 +201,8 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) 
           )}
         </motion.div>
         <div className="mt-3 flex flex-col items-center text-center font-mono">
-          <span className="text-black/50 text-[10px] uppercase tracking-[0.2em] font-medium leading-relaxed max-w-[90%]">{image.label.split('\n')[0]}</span>
-          <span className="text-black text-xs font-bold tracking-wider leading-relaxed mt-2">{image.label.split('\n')[1] || ''}</span>
+          <span className="text-black/50 text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-medium leading-relaxed max-w-[90%]">{image.label.split('\n')[0]}</span>
+          <span className="text-black text-[10px] md:text-xs font-bold tracking-wider leading-relaxed mt-2">{image.label.split('\n')[1] || ''}</span>
         </div>
       </div>
     </motion.div>
@@ -322,7 +327,7 @@ export function StudioDetail() {
 
   return (
     <div 
-      className="relative w-full h-screen bg-[#000000] overflow-hidden"
+      className="relative w-full h-screen bg-[#000000] overflow-hidden overscroll-none touch-none"
       onMouseDown={handleCanvasMouseDown}
       onMouseMove={handleCanvasMouseMove}
       onMouseUp={handleCanvasMouseUp}
@@ -367,13 +372,13 @@ export function StudioDetail() {
         {/* Title - centered in viewport initially */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[0] text-center pointer-events-none">
           <h1
-            className="text-2xl md:text-3xl font-light tracking-tight text-white italic mb-2"
+            className="text-xl md:text-3xl font-light tracking-tight text-white italic mb-2"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             Keep chasing
           </h1>
           <h1
-            className="text-2xl md:text-3xl font-light tracking-tight text-white italic mb-6"
+            className="text-xl md:text-3xl font-light tracking-tight text-white italic mb-6"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             curiosity through play
@@ -400,6 +405,7 @@ export function StudioDetail() {
                 onBringToFront={() => bringToFront(image.id)}
                 zIndex={zIndex}
                 onExpand={image.isVideo ? () => setExpandedVideoId(image.id) : undefined}
+                isMobile={isMobile}
               />
             );
           })}
