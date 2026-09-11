@@ -213,33 +213,44 @@ export function StudioDetail() {
   const [imageOrder, setImageOrder] = useState(
     studioImages.map((img) => img.id)
   );
-  const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
-  const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [expandedVideoId, setExpandedVideoId] = useState<number | null>(null);
 
-  // Detect mobile
+  const [dragConstraints, setDragConstraints] = useState({ top: 0, left: 0, right: 0, bottom: 0 });
+  const [initialPos, setInitialPos] = useState({ x: 0, y: 0 });
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
-    const checkIfMobile = () => {
+    const updateDimensions = () => {
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       const isSmallScreen = window.innerWidth < 1024;
       setIsMobile(isTouchDevice || isSmallScreen);
+
+      const canvasWidth = 3000;
+      const canvasHeight = 2500;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      setDragConstraints({
+        top: -(canvasHeight - viewportHeight),
+        left: -(canvasWidth - viewportWidth),
+        right: 0,
+        bottom: 0,
+      });
+      
+      if (!isReady) {
+        setInitialPos({
+          x: -(1500 - viewportWidth / 2),
+          y: -(1250 - viewportHeight / 2)
+        });
+        setIsReady(true);
+      }
     };
     
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
-
-  // Center the canvas initially
-  useEffect(() => {
-    // Center on the title (1500, 1250) in the 3000x2500 canvas
-    const initialX = -(1500 - window.innerWidth / 2);
-    const initialY = -(1250 - window.innerHeight / 2);
-    setCanvasPosition({ x: initialX, y: initialY });
-  }, []);
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, [isReady]);
 
   const bringToFront = (id: number) => {
     setImageOrder((prevOrder) => {
@@ -247,96 +258,13 @@ export function StudioDetail() {
       return [...filtered, id];
     });
   };
-
-  const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    // Only start canvas drag if clicking on the background (not on images)
-    if ((e.target as HTMLElement).closest('.draggable-image')) {
-      return;
-    }
-    setIsDraggingCanvas(true);
-    setDragStart({ x: e.clientX - canvasPosition.x, y: e.clientY - canvasPosition.y });
-  };
-
-  const handleCanvasMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingCanvas) return;
-    
-    // Calculate new position
-    let newX = e.clientX - dragStart.x;
-    let newY = e.clientY - dragStart.y;
-    
-    // Define boundaries (canvas is 3000x2500)
-    const canvasWidth = 3000;
-    const canvasHeight = 2500;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Constrain the position so canvas edges can't go beyond viewport edges
-    const maxX = 0;
-    const minX = -(canvasWidth - viewportWidth);
-    const maxY = 0;
-    const minY = -(canvasHeight - viewportHeight);
-    
-    // Apply boundaries
-    newX = Math.max(minX, Math.min(maxX, newX));
-    newY = Math.max(minY, Math.min(maxY, newY));
-    
-    setCanvasPosition({ x: newX, y: newY });
-  };
-
-  const handleCanvasMouseUp = () => {
-    setIsDraggingCanvas(false);
-  };
-
-  const handleCanvasMouseLeave = () => {
-    setIsDraggingCanvas(false);
-  };
-
-  const handleCanvasTouchStart = (e: React.TouchEvent) => {
-    if ((e.target as HTMLElement).closest('.draggable-image')) return;
-    setIsDraggingCanvas(true);
-    setDragStart({ x: e.touches[0].clientX - canvasPosition.x, y: e.touches[0].clientY - canvasPosition.y });
-  };
-
-  const handleCanvasTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingCanvas) return;
-    
-    let newX = e.touches[0].clientX - dragStart.x;
-    let newY = e.touches[0].clientY - dragStart.y;
-    
-    const canvasWidth = 3000;
-    const canvasHeight = 2500;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    const maxX = 0;
-    const minX = -(canvasWidth - viewportWidth);
-    const maxY = 0;
-    const minY = -(canvasHeight - viewportHeight);
-    
-    newX = Math.max(minX, Math.min(maxX, newX));
-    newY = Math.max(minY, Math.min(maxY, newY));
-    
-    setCanvasPosition({ x: newX, y: newY });
-  };
-
-  const handleCanvasTouchEnd = () => {
-    setIsDraggingCanvas(false);
-  };
   
   const expandedVideo = studioImages.find(img => img.id === expandedVideoId);
 
+  if (!isReady) return null;
+
   return (
-    <div 
-      className="relative w-full h-screen bg-[#000000] overflow-hidden overscroll-none touch-none"
-      onMouseDown={handleCanvasMouseDown}
-      onMouseMove={handleCanvasMouseMove}
-      onMouseUp={handleCanvasMouseUp}
-      onMouseLeave={handleCanvasMouseLeave}
-      onTouchStart={handleCanvasTouchStart}
-      onTouchMove={handleCanvasTouchMove}
-      onTouchEnd={handleCanvasTouchEnd}
-      style={{ cursor: isDraggingCanvas ? 'grabbing' : 'grab' }}
-    >
+    <div className="relative w-full h-screen bg-[#000000] overflow-hidden overscroll-none touch-none">
       {/* Header with Back Button - Fixed position outside canvas */}
       <div className="fixed top-0 left-0 z-[1001] p-4 md:p-8 pointer-events-none">
         <Link to="/" className="pointer-events-auto">
@@ -353,12 +281,15 @@ export function StudioDetail() {
       </div>
 
       {/* Large scrollable/draggable canvas */}
-      <div 
+      <motion.div 
         className="relative w-[3000px] h-[2500px]"
-        style={{
-          transform: `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
-          transition: isDraggingCanvas ? 'none' : 'transform 0.1s ease-out',
-        }}
+        drag
+        dragMomentum={true}
+        dragElastic={0.1}
+        dragConstraints={dragConstraints}
+        initial={{ x: initialPos.x, y: initialPos.y }}
+        style={{ cursor: 'grab' }}
+        whileDrag={{ cursor: 'grabbing' }}
       >
         {/* Dot Pattern Background */}
         <div
@@ -410,7 +341,7 @@ export function StudioDetail() {
             );
           })}
         </div>
-      </div>
+      </motion.div>
       
       {/* Expanded Video Modal */}
       <AnimatePresence>
