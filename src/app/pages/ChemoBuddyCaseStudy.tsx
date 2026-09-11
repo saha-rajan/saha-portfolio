@@ -58,6 +58,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, X, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, ChevronDown, Trophy, Monitor } from "lucide-react";
+import chemoBanner from "../../assets/Chemo banner.png";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useCursor } from "../contexts/CursorContext";
 import { literatureReviewData, ResearchPaper } from '../../data/research/literatureReview';
