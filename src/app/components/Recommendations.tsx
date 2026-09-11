@@ -55,28 +55,31 @@ export function Recommendations() {
               className="bg-[#0A0A0A] p-10 border border-white/5 relative group transition-all duration-500 rounded-lg max-w-5xl mx-auto w-full"
             >
               {/* Card Header */}
-              <div className="flex items-start sm:items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <div className="w-14 h-14 sm:w-20 sm:h-20 shrink-0 rounded-lg bg-[#111] overflow-hidden border border-white/10">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-all duration-500" />
+              <div className="flex items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 w-full">
+                <div className="flex items-start sm:items-center gap-4 sm:gap-6">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 shrink-0 rounded-lg bg-[#111] overflow-hidden border border-white/10">
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-all duration-500" />
+                  </div>
+                  <div className="flex flex-col">
+                    <h4 className="text-white text-base sm:text-2xl font-bold tracking-tight mb-0.5 sm:mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                      {item.name}
+                    </h4>
+                    <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
+                    <p className="text-[#666] text-[10px] sm:text-xs font-medium" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
+                    {item.tagline && (
+                      <p className="text-[#444] text-[8px] sm:text-[10px] uppercase tracking-[0.05em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col flex-1">
-                  <h4 className="text-white text-base sm:text-2xl font-bold tracking-tight mb-0.5 sm:mb-1 flex items-center gap-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                    {item.name}
-                    <a 
-                      href={item.linkedin} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-[#444] hover:text-white transition-colors"
-                    >
-                      <Linkedin size={16} className="sm:w-5 sm:h-5" />
-                    </a>
-                  </h4>
-                  <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
-                  <p className="text-[#666] text-[10px] sm:text-xs font-medium" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
-                  {item.tagline && (
-                    <p className="text-[#444] text-[8px] sm:text-[10px] uppercase tracking-[0.05em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
-                  )}
-                </div>
+                
+                <a 
+                  href={item.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-[#A7A7A7] hover:text-white transition-colors shrink-0 self-start sm:self-center p-2 sm:p-0 mt-1 sm:mt-0"
+                >
+                  <Linkedin className="w-5 h-5 sm:w-6 sm:h-6" />
+                </a>
               </div>
 
               {/* Separator */}
