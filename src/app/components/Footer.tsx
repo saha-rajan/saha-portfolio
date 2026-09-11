@@ -2,6 +2,7 @@ import svgPaths from "../../imports/svg-cxqqlnkn3m";
 import { useCursor } from "../contexts/CursorContext";
 import { useState } from "react";
 import { motion } from "motion/react";
+import { trackEvent } from "../utils/analytics";
 
 export function Footer() {
   const { setHideCursor } = useCursor();
@@ -61,7 +62,7 @@ export function Footer() {
             <div className="flex gap-1.5 sm:gap-3 items-center text-sm sm:text-base md:text-xl font-medium text-white">
               <span>.</span>
               <a 
-                href="https://www.linkedin.com/in/saharajan/" 
+                href="https://www.linkedin.com/in/saharajan/" onClick={() => trackEvent("outbound_click", { link_name: "linkedin_footer" })} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="px-3 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
@@ -89,7 +90,7 @@ export function Footer() {
             <div className="flex gap-1.5 sm:gap-3 items-center text-sm sm:text-base md:text-xl font-medium text-white">
               <span>.</span>
               <a 
-                href="mailto:trajan2@asu.edu" 
+                href="mailto:trajan2@asu.edu" onClick={() => trackEvent("outbound_click", { link_name: "email_footer" })} 
                 className="px-3 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-[#282834] transition-all duration-300 relative z-50 overflow-hidden"
                 onMouseEnter={() => setHideCursor(true)}
                 onMouseLeave={() => {

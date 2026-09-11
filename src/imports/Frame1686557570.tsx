@@ -1,6 +1,3 @@
-import image_1fe6da1fb24e994dedf5f88213c048966d32519a from 'figma:asset/1fe6da1fb24e994dedf5f88213c048966d32519a.png';
-import image_68eb3e4689690c387ac6a58fcb7b5cb95e117395 from 'figma:asset/68eb3e4689690c387ac6a58fcb7b5cb95e117395.png';
-import literatureReviewImage from "figma:asset/e9f2d17049abb93ceab92371fb42a3e467599da1.png";
 
 function Frame() {
   return (

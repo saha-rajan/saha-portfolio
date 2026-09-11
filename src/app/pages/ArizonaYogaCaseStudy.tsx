@@ -1,4 +1,3 @@
-import image_951dd61283abdcb0dee59290acdcf1450ed7ea9e from 'figma:asset/951dd61283abdcb0dee59290acdcf1450ed7ea9e.png';
 import image_c85cd79d8db605865c878c0bd8b508284ae400c1 from 'figma:asset/c85cd79d8db605865c878c0bd8b508284ae400c1.png';
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,9 +6,6 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Target, Lightbulb, Search, Navigat
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useCursor } from "../contexts/CursorContext";
 import arizonaYogaDesign from 'figma:asset/01b9d998b474ecbc53d152e413a35c6edd701f13.png';
-import oldDesignImage from 'figma:asset/76ca1ed783f58afd4d71e8218bdea43ede5d0e58.png';
-import week9TableImage from 'figma:asset/1c16949135c0c19e1ae5d17f039a74743c0c6412.png';
-import week11PrototypeImage from 'figma:asset/7db7cd97752b64e88e74537ee30baa41427b8883.png';
 import solutionImage1 from 'figma:asset/4517248f4041fa94796444689126f919f6230a28.png';
 import solutionImage2 from 'figma:asset/3334744517cfb0f8fa6a3697b568391d2ea42a22.png';
 import solutionImage3 from 'figma:asset/d17e5d9158db8507662ad84fcb34bd83c9d7e945.png';

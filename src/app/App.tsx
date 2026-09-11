@@ -48,7 +48,7 @@ function Layout() {
 
   // Track page views with Google Analytics
   useEffect(() => {
-    if (window.gtag) {
+    if (window.gtag && window.location.hostname !== 'localhost' && localStorage.getItem('ignore_analytics') !== 'true') {
       window.gtag('config', 'G-9ZHMPW32L4', {
         page_path: location.pathname + location.search,
       });
@@ -133,6 +133,17 @@ const router = createBrowserRouter([
 function App() {
   // Initialize Google Analytics
   useEffect(() => {
+    // Check for opt-out flag in URL
+    if (window.location.search.includes('ignore_me=true')) {
+      localStorage.setItem('ignore_analytics', 'true');
+      alert('Analytics tracking successfully disabled for your browser!');
+    }
+
+    // Don't inject analytics if on localhost or if ignored
+    if (window.location.hostname === 'localhost' || localStorage.getItem('ignore_analytics') === 'true') {
+      console.log('Analytics disabled for this session.');
+      return;
+    }
     // Load gtag.js script
     const script1 = document.createElement('script');
     script1.async = true;

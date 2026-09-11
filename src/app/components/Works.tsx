@@ -1,6 +1,6 @@
 import chemoVideo from '../../assets/Chemo thumbnail.mp4';
-import image_a77d1db12e8df8c86d603cb5d79ce40f7ba0c131 from 'figma:asset/a77d1db12e8df8c86d603cb5d79ce40f7ba0c131.png';
 import { motion } from "motion/react";
+import { trackEvent } from "../utils/analytics";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import auraVideo from '../../assets/Aura thumbnail.mp4';
@@ -105,7 +105,17 @@ export function Works() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 auto-rows-[160px] sm:auto-rows-[300px]">
           {projects.map((project, index) => (
-            <Link to={`/works/${project.id}`} key={index} className={`${project.size} block`}>
+            <Link 
+              to={`/works/${project.id}`} 
+              key={index} 
+              className={`${project.size} block`}
+              onClick={() => {
+                trackEvent("select_case_study", {
+                  project_id: project.id,
+                  project_title: project.title
+                });
+              }}
+            >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

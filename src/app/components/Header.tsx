@@ -133,7 +133,7 @@ export function Header() {
             About
           </Link>
           <a
-            href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing"
+            href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium hover:text-gray-400 transition-colors"
@@ -142,6 +142,7 @@ export function Header() {
           </a>
           <Link
             to="/contact"
+            onClick={() => trackEvent("navigation_click", { destination: "/contact" })}
             className="relative px-6 py-2 border border-white rounded-full text-sm font-medium hover:bg-white hover:text-black transition-all duration-300 overflow-hidden"
             onMouseMove={handleContactHover}
             onMouseLeave={handleContactLeave}
@@ -200,7 +201,7 @@ export function Header() {
               About
             </Link>
             <a
-              href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing"
+              href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
               target="_blank"
               rel="noopener noreferrer"
               className="block text-sm font-medium hover:text-gray-400 transition-colors"

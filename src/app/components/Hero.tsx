@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useCursor } from "../contexts/CursorContext";
 import { useChakku } from "../contexts/ChakkuContext";
 
-import image_9eba4ef78c719ff307dfa84e927ac719277023fb from 'figma:asset/9eba4ef78c719ff307dfa84e927ac719277023fb.png';
 import chemoVideo from '../../assets/Chemo thumbnail.mp4';
 import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
 import auraVideo from '../../assets/Aura thumbnail.mp4';

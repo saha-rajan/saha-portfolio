@@ -1,34 +1,13 @@
 import image_9a41f841d18e2e15b19fa5b42310fca9fe85eb4d from 'figma:asset/9a41f841d18e2e15b19fa5b42310fca9fe85eb4d.png';
-import image_44206bd9b324eb75a24acdfa72b2f8e80d1cbd65 from 'figma:asset/44206bd9b324eb75a24acdfa72b2f8e80d1cbd65.png';
-import image_9b84f1632d73307214f57b506cb409eae84c6c75 from 'figma:asset/9b84f1632d73307214f57b506cb409eae84c6c75.png';
-import image_9cb1021147062033ad95ff4b70af680d32459dae from 'figma:asset/9cb1021147062033ad95ff4b70af680d32459dae.png';
-import image_e2875e290d4a2b2ca4bed813b199115b1bdae041 from 'figma:asset/e2875e290d4a2b2ca4bed813b199115b1bdae041.png';
-import image_9f4544a8d094d8410e9128397e8e0c58340578b6 from 'figma:asset/9f4544a8d094d8410e9128397e8e0c58340578b6.png';
-import image_da7b297ce73182028f4f1661a78bfc061d68c793 from 'figma:asset/da7b297ce73182028f4f1661a78bfc061d68c793.png';
-import image_73be314deac034d00b65d7a9d4bb46c5f3c0272f from 'figma:asset/73be314deac034d00b65d7a9d4bb46c5f3c0272f.png';
 import image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b from 'figma:asset/5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b.png';
-import image_2b8bffd76f419f68be1a74616b439c493c27366f from 'figma:asset/2b8bffd76f419f68be1a74616b439c493c27366f.png';
 import image_056f058b598dbb5ba9ed90f94b8880797dac30da from '../../assets/chemobuddy_command_center_dashboard.png';
-import video_cx_bento from '../../assets/CX Bento image.mp4';
-import image_fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe from 'figma:asset/fd1e5af4d65a2ca8e2a4bc26ea6a7b7878ee5dfe.png';
-import image_d43ea63d788cb45c53fb10f7153ed33027f96302 from 'figma:asset/d43ea63d788cb45c53fb10f7153ed33027f96302.png';
 import image_59d13c8214ad12598c9d2470478d8fa2004aad78 from '../../assets/chemobuddy_3d_symptom_tracker.png';
-import image_90b9edf0c86b7bb53f8dc13f95bc4fb12e3a38e5 from 'figma:asset/90b9edf0c86b7bb53f8dc13f95bc4fb12e3a38e5.png';
-import image_3c59f1c9e46af029ca5aefd48dc5e476b36bb7dc from 'figma:asset/3c59f1c9e46af029ca5aefd48dc5e476b36bb7dc.png';
-import image_a94bd21b6f1c22749e15c23a41adb43efddf8d21 from 'figma:asset/a94bd21b6f1c22749e15c23a41adb43efddf8d21.png';
-import image_49e48536bd59f36e96e11b6c01db7f5cf2a2be32 from 'figma:asset/49e48536bd59f36e96e11b6c01db7f5cf2a2be32.png';
-import image_9b0c0f41a2e79efb21d5c7afee22e36360e6adf0 from 'figma:asset/9b0c0f41a2e79efb21d5c7afee22e36360e6adf0.png';
-import image_975eb820b2db35fb5fac046d478d0954033f591e from 'figma:asset/975eb820b2db35fb5fac046d478d0954033f591e.png';
-import image_1359c5d57ea418d545cb77a8af23298b569b64c5 from 'figma:asset/1359c5d57ea418d545cb77a8af23298b569b64c5.png';
 import image_0a7341009409eb5c92a8468f00f59b855a2e96ec from 'figma:asset/0a7341009409eb5c92a8468f00f59b855a2e96ec.png';
 import image_6b94fbe06bc29faf769f47c274b9f57570099e4e from 'figma:asset/6b94fbe06bc29faf769f47c274b9f57570099e4e.png';
-import image_a932146b4da5fd39394bd08dc371833a947bf031 from 'figma:asset/a932146b4da5fd39394bd08dc371833a947bf031.png';
 import image_47e793bbbd9b6c47a009bc5cd565225ecbc3555b from 'figma:asset/47e793bbbd9b6c47a009bc5cd565225ecbc3555b.png';
 import image_e729558bff1e5dee9e2a0b10d9b52f172c77e485 from 'figma:asset/e729558bff1e5dee9e2a0b10d9b52f172c77e485.png';
-import image_8d722db1b25e1127c80a4073220999e8fd367bbc from 'figma:asset/8d722db1b25e1127c80a4073220999e8fd367bbc.png';
 import image_7296505a3b71e68e6b283ec15441144609a3f5de from 'figma:asset/7296505a3b71e68e6b283ec15441144609a3f5de.png';
 import image_a31aa83ff5a2652f2e2e0df7dc93513326077d46 from 'figma:asset/a31aa83ff5a2652f2e2e0df7dc93513326077d46.png';
-import image_53b2ff1b49d8151787bc2f88b76656d2f60e7854 from 'figma:asset/53b2ff1b49d8151787bc2f88b76656d2f60e7854.png';
 import image_f2c47c6a5a9d2a5d5c859311c484da6a51b0991b from 'figma:asset/f2c47c6a5a9d2a5d5c859311c484da6a51b0991b.png';
 import image_968b63f5dfbb9f45ef1796a9e98d86b5754ea0fc from 'figma:asset/968b63f5dfbb9f45ef1796a9e98d86b5754ea0fc.png';
 import image_307f0cf6112994805ecbfc5bb3e4e6418d34c654 from 'figma:asset/307f0cf6112994805ecbfc5bb3e4e6418d34c654.png';
@@ -37,23 +16,14 @@ import image_23cc25120b76c47d60a57ba62b2e267771164b93 from 'figma:asset/23cc2512
 import image_ace2ee9ac19cb07f350613998cea2e538ed19b28 from 'figma:asset/ace2ee9ac19cb07f350613998cea2e538ed19b28.png';
 import image_3222020273b0d24c0782bbea6801687e8ad2499a from 'figma:asset/3222020273b0d24c0782bbea6801687e8ad2499a.png';
 import image_f9ee50abc6dcd9e3b860995a9fab69f8900c118b from 'figma:asset/f9ee50abc6dcd9e3b860995a9fab69f8900c118b.png';
-import image_45d43e83e82a877b253b45848ac3e422e6fc240b from 'figma:asset/45d43e83e82a877b253b45848ac3e422e6fc240b.png';
-import image_7d95ded4487e1315223c22f54aaa919d71cb18d5 from 'figma:asset/7d95ded4487e1315223c22f54aaa919d71cb18d5.png';
-import image_655252f06ad089cb27b8ef738e2201acad87ac25 from 'figma:asset/655252f06ad089cb27b8ef738e2201acad87ac25.png';
-import image_70c6412f0619b8b7a3f18c2b40ac2032444647c7 from 'figma:asset/70c6412f0619b8b7a3f18c2b40ac2032444647c7.png';
-import image_fbd1f1e7c2c3a3481ad04ae5fb42e65c05e7ca43 from 'figma:asset/fbd1f1e7c2c3a3481ad04ae5fb42e65c05e7ca43.png';
 import image_7b12ed23134ee9b99fea891ec6bc912b3be0ec87 from 'figma:asset/7b12ed23134ee9b99fea891ec6bc912b3be0ec87.png';
 import image_ca40c914b63d117033bf40e44298bdf300d79d85 from 'figma:asset/ca40c914b63d117033bf40e44298bdf300d79d85.png';
-import image_b11ce3b13b2dd09cd261f15b98dc70b78128b4aa from 'figma:asset/b11ce3b13b2dd09cd261f15b98dc70b78128b4aa.png';
-import image_8f5a3c2e9d4b7a1f6e8c5d3a9b2f4e7c6d1a8b5e from 'figma:asset/8f5a3c2e9d4b7a1f6e8c5d3a9b2f4e7c6d1a8b5e.png';
-import image_432ee39c25ce5fee3096e93aef86b16da5a460c3 from 'figma:asset/432ee39c25ce5fee3096e93aef86b16da5a460c3.png';
 import image_befeaba9aa8513d7ed7947c448c03dda01c18294 from 'figma:asset/befeaba9aa8513d7ed7947c448c03dda01c18294.png';
 import image_f8f8935eeffa8c1764b65eb66b6d14d377527bf4 from 'figma:asset/f8f8935eeffa8c1764b65eb66b6d14d377527bf4.png';
 import image_b16062226f3bb2066b289a790fbad2e44621e2c7 from 'figma:asset/b16062226f3bb2066b289a790fbad2e44621e2c7.png';
 import image_69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5 from 'figma:asset/69e1d0b2ac815640f0c2d1fb4f31f0ed44315ef5.png';
 import image_7185839779b789cbfbfd75fdfef3c494ccafb053 from 'figma:asset/7185839779b789cbfbfd75fdfef3c494ccafb053.png';
 import image_872548eb54e3a9a24e2d9fe1ba3961431a895775 from 'figma:asset/872548eb54e3a9a24e2d9fe1ba3961431a895775.png';
-import image_1fe6da1fb24e994dedf5f88213c048966d32519a from 'figma:asset/1fe6da1fb24e994dedf5f88213c048966d32519a.png';
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "motion/react";
@@ -3174,7 +3144,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Bottom Navigation */}
           <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-white/10">
              <Link 
-               to="/works/aura" 
+               to="/works/arizona-yoga-studio" 
                data-cursor-hide="true"
                className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}
@@ -3194,7 +3164,7 @@ export function ChemoBuddyCaseStudy() {
                </motion.div>
              </Link>
              <Link 
-               to="/works/arizona-yoga-studio" 
+               to="/works/aura" 
                data-cursor-hide="true"
                className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}
