@@ -164,7 +164,7 @@ export function Write() {
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
-            I write to connect through words that shape experiences and stories. From microcopy in interfaces that guide users with clarity, to film captions that evoke emotion, and long-form reflections on Medium that unpack design and creativity, writing is how I think, design, and express.
+            I write to shape experiences and tell stories, from interface microcopy to reflections on design and creativity.
           </p>
         </div>
 
@@ -224,14 +224,7 @@ export function Write() {
                 </div>
 
                 {/* Title below card - using body text properties */}
-                <h3 
-                  className="hidden sm:block text-sm sm:text-base md:text-lg font-normal leading-[1.7] tracking-[0] text-white"
-                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-                  onMouseEnter={() => setIsTextCursor(true)}
-                  onMouseLeave={() => setIsTextCursor(false)}
-                >
-                  {article.title}
-                </h3>
+                
               </motion.div>
             </a>
           ))}
