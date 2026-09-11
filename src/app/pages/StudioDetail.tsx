@@ -125,10 +125,9 @@ interface ImageCardProps {
   onBringToFront: () => void;
   zIndex: number;
   onExpand?: () => void;
-  isMobile?: boolean;
 }
 
-function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageCardProps) {
+function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent canvas drag from starting
     onBringToFront();
@@ -147,19 +146,15 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
 
   return (
     <motion.div
-      drag={!isMobile}
+      drag
       dragMomentum={false}
       dragElastic={0}
-      initial={isMobile ? { x: 0, y: 0, rotate: 0 } : { x: image.initialX, y: image.initialY, rotate: image.rotation }}
-      whileHover={isMobile ? {} : { rotate: image.rotation + 3, scale: 1.05 }}
-      whileDrag={isMobile ? {} : { scale: 1.05, cursor: "grabbing" }}
-      onMouseDown={!isMobile ? handleMouseDown : undefined}
-      onDragEnd={!isMobile ? handleDragEnd : undefined}
-      style={isMobile ? {
-        position: "relative",
-        zIndex: zIndex,
-        marginBottom: "2rem"
-      } : {
+      initial={{ x: image.initialX, y: image.initialY, rotate: image.rotation }}
+      whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
+      whileDrag={{ scale: 1.05, cursor: "grabbing" }}
+      onMouseDown={handleMouseDown}
+      onDragEnd={handleDragEnd}
+      style={{
         position: "absolute",
         zIndex: zIndex,
         cursor: "grab",
@@ -290,17 +285,52 @@ export function StudioDetail() {
   const handleCanvasMouseLeave = () => {
     setIsDraggingCanvas(false);
   };
+
+  const handleCanvasTouchStart = (e: React.TouchEvent) => {
+    if ((e.target as HTMLElement).closest('.draggable-image')) return;
+    setIsDraggingCanvas(true);
+    setDragStart({ x: e.touches[0].clientX - canvasPosition.x, y: e.touches[0].clientY - canvasPosition.y });
+  };
+
+  const handleCanvasTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingCanvas) return;
+    
+    let newX = e.touches[0].clientX - dragStart.x;
+    let newY = e.touches[0].clientY - dragStart.y;
+    
+    const canvasWidth = 3000;
+    const canvasHeight = 2500;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    const maxX = 0;
+    const minX = -(canvasWidth - viewportWidth);
+    const maxY = 0;
+    const minY = -(canvasHeight - viewportHeight);
+    
+    newX = Math.max(minX, Math.min(maxX, newX));
+    newY = Math.max(minY, Math.min(maxY, newY));
+    
+    setCanvasPosition({ x: newX, y: newY });
+  };
+
+  const handleCanvasTouchEnd = () => {
+    setIsDraggingCanvas(false);
+  };
   
   const expandedVideo = studioImages.find(img => img.id === expandedVideoId);
 
   return (
     <div 
-      className={`relative w-full h-screen bg-[#000000] ${isMobile ? 'overflow-auto' : 'overflow-hidden'}`}
-      onMouseDown={!isMobile ? handleCanvasMouseDown : undefined}
-      onMouseMove={!isMobile ? handleCanvasMouseMove : undefined}
-      onMouseUp={!isMobile ? handleCanvasMouseUp : undefined}
-      onMouseLeave={!isMobile ? handleCanvasMouseLeave : undefined}
-      style={{ cursor: isMobile ? 'auto' : (isDraggingCanvas ? 'grabbing' : 'grab') }}
+      className="relative w-full h-screen bg-[#000000] overflow-hidden"
+      onMouseDown={handleCanvasMouseDown}
+      onMouseMove={handleCanvasMouseMove}
+      onMouseUp={handleCanvasMouseUp}
+      onMouseLeave={handleCanvasMouseLeave}
+      onTouchStart={handleCanvasTouchStart}
+      onTouchMove={handleCanvasTouchMove}
+      onTouchEnd={handleCanvasTouchEnd}
+      style={{ cursor: isDraggingCanvas ? 'grabbing' : 'grab' }}
     >
       {/* Header with Back Button - Fixed position outside canvas */}
       <div className="fixed top-0 left-0 z-[1001] p-4 md:p-8 pointer-events-none">
@@ -321,7 +351,7 @@ export function StudioDetail() {
       <div 
         className="relative w-[3000px] h-[2500px]"
         style={{
-          transform: isMobile ? 'none' : `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
+          transform: `translate(${canvasPosition.x}px, ${canvasPosition.y}px)`,
           transition: isDraggingCanvas ? 'none' : 'transform 0.1s ease-out',
         }}
       >
