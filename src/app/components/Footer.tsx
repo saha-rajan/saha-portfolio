@@ -55,16 +55,16 @@ export function Footer() {
   return (
     <footer className="relative bg-black border-t border-[#333] mt-8 md:mt-12 overflow-hidden">
       {/* Content Container */}
-      <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24 py-12 md:py-16">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24 py-8 md:py-16">
         <div className="flex justify-between items-center w-full">
-          <div className="flex gap-10 items-center">
-            <div className="flex gap-3 items-center text-xl font-medium text-white">
+          <div className="flex gap-2 sm:gap-10 items-center">
+            <div className="flex gap-1.5 sm:gap-3 items-center text-sm sm:text-base md:text-xl font-medium text-white">
               <span>.</span>
               <a 
                 href="https://www.linkedin.com/in/saharajan/" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="px-6 py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
+                className="px-3 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
                 onMouseEnter={() => setHideCursor(true)}
                 onMouseLeave={() => {
                   setHideCursor(false);
@@ -86,11 +86,11 @@ export function Footer() {
                 </motion.span>
               </a>
             </div>
-            <div className="flex gap-3 items-center text-xl font-medium text-white">
+            <div className="flex gap-1.5 sm:gap-3 items-center text-sm sm:text-base md:text-xl font-medium text-white">
               <span>.</span>
               <a 
                 href="mailto:trajan2@asu.edu" 
-                className="px-6 py-3 rounded-md hover:bg-[#282834] transition-all duration-300 relative z-50 overflow-hidden"
+                className="px-3 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-[#282834] transition-all duration-300 relative z-50 overflow-hidden"
                 onMouseEnter={() => setHideCursor(true)}
                 onMouseLeave={() => {
                   setHideCursor(false);
@@ -117,7 +117,7 @@ export function Footer() {
           <button 
             onClick={scrollToTop}
             data-cursor-hide="true"
-            className="px-6 py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
+            className="px-3 sm:px-6 py-2 sm:py-3 rounded-md hover:bg-[#282834] transition-all duration-300 overflow-hidden"
             aria-label="Back to top"
             onMouseEnter={() => setHideCursor(true)}
             onMouseLeave={() => {
@@ -137,7 +137,7 @@ export function Footer() {
               }}
             >
               <div className="flex-none rotate-90">
-                <div className="w-[17.42px] h-[30.32px]">
+                <div className="w-[12px] h-[21px] sm:w-[17.42px] sm:h-[30.32px]">
                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 17.4214 30.3204">
                     <path d={svgPaths.p2d439d20} fill="white" id="Icon / chevron.left" />
                   </svg>
@@ -147,7 +147,7 @@ export function Footer() {
           </button>
         </div>
 
-        <div className="mt-24 flex flex-col md:flex-row justify-between items-center text-sm text-[#555]">
+        <div className="mt-12 sm:mt-24 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] sm:text-xs md:text-sm text-[#555]">
           <p className="cursor-line-effect">© 2025 THIRUVENKATA SAHA. ALL RIGHTS RESERVED.</p>
           <p className="cursor-line-effect">DESIGNED & DEVELOPED WITH CARE BY SAHA.</p>
         </div>
