@@ -14,7 +14,7 @@ const recommendations = [
       "Thiruvenkata is great at taking feedback and genuinely using it to improve his work. He doesn't get stuck on critique—he listens, adapts, and makes thoughtful changes that strengthen the final result. He's also a quick learner and was always open to picking up new skills and tools as needed. He would be a great addition to any creative or media production team."
     ],
     image: cameronImage,
-    linkedin: "https://www.linkedin.com/in/cameron-burridge/"
+    linkedin: "https://www.linkedin.com/in/cameron-burridge-8761311b5/"
   },
   {
     name: "Tamara Gligoric",
@@ -26,7 +26,7 @@ const recommendations = [
       "What truly sets Saha apart is his communication style and growth mindset. He is receptive to feedback, asks thoughtful questions, and is always looking for ways to improve and refine his work to create the best possible final product. He is reliable, proactive, and manages his time well. These qualities that make him someone you can genuinely depend on. Saha would be a strong addition to any team looking for a creative, dependable, and collaborative media producer, and I highly recommend him without hesitation."
     ],
     image: tamaraImage,
-    linkedin: "https://www.linkedin.com/in/tamara-gligoric/"
+    linkedin: "https://www.linkedin.com/in/tamaragligoric/"
   }
 ];
 
