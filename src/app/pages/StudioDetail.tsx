@@ -125,9 +125,10 @@ interface ImageCardProps {
   onBringToFront: () => void;
   zIndex: number;
   onExpand?: () => void;
+  isMobile?: boolean;
 }
 
-function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) {
+function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageCardProps) {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent canvas drag from starting
     onBringToFront();
@@ -146,15 +147,19 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand }: ImageCardProps) 
 
   return (
     <motion.div
-      drag
+      drag={!isMobile}
       dragMomentum={false}
       dragElastic={0}
-      initial={{ x: image.initialX, y: image.initialY, rotate: image.rotation }}
-      whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
-      whileDrag={{ scale: 1.05, cursor: "grabbing" }}
-      onMouseDown={handleMouseDown}
-      onDragEnd={handleDragEnd}
-      style={{
+      initial={isMobile ? { x: 0, y: 0, rotate: 0 } : { x: image.initialX, y: image.initialY, rotate: image.rotation }}
+      whileHover={isMobile ? {} : { rotate: image.rotation + 3, scale: 1.05 }}
+      whileDrag={isMobile ? {} : { scale: 1.05, cursor: "grabbing" }}
+      onMouseDown={!isMobile ? handleMouseDown : undefined}
+      onDragEnd={!isMobile ? handleDragEnd : undefined}
+      style={isMobile ? {
+        position: "relative",
+        zIndex: zIndex,
+        marginBottom: "2rem"
+      } : {
         position: "absolute",
         zIndex: zIndex,
         cursor: "grab",
