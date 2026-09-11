@@ -1155,104 +1155,19 @@ export function ChemoBuddyCaseStudy() {
         </div>
       </section>
 
-      {/* Bento Grid Section - Full Width */}
+      {/* Banner Section - Full Width */}
       <section className="w-full mb-16 px-2 md:px-6">
         <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.05 } }
-          }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3 max-w-[1600px] mx-auto"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="w-full max-w-[1600px] mx-auto bg-[#121217] border border-white/10 rounded-lg overflow-hidden relative group hover:border-white/20 transition-colors"
         >
-          {/* Dashboard - Extra tall and wide */}
-          <motion.div 
-            className="col-span-2 md:col-span-3 lg:col-span-2 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <video 
-              src={video_cx_bento}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover object-left transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Profile - Tall narrow */}
-          <motion.div 
-            className="col-span-2 md:col-span-1 lg:col-span-1 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_e2875e290d4a2b2ca4bed813b199115b1bdae041}
-              alt="Profile Icons"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Stats - Short square */}
-          <motion.div 
-            className="col-span-1 md:col-span-2 lg:col-span-1 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_9b84f1632d73307214f57b506cb409eae84c6c75}
-              alt="ChemoBuddy Logo"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Symptom Tracker - Wide short */}
-          <motion.div 
-            className="col-span-1 md:col-span-2 lg:col-span-2 h-[280px] md:h-[320px] lg:h-[480px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_59d13c8214ad12598c9d2470478d8fa2004aad78}
-              alt="Symptom Tracker"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Alerts - Small square */}
-          <motion.div 
-            className="col-span-1 md:col-span-2 lg:col-span-1 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_9cb1021147062033ad95ff4b70af680d32459dae}
-              alt="Continue Learning Feature"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* AI Chatbot - Extra wide */}
-          <motion.div 
-            className="col-span-1 md:col-span-2 lg:col-span-4 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_5ca30773ef0f5e0dccd8b3b0a1b71cc509b1730b}
-              alt="AI Chatbot Interface"
-              className="w-full h-full object-cover object-[center_35%] transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
-          {/* Medication - Tall medium */}
-          <motion.div 
-            className="col-span-2 md:col-span-2 lg:col-span-1 h-[200px] md:h-[280px] lg:h-[360px] bg-[#121217] border border-white/10 rounded-lg overflow-hidden group hover:border-white/20 transition-colors relative"
-            variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } }}
-          >
-            <img 
-              src={image_44206bd9b324eb75a24acdfa72b2f8e80d1cbd65}
-              alt="ChemoBuddy Chat Interface"
-              className="w-full h-full object-cover transition-transform duration-350 group-hover:scale-105"
-            />
-          </motion.div>
-
+          <img 
+            src={chemoBanner}
+            alt="ChemoBuddy Banner"
+            className="w-full h-auto block transition-transform duration-500 group-hover:scale-[1.01]"
+          />
         </motion.div>
       </section>
 
