@@ -8,6 +8,11 @@ import sketchImg from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png"
 import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
 import futureFabLogo from "../../assets/future_fab_heroes_logo.png";
 import trailerVideo from "../../assets/future_fab_heroes_trailer.mp4";
+import video1 from "../../assets/video1.mp4";
+import video2 from "../../assets/video2.mp4";
+import video3 from "../../assets/video3.mp4";
+import video4 from "../../assets/video4.mp4";
+import video5 from "../../assets/video5.mp4";
 
 // Studio images with rotation and closer positioning
 const studioImages = [
@@ -54,6 +59,61 @@ const studioImages = [
     initialX: -600,
     initialY: -350,
     rotation: -3,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 6,
+    url: video1,
+    label: "🎬 VIDEO · VISUAL DIARY\nBoston, in Passing",
+    initialX: -150,
+    initialY: -150,
+    rotation: -4,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 7,
+    url: video2,
+    label: "🎬 VIDEO · CINEMATIC STUDY\nSomewhere Above Earth",
+    initialX: 200,
+    initialY: -400,
+    rotation: 5,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 8,
+    url: video3,
+    label: "🎬 VIDEO · SOUND + COLOR STUDY\nDinner Rush",
+    initialX: -300,
+    initialY: 50,
+    rotation: -2,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 9,
+    url: video4,
+    label: "🎬 VIDEO · OBSERVATIONAL SHORT\nThe Seat Ahead",
+    initialX: 250,
+    initialY: 150,
+    rotation: 6,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 10,
+    url: video5,
+    label: "Google Antigravity + BLENDER EXPERIMENT\nGame Design · 3D Environment",
+    initialX: 0,
+    initialY: 350,
+    rotation: -5,
     backgroundColor: "#000000",
     size: "wide",
     isVideo: true,
