@@ -1,28 +1,42 @@
 import { motion } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
 import { Link } from "react-router-dom";
-import threeDGif from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
-import layoutGif from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
-import typographyImage from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
+import video1 from "../../assets/video1.mp4";
+import video2 from "../../assets/video2.mp4";
+import video3 from "../../assets/video3.mp4";
+import video4 from "../../assets/video4.mp4";
+import video5 from "../../assets/video5.mp4";
 
 const experiments = [
   {
-    type: "Robot",
-    label: "Spline 3D\nInteractive 3D Model",
-    image: threeDGif,
-    size: "col-span-1 md:col-span-1 row-span-1",
-  },
-  {
-    type: "Game",
-    label: "Adobe Illustrator\nThumbnail Design",
-    image: typographyImage,
+    type: "video1",
+    label: "🎬 VIDEO · VISUAL DIARY\nBoston, in Passing",
+    video: video1,
     size: "col-span-1 md:col-span-2 row-span-2",
   },
   {
-    type: "After Effects",
-    label: "After Effects\nLogo Animation",
-    image: layoutGif,
+    type: "video2",
+    label: "🎬 VIDEO · CINEMATIC STUDY\nSomewhere Above Earth",
+    video: video2,
     size: "col-span-1 md:col-span-1 row-span-1",
+  },
+  {
+    type: "video3",
+    label: "🎬 VIDEO · SOUND + COLOR STUDY\nDinner Rush",
+    video: video3,
+    size: "col-span-1 md:col-span-1 row-span-1",
+  },
+  {
+    type: "video4",
+    label: "🎬 VIDEO · OBSERVATIONAL SHORT\nThe Seat Ahead",
+    video: video4,
+    size: "col-span-1 md:col-span-1 row-span-1",
+  },
+  {
+    type: "video5",
+    label: "Google Antigravity + BLENDER EXPERIMENT\nGame Design · 3D Environment",
+    video: video5,
+    size: "col-span-1 md:col-span-2 row-span-1",
   },
 ];
 
@@ -105,42 +119,14 @@ export function Studio() {
                 whileHover={{ y: -4 }}
                 className="relative group overflow-hidden bg-[#111] cursor-pointer h-full rounded-xl"
               >
-                <motion.img
-                  src={item.image}
-                  alt={item.type}
-                  className={`w-full h-full transition-transform duration-700 opacity-80 group-hover:opacity-100 object-cover scale-125 ${
-                    item.type === "Game" 
-                      ? "group-hover:scale-120" 
-                      : "group-hover:scale-130"
-                  }`}
+                <video
+                  src={item.video}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full transition-transform duration-700 opacity-80 group-hover:opacity-100 object-cover group-hover:scale-105"
                   style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}
-                  animate={
-                    item.type === "Game" ? {
-                      y: [0, -15, 0],
-                      x: [0, 8, 0],
-                    } : item.type === "Robot" ? {
-                      y: [0, -8, 0],
-                      rotate: [0, 2, 0],
-                    } : {
-                      x: [0, -10, 0],
-                      y: [0, 5, 0],
-                    }
-                  }
-                  transition={
-                    item.type === "Game" ? {
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    } : item.type === "Robot" ? {
-                      duration: 6,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    } : {
-                      duration: 7,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }
-                  }
                 />
                 
                 {/* Title overlay - appears on hover in center */}
