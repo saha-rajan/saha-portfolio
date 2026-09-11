@@ -64,10 +64,10 @@ export function Recommendations() {
                     <h4 className="text-white text-base sm:text-2xl font-bold tracking-tight mb-0.5 sm:mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                       {item.name}
                     </h4>
-                    <p className="text-[#A7A7A7] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
-                    <p className="text-[#666] text-[10px] sm:text-xs font-medium" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
+                    <p className="text-[#D1D1D1] text-xs sm:text-sm font-medium mb-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.title}</p>
+                    <p className="text-[#A3A3A3] text-[10px] sm:text-xs font-medium" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.org}</p>
                     {item.tagline && (
-                      <p className="text-[#444] text-[8px] sm:text-[10px] uppercase tracking-[0.05em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
+                      <p className="text-[#7A7A7A] text-[8px] sm:text-[10px] uppercase tracking-[0.05em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{item.tagline}</p>
                     )}
                   </div>
                 </div>
