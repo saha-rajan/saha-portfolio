@@ -32,6 +32,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
   const sessionRef = useRef<any>(null);
   const streamerRef = useRef<AudioStreamer | null>(null);
   const transcriptRef = useRef<string>('');
+  const chakkuTextBufferRef = useRef<string>('');
   const recognitionRef = useRef<any>(null);
   const playerRef = useRef<AudioPlayer | null>(null);
   
@@ -144,7 +145,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
       const session = await ai.live.connect({
         model: 'gemini-3.1-flash-live-preview',
         config: { 
-          responseModalities: ['AUDIO'],
+          responseModalities: ['AUDIO', 'TEXT'],
           systemInstruction: { parts: [{ text: data.systemInstruction }] },
           tools: data.tools
         },
@@ -155,6 +156,9 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
                  const modelTurn = msg.serverContent.modelTurn;
                  if (modelTurn && modelTurn.parts) {
                    for (const part of modelTurn.parts) {
+                     if (part.text) {
+                         chakkuTextBufferRef.current += part.text;
+                     }
                      if (part.inlineData && part.inlineData.mimeType.startsWith('audio/pcm')) {
                         setMode('speaking');
                         playerRef.current?.play(part.inlineData.data);
@@ -162,7 +166,19 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
                    }
                  }
                }
+               
+               if (msg.serverContent.turnComplete) {
+                   if (chakkuTextBufferRef.current.trim().length > 0) {
+                       transcriptRef.current += `\nChakku: ${chakkuTextBufferRef.current.trim()}\n`;
+                       chakkuTextBufferRef.current = "";
+                   }
+               }
+               
                if (msg.serverContent.interrupted) {
+                 if (chakkuTextBufferRef.current.trim().length > 0) {
+                     transcriptRef.current += `\nChakku: ${chakkuTextBufferRef.current.trim()} [interrupted]\n`;
+                     chakkuTextBufferRef.current = "";
+                 }
                  playerRef.current?.interrupt();
                  setMode('listening');
                }
@@ -221,7 +237,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
           recognition.onresult = (event: any) => {
             for (let i = event.resultIndex; i < event.results.length; i++) {
               if (event.results[i].isFinal) {
-                transcriptRef.current += event.results[i][0].transcript + "\n";
+                transcriptRef.current += `\nVisitor: ${event.results[i][0].transcript.trim()}\n`;
               }
             }
           };
@@ -256,6 +272,12 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
         try { recognitionRef.current.stop(); } catch(e) {}
     }
     
+    // Flush any pending Chakku text before sending
+    if (chakkuTextBufferRef.current.trim().length > 0) {
+        transcriptRef.current += `\nChakku: ${chakkuTextBufferRef.current.trim()} [hung up]\n`;
+        chakkuTextBufferRef.current = "";
+    }
+
     if (transcriptRef.current.trim().length > 0) {
         const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
         if (accessKey) {
