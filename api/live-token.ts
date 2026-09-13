@@ -129,7 +129,7 @@ export default async function handler(req: any, res: any) {
     const tokenResponse = await ai.authTokens.create({
       model: 'gemini-3.1-flash-live-preview', // The current Live API model in v1alpha
       config: {
-        responseModalities: ['AUDIO', 'TEXT'],
+        responseModalities: ['AUDIO'],
         systemInstruction: {
           parts: [{ text: SYSTEM_INSTRUCTION }]
         },

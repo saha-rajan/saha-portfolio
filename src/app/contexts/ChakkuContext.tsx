@@ -145,7 +145,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
       const session = await ai.live.connect({
         model: 'gemini-3.1-flash-live-preview',
         config: { 
-          responseModalities: ['AUDIO', 'TEXT'],
+          responseModalities: ['AUDIO'],
           systemInstruction: { parts: [{ text: data.systemInstruction }] },
           tools: data.tools
         },
