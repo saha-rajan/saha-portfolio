@@ -261,6 +261,11 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ transcript: transcriptRef.current })
+        }).then(async (res) => {
+            if (!res.ok) {
+                const errData = await res.json();
+                console.error("Backend Error Details:", errData);
+            }
         }).catch(console.error);
     }
     transcriptRef.current = '';
