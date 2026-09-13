@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, MicOff, Mic } from 'lucide-react';
+import { X, MicOff, Mic, Info } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { AudioStreamer, AudioPlayer } from '../utils/audioProcessing';
 
@@ -31,6 +31,8 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
 
   const sessionRef = useRef<any>(null);
   const streamerRef = useRef<AudioStreamer | null>(null);
+  const transcriptRef = useRef<string>('');
+  const recognitionRef = useRef<any>(null);
   const playerRef = useRef<AudioPlayer | null>(null);
   
   // Track location changes to send context to Gemini Live
@@ -208,7 +210,30 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
       };
       await streamerRef.current.start();
       setMode('listening');
-      
+
+      // Setup silent dictation for logging
+      try {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          const recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = false;
+          recognition.onresult = (event: any) => {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              if (event.results[i].isFinal) {
+                transcriptRef.current += event.results[i][0].transcript + "\n";
+              }
+            }
+          };
+          recognition.onend = () => {
+             // Browser might stop it if silent, try restarting if session is still active
+             try { recognition.start(); } catch(e) {}
+          };
+          recognition.start();
+          recognitionRef.current = recognition;
+        }
+      } catch(e) { console.error("Dictation error", e); }
+
     } catch(e: any) {
       console.error("[LIVE_DEBUG] Chakku session initialization exception:", e);
       setMode('error');
@@ -224,6 +249,22 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
     if (sessionRef.current) {
        try { sessionRef.current.close(); } catch(e) {}
     }
+    
+    // Stop recognition and send transcript
+    if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        try { recognitionRef.current.stop(); } catch(e) {}
+    }
+    
+    if (transcriptRef.current.trim().length > 0) {
+        fetch('/api/save-transcript', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ transcript: transcriptRef.current })
+        }).catch(console.error);
+    }
+    transcriptRef.current = '';
+    
     sessionRef.current = null;
     streamerRef.current = null;
     playerRef.current = null;
@@ -273,15 +314,21 @@ export function ChakkuOverlay() {
         >
           <div className="bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-4 md:p-6 w-fit pointer-events-auto flex flex-col gap-3">
             <div className="flex items-center gap-6">
-              <span className="text-[11px] tracking-widest uppercase text-white/80 flex items-center gap-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              <span className="text-[11px] tracking-widest uppercase text-white/80 flex items-center gap-2 relative group cursor-help" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                 <span className="text-white/40">✦</span> CHAKKU · {mode} {mode === 'error' && context.errorMsg ? ` [${context.errorMsg}]` : ''}
+                <Info size={14} className="text-white/40 group-hover:text-white/80 ml-1 transition-colors" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[220px] bg-[#1a1a1a] text-white/80 text-[10px] tracking-normal p-2.5 rounded-lg border border-white/10 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed font-sans normal-case z-50">
+                  Conversations with Chakku are anonymously transcribed to help improve this portfolio.
+                </div>
               </span>
-              <button onClick={toggleMute} className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${isMuted ? 'text-red-400' : 'text-white/40 hover:text-white'}`} title="Mute Microphone">
-                {isMuted ? <MicOff size={16} /> : <Mic size={16} />}
-              </button>
-              <button onClick={stopSession} className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Exit">
-                <X size={16} />
-              </button>
+              <div className="flex items-center gap-1 ml-4">
+                <button onClick={toggleMute} className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${isMuted ? 'text-red-400' : 'text-white/40 hover:text-white'}`} title="Mute Microphone">
+                  {isMuted ? <MicOff size={16} /> : <Mic size={16} />}
+                </button>
+                <button onClick={stopSession} className="p-1.5 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-colors" title="Exit">
+                  <X size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
