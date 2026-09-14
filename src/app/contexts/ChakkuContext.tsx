@@ -343,18 +343,34 @@ export function ChakkuOverlay() {
     <AnimatePresence>
       {isSessionActive && (
         <>
-        <motion.div
+                <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="fixed inset-0 z-[190] pointer-events-none"
+          className="fixed inset-0 z-[190] pointer-events-none overflow-hidden"
           style={{
             background: 'radial-gradient(circle, transparent 60%, rgba(150, 150, 150, 0.2) 140%)',
             boxShadow: 'inset 0 0 100px rgba(150, 150, 150, 0.2)',
             border: '1px solid rgba(150, 150, 150, 0.25)'
           }}
-        />
+        >
+          <style>{AI_BUBBLE_CSS}</style>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={i}
+              className="ai-bubble"
+              style={{
+                width: Math.random() * 4 + 2 + 'px',
+                height: Math.random() * 4 + 2 + 'px',
+                left: Math.random() * 100 + '%',
+                bottom: Math.random() * 20 - 5 + '%',
+                animationDelay: Math.random() * 4 + 's',
+                animationDuration: Math.random() * 3 + 3 + 's'
+              }}
+            />
+          ))}
+        </motion.div>
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
