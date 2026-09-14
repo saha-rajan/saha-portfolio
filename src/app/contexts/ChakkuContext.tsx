@@ -19,7 +19,8 @@ const AI_BUBBLE_CSS = `
   animation: aiBubble infinite ease-in-out;
 }
 `;
-\ntype ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
+
+type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
 
 interface ChakkuContextType {
   isSessionActive: boolean;
