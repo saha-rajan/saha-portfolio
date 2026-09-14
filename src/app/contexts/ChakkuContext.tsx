@@ -342,6 +342,17 @@ export function ChakkuOverlay() {
   return (
     <AnimatePresence>
       {isSessionActive && (
+        <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          className="fixed inset-0 z-[190] pointer-events-none"
+          style={{
+            boxShadow: 'inset 0 0 150px rgba(150, 150, 150, 0.15)'
+          }}
+        />
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -368,6 +379,7 @@ export function ChakkuOverlay() {
             </div>
           </div>
         </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
