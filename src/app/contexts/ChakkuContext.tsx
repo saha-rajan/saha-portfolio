@@ -153,6 +153,15 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
         model: 'gemini-3.1-flash-live-preview',
         config: { 
           responseModalities: ['AUDIO'],
+          generationConfig: {
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: {
+                  voiceName: "Puck"
+                }
+              }
+            }
+          },
           systemInstruction: { parts: [{ text: data.systemInstruction }] },
           tools: data.tools
         },
