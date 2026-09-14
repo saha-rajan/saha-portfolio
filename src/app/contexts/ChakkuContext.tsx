@@ -5,7 +5,21 @@ import { X, MicOff, Mic, Info } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { AudioStreamer, AudioPlayer } from '../utils/audioProcessing';
 
-type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
+
+const AI_BUBBLE_CSS = `
+@keyframes aiBubble {
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  50% { opacity: 0.4; scale: 1; }
+  100% { transform: translateY(-100px) scale(0); opacity: 0; }
+}
+.ai-bubble {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: aiBubble infinite ease-in-out;
+}
+`;
+\ntype ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
 
 interface ChakkuContextType {
   isSessionActive: boolean;
