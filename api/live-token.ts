@@ -122,10 +122,12 @@ export default async function handler(req: any, res: any) {
       model: 'gemini-3.1-flash-live-preview', // The current Live API model in v1alpha
       config: {
         responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: {
-              voiceName: "Puck"
+        generationConfig: {
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: "Puck"
+              }
             }
           }
         },
