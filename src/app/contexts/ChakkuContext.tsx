@@ -29,7 +29,8 @@ const STATIC_BUBBLES = Array.from({ length: 24 }).map(() => ({
   animationDelay: Math.random() * 4 + 's',
   animationDuration: Math.random() * 3 + 3 + 's'
 }));
-\ntype ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
+
+type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
 
 interface ChakkuContextType {
   isSessionActive: boolean;
