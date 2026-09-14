@@ -64,8 +64,9 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
             } else if (args.sectionId === 'bottom') {
               window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             } else {
-              const el = document.getElementById(args.sectionId);
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              const cleanId = String(args.sectionId).toLowerCase().trim().replace(/\s+/g, '-');
+              const el = document.getElementById(cleanId) || document.getElementById(args.sectionId);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
               else success = false;
             }
             
