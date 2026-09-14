@@ -6,30 +6,10 @@ import { GoogleGenAI } from '@google/genai';
 import { AudioStreamer, AudioPlayer } from '../utils/audioProcessing';
 
 
-const AI_BUBBLE_CSS = `
-@keyframes aiBubble {
-  0% { transform: translateY(0) scale(0); opacity: 0; }
-  50% { opacity: 0.8; scale: 1.5; }
-  100% { transform: translateY(-100px) scale(0); opacity: 0; }
-}
-.ai-bubble {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255,255,255,0.8);
-  animation: aiBubble 3s infinite ease-in-out;
-}
-`;
 
 
-const STATIC_BUBBLES = Array.from({ length: 24 }).map(() => ({
-  width: Math.random() * 4 + 2 + 'px',
-  height: Math.random() * 4 + 2 + 'px',
-  left: Math.random() * 100 + '%',
-  bottom: Math.random() * 20 - 5 + '%',
-  animationDelay: Math.random() * 4 + 's',
-  animationDuration: Math.random() * 3 + 3 + 's'
-}));
+
+
 
 type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
 
@@ -374,17 +354,14 @@ export function ChakkuOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="fixed inset-0 z-[190] pointer-events-none overflow-hidden"
+          className="fixed inset-0 z-[190] pointer-events-none"
           style={{
             background: 'radial-gradient(circle, transparent 60%, rgba(150, 150, 150, 0.2) 140%)',
             boxShadow: 'inset 0 0 100px rgba(150, 150, 150, 0.2)',
             border: '1px solid rgba(150, 150, 150, 0.25)'
           }}
         >
-          <style>{AI_BUBBLE_CSS}</style>
-          {STATIC_BUBBLES.map((style, i) => (
-            <div key={i} className="ai-bubble" style={style} />
-          ))}
+
         </motion.div>
         <motion.div
           initial={{ y: 50, opacity: 0 }}
