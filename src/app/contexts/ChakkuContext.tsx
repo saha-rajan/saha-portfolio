@@ -9,14 +9,15 @@ import { AudioStreamer, AudioPlayer } from '../utils/audioProcessing';
 const AI_BUBBLE_CSS = `
 @keyframes aiBubble {
   0% { transform: translateY(0) scale(0); opacity: 0; }
-  50% { opacity: 0.4; scale: 1; }
+  50% { opacity: 0.8; scale: 1.5; }
   100% { transform: translateY(-100px) scale(0); opacity: 0; }
 }
 .ai-bubble {
   position: absolute;
   background: white;
   border-radius: 50%;
-  animation: aiBubble infinite ease-in-out;
+  box-shadow: 0 0 8px rgba(255,255,255,0.8);
+  animation: aiBubble 3s infinite ease-in-out;
 }
 `;
 
