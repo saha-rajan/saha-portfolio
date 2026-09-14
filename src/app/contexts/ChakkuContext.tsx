@@ -350,7 +350,9 @@ export function ChakkuOverlay() {
           transition={{ duration: 0.8 }}
           className="fixed inset-0 z-[190] pointer-events-none"
           style={{
-            boxShadow: 'inset 0 0 200px rgba(0, 0, 0, 0.25), inset 0 0 0 2px rgba(0, 0, 0, 0.05)'
+            background: 'radial-gradient(circle, transparent 60%, rgba(150, 150, 150, 0.2) 140%)',
+            boxShadow: 'inset 0 0 100px rgba(150, 150, 150, 0.2)',
+            border: '1px solid rgba(150, 150, 150, 0.25)'
           }}
         />
         <motion.div
