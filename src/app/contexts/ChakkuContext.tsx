@@ -20,7 +20,16 @@ const AI_BUBBLE_CSS = `
 }
 `;
 
-type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
+
+const STATIC_BUBBLES = Array.from({ length: 24 }).map(() => ({
+  width: Math.random() * 4 + 2 + 'px',
+  height: Math.random() * 4 + 2 + 'px',
+  left: Math.random() * 100 + '%',
+  bottom: Math.random() * 20 - 5 + '%',
+  animationDelay: Math.random() * 4 + 's',
+  animationDuration: Math.random() * 3 + 3 + 's'
+}));
+\ntype ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
 
 interface ChakkuContextType {
   isSessionActive: boolean;
@@ -371,19 +380,8 @@ export function ChakkuOverlay() {
           }}
         >
           <style>{AI_BUBBLE_CSS}</style>
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div
-              key={i}
-              className="ai-bubble"
-              style={{
-                width: Math.random() * 4 + 2 + 'px',
-                height: Math.random() * 4 + 2 + 'px',
-                left: Math.random() * 100 + '%',
-                bottom: Math.random() * 20 - 5 + '%',
-                animationDelay: Math.random() * 4 + 's',
-                animationDuration: Math.random() * 3 + 3 + 's'
-              }}
-            />
+          {STATIC_BUBBLES.map((style, i) => (
+            <div key={i} className="ai-bubble" style={style} />
           ))}
         </motion.div>
         <motion.div
