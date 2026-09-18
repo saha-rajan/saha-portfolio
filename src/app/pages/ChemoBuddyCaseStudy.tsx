@@ -27,10 +27,12 @@ import image_872548eb54e3a9a24e2d9fe1ba3961431a895775 from 'figma:asset/872548eb
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView, useMotionValue, useSpring, AnimatePresence, useReducedMotion } from "motion/react";
-import { ArrowLeft, ArrowRight, X, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, ChevronDown, Trophy, Monitor } from "lucide-react";
+import { ArrowLeft, ArrowRight, X, ArrowUpRight, Layers, Lightbulb, Target, FileText, Clock, Activity, Users, Calendar, UserCheck, Sparkles, Pencil, Layout, TestTube, TrendingUp, BookOpen, Rocket, ChevronUp, ChevronDown, Trophy, Monitor, Play, Pause } from "lucide-react";
 import chemoBanner from "../../assets/Chemo banner.png";
+import chemoAudioFile from "../../assets/ChemoBuddy Audio.mp3";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useCursor } from "../contexts/CursorContext";
+import { useChakku } from "../contexts/ChakkuContext";
 import { literatureReviewData, ResearchPaper } from '../../data/research/literatureReview';
 import { competitiveAnalysisData, CompetitiveProduct } from '../../data/research/competitiveAnalysis';
 import Frame69 from "../../imports/Frame69";
@@ -884,6 +886,140 @@ export function ChemoBuddyCaseStudy() {
   const [prevBottomNavPosition, setPrevBottomNavPosition] = useState({ x: 0, y: 0 });
   const [nextBottomNavPosition, setNextBottomNavPosition] = useState({ x: 0, y: 0 });
   const shouldReduceMotion = useReducedMotion();
+  const { isSessionActive } = useChakku();
+
+  // Audio Sync Scrolling
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isAudioActive, setIsAudioActive] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const lastScrolledIndexRef = useRef<number>(-1);
+  const isDraggingRef = useRef(false);
+
+  const scrollTimestamps = [
+    { time: 0, id: 'hero' },
+    { time: 24, id: 'overview' },
+    { time: 40, id: 'context' },
+    { time: 71, id: 'solution' },
+    { time: 80, id: 'command-center' },
+    { time: 99, id: 'ai-companion' },
+    { time: 122, id: 'symptom-tracker' },
+    { time: 146, id: 'research' },
+    { time: 158, id: 'key-insights' },
+    { time: 164, id: 'insight-1' },
+    { time: 175, id: 'insight-2' },
+    { time: 186, id: 'insight-3' },
+    { time: 195, id: 'constraint' },
+    { time: 209, id: 'design' },
+    { time: 225, id: 'caregiver-access' },
+    { time: 235, id: 'testing' },
+    { time: 244, id: 'iteration-1' },
+    { time: 252, id: 'iteration-2' },
+    { time: 258, id: 'iteration-3' },
+    { time: 265, id: 'impact' },
+    { time: 285, id: 'learnings' }
+  ];
+
+  const handlePointerMoveRef = useRef<(e: PointerEvent) => void>(null);
+  const handlePointerUpRef = useRef<() => void>(null);
+
+  const handleScrub = (clientX: number) => {
+    if (!progressBarRef.current || !audioRef.current) return;
+    const duration = audioRef.current.duration || 1;
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const percentage = x / rect.width;
+    audioRef.current.currentTime = percentage * duration;
+    setAudioProgress(percentage * 100);
+  };
+
+  handlePointerMoveRef.current = (e: PointerEvent) => {
+    if (isDraggingRef.current) {
+      handleScrub(e.clientX);
+    }
+  };
+
+  handlePointerUpRef.current = () => {
+    isDraggingRef.current = false;
+    document.removeEventListener('pointermove', handlePointerMoveRef.current!);
+    document.removeEventListener('pointerup', handlePointerUpRef.current!);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDraggingRef.current = true;
+    handleScrub(e.clientX);
+    document.addEventListener('pointermove', handlePointerMoveRef.current!);
+    document.addEventListener('pointerup', handlePointerUpRef.current!);
+  };
+
+  useEffect(() => {
+    let animationFrameId: number;
+
+    const scrollLoop = () => {
+      if (audioRef.current && isAudioActive) {
+        const currentTime = audioRef.current.currentTime;
+        const duration = audioRef.current.duration || 1;
+        
+        if (!isDraggingRef.current) {
+          setAudioProgress((currentTime / duration) * 100);
+        }
+
+        if (!audioRef.current.paused && !isDraggingRef.current) {
+          let targetIndex = -1;
+          for (let i = scrollTimestamps.length - 1; i >= 0; i--) {
+            if (currentTime >= scrollTimestamps[i].time) {
+              targetIndex = i;
+              break;
+            }
+          }
+          
+          if (targetIndex !== -1 && targetIndex !== lastScrolledIndexRef.current) {
+            lastScrolledIndexRef.current = targetIndex;
+            const targetMark = scrollTimestamps[targetIndex];
+            const targetEl = document.getElementById(targetMark.id);
+            
+            if (targetEl) {
+              const offset = window.innerHeight * 0.15;
+              const targetY = Math.max(0, targetEl.offsetTop - offset);
+              window.scrollTo({ top: targetY, behavior: 'smooth' });
+            }
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(scrollLoop);
+    };
+    
+    scrollLoop();
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isAudioActive]);
+
+  const toggleAudio = () => {
+    if (audioRef.current) {
+      if (!isAudioActive) {
+        setIsAudioActive(true);
+      }
+      
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+      setIsAudioActive(false);
+      setAudioProgress(0);
+      lastScrolledIndexRef.current = -1;
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -891,8 +1027,11 @@ export function ChemoBuddyCaseStudy() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show button when user scrolls down 300px
-      if (window.scrollY > 300) {
+      // Calculate how close to bottom
+      const isNearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 600;
+      
+      // Show button when user scrolls down 300px AND not near bottom
+      if (window.scrollY > 300 && !isNearBottom) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
@@ -1006,6 +1145,77 @@ export function ChemoBuddyCaseStudy() {
 
   return (
     <div className="bg-black min-h-screen text-[#A7A7A7] font-sans selection:bg-white selection:text-black">
+      <audio 
+        ref={audioRef} 
+        src={chemoAudioFile} 
+        onLoadedMetadata={(e) => setAudioDuration(e.currentTarget.duration)}
+        onEnded={() => {
+          setIsPlaying(false);
+          setIsAudioActive(false);
+        }} 
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+      />
+
+      <AnimatePresence>
+        {isAudioActive && (
+          <motion.div 
+            className="fixed left-1/2 -translate-x-1/2 z-[20000] bg-[#121217]/90 backdrop-blur-md border border-white/10 rounded-full px-5 py-3 flex items-center gap-5 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{ bottom: isSessionActive ? '110px' : '48px' }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+          >
+            <button 
+              onClick={toggleAudio}
+              className="text-white hover:text-[#1CB4F5] transition-colors"
+            >
+              {isPlaying ? <Pause size={18} /> : <Play size={18} />}
+            </button>
+            
+            <div 
+              className="relative w-48 md:w-80 h-4 flex items-center cursor-pointer group"
+              ref={progressBarRef}
+              onPointerDown={handlePointerDown}
+            >
+              {/* Background Track */}
+              <div className="absolute left-0 w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#1CB4F5] transition-all duration-100 ease-linear" 
+                  style={{ width: `${audioProgress}%` }} 
+                />
+              </div>
+              
+              {/* Timestamp Dots */}
+              {audioDuration > 0 && scrollTimestamps.map((ts, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 rounded-full bg-white/40 pointer-events-none transition-all duration-300 group-hover:bg-white/80"
+                  style={{ 
+                    left: `calc(${(ts.time / audioDuration) * 100}% - 2px)`,
+                    top: '50%',
+                    transform: 'translateY(-50%)'
+                  }}
+                />
+              ))}
+
+              {/* Scrubber handle */}
+              <div 
+                className="absolute w-3 h-3 bg-white rounded-full shadow-md transform -translate-x-1/2 transition-transform scale-0 group-hover:scale-100"
+                style={{ left: `${audioProgress}%` }}
+              />
+            </div>
+
+            <button 
+              onClick={stopAudio}
+              className="text-white/50 hover:text-white transition-colors ml-1"
+            >
+              <X size={18} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Scroll to Top Button */}
       <motion.button
         onClick={scrollToTop}
@@ -1023,7 +1233,7 @@ export function ChemoBuddyCaseStudy() {
           pointerEvents: showScrollTop ? 'auto' : 'none'
         }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-28 right-8 z-[10000] w-16 h-10 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent hover:scale-110 transition-all duration-300"
+        className="fixed bottom-28 right-6 md:right-12 lg:right-24 z-[10000] w-12 h-12 bg-white/10 backdrop-blur-sm rounded-md flex items-center justify-center text-white hover:bg-[#282834] hover:scale-110 transition-all duration-300"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         aria-label="Scroll to top"
       >
@@ -1076,6 +1286,16 @@ export function ChemoBuddyCaseStudy() {
                   Selected for a Mayo Clinic Observership
                 </span>
               </div>
+              
+              {!isAudioActive && (
+                <button
+                  onClick={toggleAudio}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-all border border-white/20 text-white text-xs tracking-wide uppercase case-meta"
+                >
+                  <Play size={14} />
+                  <span>Listen to Case Study</span>
+                </button>
+              )}
             </motion.div>
           </div>
             
@@ -1421,6 +1641,7 @@ export function ChemoBuddyCaseStudy() {
               <div className="space-y-32">
                 {/* 01 Command Center Dashboard */}
                 <motion.div 
+                  id="command-center"
                   className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1443,6 +1664,7 @@ export function ChemoBuddyCaseStudy() {
 
                 {/* 02 AI Educational Companion */}
                 <motion.div 
+                  id="ai-companion"
                   className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1465,6 +1687,7 @@ export function ChemoBuddyCaseStudy() {
 
                 {/* 03 3D Symptom Tracker */}
                 <motion.div 
+                  id="symptom-tracker"
                   className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
                   initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1618,14 +1841,14 @@ export function ChemoBuddyCaseStudy() {
   </div>
 
   {/* KEY RESEARCH INSIGHTS */}
-  <div className="mb-24">
+  <div id="key-insights" className="mb-24">
     <h3 className="case-meta text-[#1CB4F5] mb-12 flex items-center gap-4">
       Key Research Insights
       <div className="h-[1px] bg-gradient-to-r from-[#1CB4F5]/50 to-transparent flex-grow"></div>
     </h3>
 
     {/* INSIGHT 01 */}
-    <div className="mb-20">
+    <div id="insight-1" className="mb-20">
       <div className="mb-12">
         <div className="case-meta text-[#1CB4F5] mb-4">01 / INSIGHT</div>
         <h4 className="case-subsection-title mb-6">
@@ -1660,7 +1883,7 @@ export function ChemoBuddyCaseStudy() {
     </div>
 
     {/* INSIGHT 02 */}
-    <div className="mb-20">
+    <div id="insight-2" className="mb-20">
       <div className="mb-12">
         <div className="case-meta text-[#1CB4F5] mb-4">02 / INSIGHT</div>
         <h4 className="case-subsection-title mb-6">
@@ -1694,8 +1917,8 @@ export function ChemoBuddyCaseStudy() {
     </div>
 
     {/* INSIGHT 03 */}
-    <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-      <div className="lg:col-span-7">
+    <div id="insight-3" className="mb-20">
+      <div className="mb-12">
         <div className="case-meta text-[#1CB4F5] mb-4">03 / INSIGHT</div>
         <h4 className="case-subsection-title mb-6">
           The caregiver's invisible workload is unsupported.
@@ -1704,7 +1927,7 @@ export function ChemoBuddyCaseStudy() {
           Family members and caregivers carry a significant emotional and logistical burden, yet existing digital health platforms consistently exclude them from the primary user experience.
         </p>
         
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <div className="case-meta text-[#5A5A5A] mb-3">EVIDENCE</div>
             <ul className="space-y-3 border-l border-white/10 pl-6">
@@ -1713,23 +1936,11 @@ export function ChemoBuddyCaseStudy() {
               <li className="case-body">Thematic cluster: The caregiver's invisible workload.</li>
             </ul>
           </div>
-          <div className="bg-[#121217] p-6 rounded-xl border border-white/5">
+          <div className="bg-[#121217] p-6 rounded-xl border border-white/5 h-fit">
             <div className="case-meta text-[#1CB4F5] mb-3">WHAT THIS MEANS FOR THE PRODUCT</div>
             <p className="case-body text-white">
               Create dedicated caregiver access providing digestible summaries, progress reports, and shared tracking without compromising patient autonomy.
             </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="lg:col-span-5 mt-8 lg:mt-0">
-        <div className="case-meta text-[#5A5A5A] mb-4 text-[10px]">SUPPORTING ARTIFACT / COMPETITIVE ANALYSIS</div>
-        <div className="relative rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0c] p-6">
-          <div className="h-[250px] overflow-hidden rounded-lg relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0a0a0c] z-10 pointer-events-none"></div>
-            <div className="scale-75 origin-top-left w-[133%]">
-              <CompetetiveAnalysis />
-            </div>
           </div>
         </div>
       </div>
@@ -1738,6 +1949,7 @@ export function ChemoBuddyCaseStudy() {
 
   {/* AI + CLINICAL TRUST AS A PRODUCT CONSTRAINT */}
   <motion.div 
+    id="constraint"
     initial="hidden"
     whileInView="visible"
     viewport={{ once: true }}
@@ -2421,7 +2633,7 @@ export function ChemoBuddyCaseStudy() {
               </div>
 
               {/* Caregiver Access */}
-              <div className="mb-24">
+              <div id="caregiver-access" className="mb-24">
                 <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8 mb-12">
                   <div>
                     <h3 className="text-white font-bold text-[24px] mb-3">Caregiver Access</h3>
@@ -2512,7 +2724,7 @@ export function ChemoBuddyCaseStudy() {
               {/* Editorial Design Iterations Sequence */}
               <div className="space-y-32 mb-32">
                 {/* ITERATION 01 */}
-                <div className="flex flex-col">
+                <div id="iteration-1" className="flex flex-col">
                   {/* Header */}
                   <div className="flex items-center gap-4 mb-8">
                     <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">01 / ITERATION</div>
@@ -2581,7 +2793,7 @@ export function ChemoBuddyCaseStudy() {
                 </div>
 
                 {/* ITERATION 02 */}
-                <div className="flex flex-col">
+                <div id="iteration-2" className="flex flex-col">
                   {/* Header */}
                   <div className="flex items-center gap-4 mb-8">
                     <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">02 / ITERATION</div>
@@ -2650,7 +2862,7 @@ export function ChemoBuddyCaseStudy() {
                 </div>
 
                 {/* ITERATION 03 */}
-                <div className="flex flex-col">
+                <div id="iteration-3" className="flex flex-col">
                   {/* Header */}
                   <div className="flex items-center gap-4 mb-8">
                     <div className="font-mono text-[12px] tracking-widest uppercase text-white/50">03 / ITERATION</div>
@@ -2869,6 +3081,7 @@ export function ChemoBuddyCaseStudy() {
 
             {/* Section 07: Impact */}
             <motion.section
+              id="impact"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -2907,7 +3120,7 @@ export function ChemoBuddyCaseStudy() {
                   onMouseLeave={() => setHideCursor(false)}
                 >
                   <p className="text-[#6FFF00] text-5xl font-bold mb-3">
-                    <AnimatedCounter value={95} decimals={0} />%
+                    <AnimatedCounter value={100} decimals={0} />%
                   </p>
                   <p className="text-white font-bold mb-2">Task Completion</p>
                   <p className="text-sm leading-relaxed">Users successfully completed all test scenarios</p>
@@ -2954,24 +3167,11 @@ export function ChemoBuddyCaseStudy() {
                 Clinicians praised the balance between safety and support. Caregivers valued clarity and permission-based access.
               </motion.p>
 
-              {/* Impact Placeholder */}
-              <motion.div 
-                className="w-full rounded-lg overflow-hidden border border-white/10"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <img 
-                  src={image_9a41f841d18e2e15b19fa5b42310fca9fe85eb4d}
-                  alt="ChemoBuddy Presentation"
-                  className="w-full h-auto"
-                />
-              </motion.div>
             </motion.section>
 
-            {/* Section 08: Learnings */}
+            {/* Section 08: Key Learnings */}
             <motion.section
+              id="learnings"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

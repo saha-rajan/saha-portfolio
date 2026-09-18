@@ -74,8 +74,11 @@ export function ArizonaYogaCaseStudy() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show button when user scrolls down 300px
-      if (window.scrollY > 300) {
+      // Calculate how close to bottom
+      const isNearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 600;
+      
+      // Show button when user scrolls down 300px AND not near bottom
+      if (window.scrollY > 300 && !isNearBottom) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
@@ -188,7 +191,7 @@ export function ArizonaYogaCaseStudy() {
           pointerEvents: showScrollTop ? 'auto' : 'none'
         }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-28 right-8 z-[10000] w-16 h-10 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent hover:scale-110 transition-all duration-300"
+        className="fixed bottom-28 right-6 md:right-12 lg:right-24 z-[10000] w-12 h-12 bg-white/10 backdrop-blur-sm rounded-md flex items-center justify-center text-white hover:bg-[#282834] hover:scale-110 transition-all duration-300"
         style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         aria-label="Scroll to top"
       >

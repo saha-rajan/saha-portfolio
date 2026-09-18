@@ -59,9 +59,44 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
         switch (name) {
           case 'NAVIGATE':
             if (args.path) {
-              navigate(args.path);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-               
+              const rawPath = args.path.toLowerCase().trim();
+              let targetPath = rawPath;
+              
+              // Normalize aliases and common LLM hallucinations
+              if (rawPath === '/works/aio' || rawPath === '/aio' || rawPath === '/works/isle' || rawPath === '/aisle' || rawPath === 'aisle') {
+                targetPath = '/works/aisle';
+              } else if (rawPath === '/works/chemo' || rawPath === '/works/chemo-buddy' || rawPath === '/chemobuddy' || rawPath === 'chemobuddy') {
+                targetPath = '/works/chemobuddy';
+              } else if (rawPath === '/works/yoga' || rawPath === '/works/arizona-yoga' || rawPath === '/arizona-yoga-studio' || rawPath === 'yoga') {
+                targetPath = '/works/arizona-yoga-studio';
+              } else if (rawPath === '/works/aura' || rawPath === '/aura' || rawPath === 'aura') {
+                targetPath = '/works/aura';
+              } else if (rawPath === '/resume' || rawPath === '/experience' || rawPath === '/education' || rawPath === '/skills') {
+                targetPath = '/about';
+              } else if (rawPath === '/reach-out' || rawPath === '/email') {
+                targetPath = '/contact';
+              } else if (rawPath === '/experiments' || rawPath === '/lab') {
+                targetPath = '/studio';
+              } else if (rawPath === '/home' || rawPath === '/work' || rawPath === '/works') {
+                targetPath = '/';
+              }
+              
+              // Ensure path has leading slash
+              if (!targetPath.startsWith('/')) {
+                targetPath = '/' + targetPath;
+              }
+
+              // Validate against known routes
+              const validRoutes = ['/', '/about', '/contact', '/studio', '/works/chemobuddy', '/works/aisle', '/works/aura', '/works/arizona-yoga-studio', '/works/art-gallery', '/works/e-commerce'];
+              
+              if (validRoutes.includes(targetPath)) {
+                navigate(targetPath);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                console.warn(`[LIVE_DEBUG] Unrecognized navigation path: ${targetPath}`);
+                // Instead of crashing the router, fallback to failure
+                success = false;
+              }
             }
             break;
           case 'SCROLL_TO':

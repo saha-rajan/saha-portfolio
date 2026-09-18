@@ -25,6 +25,7 @@ Use these exact IDs for `SCROLL_TO`:
 - `testing` (Usability testing and outcomes)
 
 ## AIsle (Route: /works/aisle)
+CRITICAL: The route for AIsle is `/works/aisle`. Never use `/works/aio` or any other abbreviation.
 Use these exact IDs for `SCROLL_TO`:
 - `hero` (Top of the page)
 - `glance` (Project at a glance)

@@ -60,7 +60,7 @@ function Layout() {
       "/works/aisle": "AIsle Case Study | Saha's Portfolio",
     };
     
-    const newTitle = pathTitles[location.pathname] || "Saha's Portfolio";
+    const newTitle = pathTitles[location.pathname] || "Page Not Found | Saha's Portfolio";
     document.title = newTitle;
 
     // 2. Send to GA4
@@ -99,9 +99,14 @@ function Layout() {
   );
 }
 
+import { RootErrorBoundary } from "./components/ErrorBoundary";
+import { NotFound } from "./pages/NotFound";
+import { Navigate } from "react-router-dom";
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
+    errorElement: <RootErrorBoundary />,
     children: [
       {
         path: "/",
@@ -142,6 +147,32 @@ const router = createBrowserRouter([
       {
         path: "/works/e-commerce",
         element: <Home />,
+      },
+      // Aliases / Redirects
+      {
+        path: "/works/aio",
+        element: <Navigate to="/works/aisle" replace />,
+      },
+      {
+        path: "/works/chemo-buddy",
+        element: <Navigate to="/works/chemobuddy" replace />,
+      },
+      {
+        path: "/works/yoga",
+        element: <Navigate to="/works/arizona-yoga-studio" replace />,
+      },
+      {
+        path: "/resume",
+        element: <Navigate to="/about" replace />,
+      },
+      {
+        path: "/experience",
+        element: <Navigate to="/about" replace />,
+      },
+      // Catch-all for 404
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },

@@ -723,7 +723,8 @@ export function AuraCaseStudy() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
+      const isNearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 600;
+      if (window.scrollY > 300 && !isNearBottom) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
@@ -788,7 +789,7 @@ export function AuraCaseStudy() {
           pointerEvents: showScrollTop ? ("auto" as const) : ("none" as const),
         }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-28 right-8 z-[10000] w-16 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 border border-white/15 hover:border-transparent"
+        className="fixed bottom-28 right-6 md:right-12 lg:right-24 z-[10000] w-12 h-12 backdrop-blur-sm rounded-md flex items-center justify-center transition-all duration-300"
         style={{
           background: `rgba(20, 20, 25, 0.8)`,
           color: "#FFFFFF",
