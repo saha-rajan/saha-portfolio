@@ -1018,8 +1018,24 @@ export function ChemoBuddyCaseStudy() {
       setIsAudioActive(false);
       setAudioProgress(0);
       lastScrolledIndexRef.current = -1;
+      window.dispatchEvent(new CustomEvent('chakku-audio-ended', { detail: { target: 'chemobuddy' } }));
     }
   };
+
+  useEffect(() => {
+    const handlePlayAudio = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.target === 'chemobuddy') {
+        if (audioRef.current) {
+          setIsAudioActive(true);
+          audioRef.current.play();
+          setIsPlaying(true);
+        }
+      }
+    };
+    window.addEventListener('chakku-play-audio', handlePlayAudio);
+    return () => window.removeEventListener('chakku-play-audio', handlePlayAudio);
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -1152,6 +1168,7 @@ export function ChemoBuddyCaseStudy() {
         onEnded={() => {
           setIsPlaying(false);
           setIsAudioActive(false);
+          window.dispatchEvent(new CustomEvent('chakku-audio-ended', { detail: { target: 'chemobuddy' } }));
         }} 
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}

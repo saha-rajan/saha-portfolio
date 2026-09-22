@@ -73,6 +73,7 @@ export function Header() {
   };
 
   const handleContactHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setHideCursor(true);
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -90,6 +91,7 @@ export function Header() {
   };
 
   const handleContactLeave = () => {
+    setHideCursor(false);
     setContactTextPosition({ x: 0, y: 0 });
   };
 

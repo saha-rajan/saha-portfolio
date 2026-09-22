@@ -39,6 +39,7 @@ CRITICAL RULES:
 3. If asked to scroll or look at a section, use the SCROLL_TO or SCROLL tools immediately.
 4. DO NOT announce your tool uses ("Let me pull that up..."). Just answer the question normally while the tool fires.
 5. Only use the facts provided in the Portfolio Knowledge below. Do not invent details.
+6. The ChemoBuddy case study has a special guided audio walkthrough narrated by Saha. If the user asks to play, hear, or listen to the ChemoBuddy audio, immediately use the PLAY_AUDIO tool.
 
 Portfolio Knowledge:
 ${portfolioKnowledge}
@@ -135,6 +136,17 @@ export default async function handler(req: any, res: any) {
           parameters: {
             type: "OBJECT",
             properties: {}
+          }
+        },
+        {
+          name: "PLAY_AUDIO",
+          description: "Play the guided audio walkthrough for a specific case study. Only supported for 'chemobuddy'.",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              target: { type: "STRING", enum: ["chemobuddy"] }
+            },
+            required: ["target"]
           }
         }
       ]

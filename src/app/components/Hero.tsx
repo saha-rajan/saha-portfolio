@@ -208,15 +208,15 @@ export function Hero() {
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
               <div className="flex items-center shrink-0">
-                <span className="text-[#E5E5E5] mr-2">✦</span>
+                <span className="text-[#1CB4F5] mr-2">✦</span>
                 <motion.span 
-                  className="bg-[linear-gradient(110deg,#b3b3b3_35%,#ffffff_50%,#b3b3b3_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium whitespace-nowrap"
+                  className="bg-[linear-gradient(110deg,#1CB4F5_35%,#ffffff_50%,#1CB4F5_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium whitespace-nowrap"
                   animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
                   transition={{ duration: 3, ease: "linear", repeat: Infinity }}
                 >
                   meet chakku
                 </motion.span>
-                <span className="text-[#E5E5E5] group-hover:text-white transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
+                <span className="text-[#1CB4F5] group-hover:text-[#63D2FF] transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
                   ↗
                 </span>
               </div>
@@ -228,7 +228,7 @@ export function Hero() {
                     animate={{ rotateX: 0, opacity: 1, y: 0 }}
                     exit={{ rotateX: 60, opacity: 0, y: -10 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="absolute left-0 text-[#737373] whitespace-nowrap"
+                    className="absolute left-0 text-[#A7A7A7] whitespace-nowrap"
                     style={{ transformOrigin: "center center" }}
                   >
                     {chakkuPhrases[currentChakkuPhrase]}

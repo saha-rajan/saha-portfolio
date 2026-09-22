@@ -131,6 +131,27 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
             navigate(-1);
             
             break;
+          case 'PLAY_AUDIO':
+            if (args.target === 'chemobuddy') {
+              if (location.pathname !== '/works/chemobuddy') {
+                navigate('/works/chemobuddy');
+              }
+              // Wait for navigation/render then dispatch audio trigger
+              setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('chakku-play-audio', { detail: { target: 'chemobuddy' } }));
+              }, 500);
+
+              // Mute Chakku's microphone so it doesn't talk to itself
+              setIsMuted(true);
+              if (streamerRef.current) {
+                streamerRef.current.isMuted = true;
+              }
+              // Stop any current Chakku speech
+              if (playerRef.current) {
+                playerRef.current.interrupt();
+              }
+            }
+            break;
           default:
             success = false;
         }
@@ -162,6 +183,37 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
       }
     }
   };
+
+  useEffect(() => {
+    const handleAudioEnded = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.target === 'chemobuddy') {
+        // Unmute Chakku
+        setIsMuted(false);
+        if (streamerRef.current) {
+          streamerRef.current.isMuted = false;
+        }
+        
+        // Notify Chakku that the audio is over
+        if (sessionRef.current) {
+          try {
+            sessionRef.current.sendClientContent({
+              turns: [{
+                role: "user",
+                parts: [{ text: "[System Notification: The ChemoBuddy audio case study has finished playing or was stopped by the user. You are now unmuted. Briefly acknowledge this and ask the user what they thought.]" }]
+              }],
+              turnComplete: true
+            });
+          } catch (err) {
+            console.error('Error sending audio-end notification', err);
+          }
+        }
+      }
+    };
+    
+    window.addEventListener('chakku-audio-ended', handleAudioEnded);
+    return () => window.removeEventListener('chakku-audio-ended', handleAudioEnded);
+  }, []);
 
   const startSession = async () => {
     setIsSessionActive(true);
