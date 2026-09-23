@@ -214,7 +214,7 @@ export function Hero() {
                   animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
                   transition={{ duration: 3, ease: "linear", repeat: Infinity }}
                 >
-                  meet chakku
+                  meet chakku AI
                 </motion.span>
                 <span className="text-[#1CB4F5] group-hover:text-[#63D2FF] transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
                   ↗
