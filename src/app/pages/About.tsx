@@ -206,11 +206,10 @@ export function About() {
           >
             <h3 className="text-xl font-bold mb-6 text-white">BACKGROUND</h3>
             <p className="text-[#A7A7A7] leading-relaxed mb-6">
-              With a background in computer science and visual arts, I approach design with a systematic yet creative mindset. 
-              I believe in creating interfaces that are not just functional but also emotionally resonant.
+              I started in architecture, designing spaces around how people move, feel and behave. Somewhere along the way, the spaces became screens.
             </p>
             <p className="text-[#A7A7A7] leading-relaxed">
-              Over the years, I've had the privilege of working with diverse clients, from early-stage startups to established brands, helping them define their digital presence through clear, impactful design.
+              Now I design and build digital products, bringing the same systems thinking, visual craft and curiosity into everything from early ideas to shipped experiences.
             </p>
           </motion.div>
 
