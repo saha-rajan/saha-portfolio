@@ -135,7 +135,7 @@ export function Header() {
             About
           </Link>
           <a
-            href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
+            href="https://drive.google.com/file/d/11kv9tkJK-1R-dJ06FwXgLKR3rHmiDzli/view?usp=drive_link" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium hover:text-gray-400 transition-colors"
@@ -203,7 +203,7 @@ export function Header() {
               About
             </Link>
             <a
-              href="https://drive.google.com/file/d/1F9BM2hwJhAVcU_wmbbkOZkHrrbLJzVXB/view?usp=sharing" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
+              href="https://drive.google.com/file/d/11kv9tkJK-1R-dJ06FwXgLKR3rHmiDzli/view?usp=drive_link" onClick={() => trackEvent("download_resume", { link_name: "resume_header" })}
               target="_blank"
               rel="noopener noreferrer"
               className="block text-sm font-medium hover:text-gray-400 transition-colors"
