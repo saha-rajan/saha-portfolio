@@ -194,7 +194,7 @@ export function Hero() {
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
-            I’m a founding designer who loves the 0→1. I turn fuzzy ideas into products used by 3,000+ people, experiment with AI from research to media production and occasionally wonder, “What if we tried it this way?”
+            I’m a founding designer who loves the 0→1. I turn fuzzy ideas into products used by 100K+ users, experiment with AI from research to media production and occasionally wonder, “What if we tried it this way?”
           </p>
           
           {/* Say Hi Button */}
