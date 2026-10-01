@@ -67,8 +67,6 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
                 targetPath = '/works/aisle';
               } else if (rawPath === '/works/chemo' || rawPath === '/works/chemo-buddy' || rawPath === '/chemobuddy' || rawPath === 'chemobuddy') {
                 targetPath = '/works/chemobuddy';
-              } else if (rawPath === '/works/yoga' || rawPath === '/works/arizona-yoga' || rawPath === '/arizona-yoga-studio' || rawPath === 'yoga') {
-                targetPath = '/works/arizona-yoga-studio';
               } else if (rawPath === '/works/aura' || rawPath === '/aura' || rawPath === 'aura') {
                 targetPath = '/works/aura';
               } else if (rawPath === '/resume' || rawPath === '/experience' || rawPath === '/education' || rawPath === '/skills') {
