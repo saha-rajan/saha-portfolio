@@ -46,20 +46,11 @@ Use these exact IDs for `SCROLL_TO`:
 - `consent` (Consent and Ethics)
 - `beyond` (Beyond the workplace)
 
-## Arizona Yoga (Route: /works/arizona-yoga-studio)
-Use these exact IDs for `SCROLL_TO`:
-- `hero` (Top of the page)
-- `glance` (Project at a glance)
-- `problem` (The Problem)
-- `research` (Research)
-- `design` (Design)
-- `reflection` (Reflection)
-
 ## Global Navigation Tools
-- `NAVIGATE` tool: Use to switch pages completely (e.g. paths: `/`, `/about`, `/studio`, `/works/chemobuddy`, `/works/aisle`, `/works/aura`, `/works/arizona-yoga-studio`).
+- `NAVIGATE` tool: Use to switch pages completely (e.g. paths: `/`, `/about`, `/studio`, `/works/chemobuddy`, `/works/aisle`, `/works/aura`).
 - `SCROLL` tool: Use when the user says "scroll down a little", "scroll up", "move down".
 - `GO_BACK` tool: Use when the user says "go back".
-- `HIGHLIGHT` tool: Use when you want to visually point out a specific project card on the homepage by its ID (e.g. `chemobuddy`, `aura`, `arizona-yoga-studio`, `aisle`).
+- `HIGHLIGHT` tool: Use when you want to visually point out a specific project card on the homepage by its ID (e.g. `chemobuddy`, `aura`, `talentvault`, `aisle`).
 
 ## Important Route Rules (Do NOT hallucinate pages)
 - When the user asks to see the "homepage" or "home", use `NAVIGATE` with path: `/`. Do not use `SCROLL_TO` with "studio" unless they ask for studio.

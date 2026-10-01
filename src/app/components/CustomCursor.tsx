@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { useLocation } from "react-router-dom";
+import { motion, useMotionValue, useSpring, AnimatePresence } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
 
 export function CustomCursor() {
   const [isHoveringHeading, setIsHoveringHeading] = useState(false);
   const [headingHeight, setHeadingHeight] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const { hideCursor, setHideCursor, isTextCursor, cursorText, cursorProgress, cursorTimeLeft } = useCursor();
+  const location = useLocation();
+  const { hideCursor, setHideCursor, isTextCursor, cursorText, cursorProgress, cursorTimeLeft, cursorMode, setCursorMode, setCursorText } = useCursor();
 
   // Use refs to access latest state inside event listeners without re-binding
   const isTextCursorRef = useRef(isTextCursor);
@@ -16,6 +18,12 @@ export function CustomCursor() {
   useEffect(() => { isTextCursorRef.current = isTextCursor; }, [isTextCursor]);
   useEffect(() => { isHoveringHeadingRef.current = isHoveringHeading; }, [isHoveringHeading]);
   useEffect(() => { headingHeightRef.current = headingHeight; }, [headingHeight]);
+
+  // Reset cursor state on route change
+  useEffect(() => {
+    setCursorMode('default');
+    setCursorText('');
+  }, [location.pathname, setCursorMode, setCursorText]);
 
   // High-performance motion values that bypass React's render cycle
   const mouseX = useMotionValue(-100);
@@ -51,6 +59,17 @@ export function CustomCursor() {
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target) return;
+      
+      if (target.closest('[data-no-text-cursor="true"]')) {
+        currentEligibleElement = null;
+        currentTextRects = null;
+        // Don't use ref for state update to trigger re-render properly if it was previously true
+        if (isHoveringHeadingRef.current) {
+          setIsHoveringHeading(false);
+          setHeadingHeight(0);
+        }
+        return;
+      }
       
       let headingElementFound: HTMLElement | null = null;
       let currentElement: HTMLElement | null = target;
@@ -238,31 +257,51 @@ export function CustomCursor() {
   return (
     <>
       <motion.div
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] ${
-          shouldShowHeadingCursor || isTextCursor ? 'bg-[#1CB4F5]' : 'rounded-full'
+        className={`fixed top-0 left-0 pointer-events-none z-[9999] flex items-center justify-center text-center ${
+          (shouldShowHeadingCursor || isTextCursor) && cursorMode !== 'project' ? 'bg-[#1CB4F5]' : 'rounded-full'
         }`}
         style={{
-          opacity: hideCursor || showTextCursor ? 0 : (shouldShowHeadingCursor || isTextCursor) ? 1 : 0.5,
-          width: (shouldShowHeadingCursor || isTextCursor) ? '2px' : '32px',
-          height: shouldShowHeadingCursor ? `${headingHeight}px` : (isTextCursor ? '24px' : '32px'),
-          backgroundColor: (shouldShowHeadingCursor || isTextCursor) ? '#1CB4F5' : '#8B8B8B',
+          opacity: hideCursor || (showTextCursor && cursorMode !== 'project') ? 0 : cursorMode === 'project' ? 0.5 : (shouldShowHeadingCursor || isTextCursor) ? 1 : 0.5,
+          width: cursorMode === 'project' ? '100px' : (shouldShowHeadingCursor || isTextCursor) ? '2px' : '32px',
+          height: cursorMode === 'project' ? '100px' : shouldShowHeadingCursor ? `${headingHeight}px` : (isTextCursor ? '24px' : '32px'),
+          backgroundColor: cursorMode === 'project' ? '#8B8B8B' : (shouldShowHeadingCursor || isTextCursor) ? '#1CB4F5' : '#8B8B8B',
           x: smoothX,
-          y: smoothY
+          y: smoothY,
+          marginLeft: cursorMode === 'project' ? '-34px' : '0px',
+          marginTop: cursorMode === 'project' ? '-34px' : '0px',
+          boxShadow: 'none',
         }}
         transition={{
+          width: { duration: 0.3, ease: "easeOut" },
+          height: { duration: 0.3, ease: "easeOut" },
           opacity: { duration: 0.2 },
         }}
-      />
+      >
+        <AnimatePresence>
+          {cursorMode === 'project' && (
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="text-white font-semibold text-[11px] leading-tight uppercase tracking-[0.05em] whitespace-pre-wrap px-2"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              {cursorText}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {showTextCursor && (
+      {showTextCursor && cursorMode !== 'project' && (
         <motion.div
-          className={`fixed top-0 left-0 pointer-events-none z-[9999] bg-white text-black pl-6 ${cursorProgress !== null ? 'pr-2' : 'pr-6'} py-3 rounded-full font-medium text-sm flex items-center gap-3`}
+          className="fixed top-0 left-0 pointer-events-none z-[9999] bg-white text-black pl-6 pr-6 py-3 rounded-full font-medium text-sm flex items-center gap-3"
           style={{
             fontFamily: "'IBM Plex Mono', monospace",
             letterSpacing: '0.02em',
             x: smoothTextX,
             y: smoothTextY,
-            width: 'max-content'
+            width: 'max-content',
+            paddingRight: cursorProgress !== null ? '0.5rem' : '1.5rem'
           }}
         >
           <span className="whitespace-nowrap">{cursorText}</span>

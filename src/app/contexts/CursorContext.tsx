@@ -11,6 +11,8 @@ interface CursorContextType {
   setCursorProgress: (progress: number | null) => void;
   cursorTimeLeft: number | null;
   setCursorTimeLeft: (time: number | null) => void;
+  cursorMode: 'default' | 'project';
+  setCursorMode: (mode: 'default' | 'project') => void;
 }
 
 const CursorContext = createContext<CursorContextType | undefined>(undefined);
@@ -21,6 +23,7 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   const [cursorText, setCursorText] = useState('');
   const [cursorProgress, setCursorProgress] = useState<number | null>(null);
   const [cursorTimeLeft, setCursorTimeLeft] = useState<number | null>(null);
+  const [cursorMode, setCursorMode] = useState<'default' | 'project'>('default');
 
   const value = {
     hideCursor,
@@ -33,6 +36,8 @@ export function CursorProvider({ children }: { children: ReactNode }) {
     setCursorProgress,
     cursorTimeLeft,
     setCursorTimeLeft,
+    cursorMode,
+    setCursorMode,
   };
 
   return (

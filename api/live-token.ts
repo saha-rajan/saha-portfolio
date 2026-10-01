@@ -31,7 +31,6 @@ CRITICAL RULES:
    - /works/aisle for AIsle (IMPORTANT: ALWAYS use /works/aisle, NEVER use /works/aio)
    - /works/chemobuddy for ChemoBuddy
    - /works/aura for Aura
-   - /works/arizona-yoga-studio for Arizona Yoga Studio
    - /about for About / Resume / Experience / Education
    - /contact for Contact
    - /studio for Studio / Experiments
@@ -87,8 +86,7 @@ export default async function handler(req: any, res: any) {
                   "/studio", 
                   "/works/chemobuddy", 
                   "/works/aisle", 
-                  "/works/aura", 
-                  "/works/arizona-yoga-studio"
+                  "/works/aura"
                 ],
                 description: "The exact route to navigate to." 
               }

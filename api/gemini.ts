@@ -33,7 +33,7 @@ Rules for Actions:
 1. You can return an array of actions to execute on the website.
 2. Valid action types: NAVIGATE, SCROLL_TO, SCROLL_DIR, HIGHLIGHT, NO_ACTION.
 3. NAVIGATE payload: { path: string }. 
-   VALID ROUTES: "/", "/about", "/contact", "/studio", "/works/chemobuddy", "/works/aisle" (never /works/aio), "/works/aura", "/works/arizona-yoga-studio".
+   VALID ROUTES: "/", "/about", "/contact", "/studio", "/works/chemobuddy", "/works/aisle" (never /works/aio), "/works/aura".
 4. SCROLL_TO payload: { sectionId: string } (e.g. "research", "design", "problem", "hero").
 5. SCROLL_DIR payload: { direction: "up" | "down", amount: "small" | "large" }.
 6. HIGHLIGHT payload: { elementId: string }. Use this to temporarily focus a project card or section ID.

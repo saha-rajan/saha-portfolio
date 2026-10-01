@@ -6,7 +6,7 @@ import { useCursor } from "../contexts/CursorContext";
 import { useChakku } from "../contexts/ChakkuContext";
 
 import chemoVideo from '../../assets/Chemo thumbnail.mp4';
-import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
+import talentVaultVideo from '../../assets/talentVault_logo.mp4';
 import auraVideo from '../../assets/Aura thumbnail.mp4';
 import aisleVideo from '../../assets/AIsle.mp4';
 
@@ -33,10 +33,10 @@ const projects = [
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
-    id: "arizona-yoga-studio",
-    title: "Arizona Yoga Studio",
+    id: "talentvault",
+    title: "TalentVault",
     category: "Coming Soon",
-    video: arizonaYogaVideo,
+    video: talentVaultVideo,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
 ];
@@ -54,7 +54,7 @@ export function Hero() {
     "try him"
   ];
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
-  const { setHideCursor, setIsTextCursor, setCursorText } = useCursor();
+  const { setHideCursor, setIsTextCursor, setCursorText, setCursorMode } = useCursor();
   const { startSession, isSessionActive } = useChakku();
 
   const greetings = [
@@ -248,7 +248,6 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
                 className={`relative group cursor-pointer overflow-hidden h-full w-full ${
-                  project.id === 'arizona-yoga-studio' ? 'bg-white' : 
                   index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'
                 } ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}
               >
@@ -260,9 +259,7 @@ export function Hero() {
                     muted
                     defaultMuted
                     playsInline
-                    className={`w-full h-full transition-transform duration-700 ${
-                      project.id === 'arizona-yoga-studio' ? 'object-contain scale-125 group-hover:scale-[1.30]' : 'object-cover group-hover:scale-105'
-                    }`}
+                    className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
                   />
                 ) : (
                   <img
@@ -272,28 +269,44 @@ export function Hero() {
                   />
                 )}
                 
-                <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
-                  <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
-                  {index === 0 && (
-                    <motion.div 
-                      className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
-                      animate={{ 
-                        boxShadow: [
-                          '0 0 10px rgba(250, 204, 21, 0.3)',
-                          '0 0 20px rgba(250, 204, 21, 0.5)',
-                          '0 0 10px rgba(250, 204, 21, 0.3)'
-                        ]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <motion.div
+                {project.id === 'talentvault' ? (
+                  <div className={`absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
+                    <div className="flex flex-col items-center justify-center max-w-[95%] sm:max-w-[85%] text-center">
+                      <div className="flex items-center justify-center px-4 pt-[6px] pb-[4px] mb-4 rounded-full border border-white/40 bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                        <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white font-semibold leading-none" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                          Currently Under Wraps
+                        </span>
+                      </div>
+                      
+                      <p className="text-[#E0E0E0] text-[11px] sm:text-xs md:text-sm leading-[1.7] sm:leading-[1.8] mb-4 sm:mb-6">
+                        I’m building TalentVault from 0<span className="relative bottom-[1.5px] mx-[2px]">→</span>1 as a founding designer. The work is confidential, but I can walk through selected decisions and process privately with permission.
+                      </p>
+
+                      <a 
+                        href="mailto:trajan2@asu.edu?subject=Request for TalentVault Case Study" 
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-black/40 border border-[#1CB4F5]/40 text-[#1CB4F5] hover:bg-[#1CB4F5]/10 hover:border-[#1CB4F5] hover:shadow-[0_0_15px_rgba(28,180,245,0.2)] transition-all duration-300 group/link"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                      >
+                        <span className="text-[10px] sm:text-xs font-semibold tracking-wide">
+                          Case study available upon request
+                        </span>
+                        <ArrowUpRight size={14} className="transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
+                    <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
+                    {index === 0 && (
+                      <motion.div 
+                        className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
                         animate={{ 
-                          rotate: [0, 10, -10, 10, 0],
-                          scale: [1, 1.1, 1]
+                          boxShadow: [
+                            '0 0 10px rgba(250, 204, 21, 0.3)',
+                            '0 0 20px rgba(250, 204, 21, 0.5)',
+                            '0 0 10px rgba(250, 204, 21, 0.3)'
+                          ]
                         }}
                         transition={{ 
                           duration: 2,
@@ -301,24 +314,52 @@ export function Hero() {
                           ease: "easeInOut"
                         }}
                       >
-                        <Trophy size={16} className="text-yellow-400" />
+                        <motion.div
+                          animate={{ 
+                            rotate: [0, 10, -10, 10, 0],
+                            scale: [1, 1.1, 1]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <Trophy size={16} className="text-yellow-400" />
+                        </motion.div>
+                        <p 
+                          className="text-xs font-medium relative overflow-hidden"
+                          style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
+                        >
+                          <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
+                            Mayo Clinic Observership Awardee
+                          </span>
+                        </p>
                       </motion.div>
-                      <p 
-                        className="text-xs font-medium relative overflow-hidden"
-                        style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
-                      >
-                        <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-                          Mayo Clinic Observership Awardee
-                        </span>
-                      </p>
-                    </motion.div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </motion.div>
             );
 
-            return (
-              <Link to={`/works/${project.id}`} key={index} className={`${project.size} block`}>
+            return project.id === 'talentvault' ? (
+              <div key={index} className={`${project.size} block`} data-no-text-cursor="true">
+                {cardContent}
+              </div>
+            ) : (
+              <Link 
+                to={`/works/${project.id}`} 
+                key={index} 
+                className={`${project.size} block`}
+                onMouseEnter={() => {
+                  setCursorMode('project');
+                  setCursorText('View\nProject');
+                }}
+                onMouseLeave={() => {
+                  setCursorMode('default');
+                  setCursorText('');
+                }}
+              >
                 {cardContent}
               </Link>
             );

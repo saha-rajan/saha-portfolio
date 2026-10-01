@@ -3,9 +3,10 @@ import { motion } from "motion/react";
 import { trackEvent } from "../utils/analytics";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCursor } from "../contexts/CursorContext";
 import auraVideo from '../../assets/Aura thumbnail.mp4';
 
-import arizonaYogaVideo from '../../assets/Arizona yoga.mp4';
+import talentVaultVideo from '../../assets/talentVault_logo.mp4';
 
 const projects = [
   {
@@ -23,10 +24,10 @@ const projects = [
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
-    id: "arizona-yoga-studio",
-    title: "Arizona Yoga Studio",
-    category: "UX / UI Design",
-    video: arizonaYogaVideo,
+    id: "talentvault",
+    title: "TalentVault",
+    category: "Coming Soon",
+    video: talentVaultVideo,
     size: "col-span-1 md:col-span-2 md:row-span-1",
   },
   {
@@ -39,6 +40,7 @@ const projects = [
 ];
 
 export function Works() {
+  const { setCursorMode, setCursorText } = useCursor();
   return (
     <section id="works" className="relative py-16 md:py-24 bg-black overflow-hidden">
       {/* 6-Column Grid Background - Center Aligned - Double Lines */}
@@ -104,24 +106,14 @@ export function Works() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 auto-rows-[160px] sm:auto-rows-[300px]">
-          {projects.map((project, index) => (
-            <Link 
-              to={`/works/${project.id}`} 
-              key={index} 
-              className={`${project.size} block`}
-              onClick={() => {
-                trackEvent("select_case_study", {
-                  project_id: project.id,
-                  project_title: project.title
-                });
-              }}
-            >
+          {projects.map((project, index) => {
+            const cardContent = (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative group cursor-pointer overflow-hidden h-full w-full ${project.id === 'arizona-yoga-studio' ? 'bg-white' : 'bg-[#111]'}`}
+                className="relative group cursor-pointer overflow-hidden h-full w-full bg-[#111]"
               >
                 {project.video ? (
                   <video
@@ -130,9 +122,7 @@ export function Works() {
                     loop
                     muted
                     playsInline
-                    className={`w-full h-full transition-transform duration-700 ${
-                      project.id === 'arizona-yoga-studio' ? 'object-contain scale-125 group-hover:scale-[1.30]' : 'object-cover group-hover:scale-105'
-                    }`}
+                    className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
                   />
                 ) : (
                   <img
@@ -142,19 +132,77 @@ export function Works() {
                   />
                 )}
                 
-                <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                   <div className="bg-white text-black p-3 rounded-full">
-                      <ArrowUpRight size={20} />
-                   </div>
-                </div>
+                {project.id === 'talentvault' ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60">
+                    <div className="flex flex-col items-center justify-center max-w-[95%] sm:max-w-[85%] text-center">
+                      <div className="flex items-center justify-center px-4 pt-[6px] pb-[4px] mb-4 rounded-full border border-white/40 bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+                        <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white font-semibold leading-none" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                          Currently Under Wraps
+                        </span>
+                      </div>
+                      
+                      <p className="text-[#E0E0E0] text-[11px] sm:text-xs md:text-sm leading-[1.7] sm:leading-[1.8] mb-4 sm:mb-6">
+                        I’m building TalentVault from 0<span className="relative bottom-[1.5px] mx-[2px]">→</span>1 as a founding designer. The work is confidential, but I can walk through selected decisions and process privately with permission.
+                      </p>
 
-                <div className="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black via-black/50 to-transparent">
-                  <h3 className="text-base sm:text-2xl font-medium mb-1 text-white">{project.title}</h3>
-                  <p className="text-[#A7A7A7] text-[10px] sm:text-sm uppercase tracking-wider">{project.category}</p>
-                </div>
+                      <a 
+                        href="mailto:trajan2@asu.edu?subject=Request for TalentVault Case Study" 
+                        onClick={(e) => { e.stopPropagation(); trackEvent("request_case_study", { project: "talentvault" }); }}
+                        className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-black/40 border border-[#1CB4F5]/40 text-[#1CB4F5] hover:bg-[#1CB4F5]/10 hover:border-[#1CB4F5] hover:shadow-[0_0_15px_rgba(28,180,245,0.2)] transition-all duration-300 group/link"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                      >
+                        <span className="text-[10px] sm:text-xs font-semibold tracking-wide">
+                          Case study available upon request
+                        </span>
+                        <ArrowUpRight size={14} className="transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                       <div className="bg-white text-black p-3 rounded-full">
+                          <ArrowUpRight size={20} />
+                       </div>
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 p-6 w-full bg-gradient-to-t from-black via-black/50 to-transparent">
+                      <h3 className="text-base sm:text-2xl font-medium mb-1 text-white">{project.title}</h3>
+                      <p className="text-[#A7A7A7] text-[10px] sm:text-sm uppercase tracking-wider">{project.category}</p>
+                    </div>
+                  </>
+                )}
               </motion.div>
-            </Link>
-          ))}
+            );
+
+            return project.id === 'talentvault' ? (
+              <div key={index} className={`${project.size} block`} data-no-text-cursor="true">
+                {cardContent}
+              </div>
+            ) : (
+              <Link 
+                to={`/works/${project.id}`} 
+                key={index} 
+                className={`${project.size} block`}
+                onMouseEnter={() => {
+                  setCursorMode('project');
+                  setCursorText('View\nProject');
+                }}
+                onMouseLeave={() => {
+                  setCursorMode('default');
+                  setCursorText('');
+                }}
+                onClick={() => {
+                  trackEvent("select_case_study", {
+                    project_id: project.id,
+                    project_title: project.title
+                  });
+                }}
+              >
+                {cardContent}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
