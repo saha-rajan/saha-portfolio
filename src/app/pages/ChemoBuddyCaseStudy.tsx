@@ -1319,7 +1319,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Prev/Next Navigation */}
           <div className="hidden md:flex gap-3 shrink-0 pt-4">
             <Link 
-              to="/works/arizona-yoga-studio" 
+              to="/works/aisle" 
               data-cursor-hide="true"
               className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center hover:bg-[#282834] hover:border-transparent hover:text-white transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
@@ -3361,7 +3361,7 @@ export function ChemoBuddyCaseStudy() {
           {/* Bottom Navigation */}
           <div className="flex justify-end gap-4 mt-12 pt-6 border-t border-white/10">
              <Link 
-               to="/works/arizona-yoga-studio" 
+               to="/works/aisle" 
                data-cursor-hide="true"
                className="w-10 h-10 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#282834] hover:border-transparent transition-all duration-300 opacity-70 hover:opacity-100 overflow-hidden"
                onMouseEnter={() => setHideCursor(true)}

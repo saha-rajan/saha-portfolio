@@ -382,7 +382,7 @@ export function AIsleCaseStudy() {
               </motion.div>
             </Link>
             <Link
-              to="/works/arizona-yoga-studio"
+              to="/works/chemobuddy"
               data-cursor-hide="true"
               className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white transition-all duration-300 opacity-70 hover:opacity-100 hover:bg-[#282834] hover:border-transparent overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
@@ -1519,7 +1519,7 @@ export function AIsleCaseStudy() {
               </motion.div>
             </Link>
             <Link
-              to="/works/arizona-yoga-studio"
+              to="/works/chemobuddy"
               data-cursor-hide="true"
               className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white transition-all duration-300 opacity-70 hover:opacity-100 hover:bg-[#282834] hover:border-transparent overflow-hidden"
               onMouseEnter={() => setHideCursor(true)}
