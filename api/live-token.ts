@@ -4,17 +4,15 @@ import path from 'path';
 
 let portfolioKnowledge = '';
 try {
-  // Live API v1alpha has strict system instruction limits that cause 1011 WS crashes if exceeded.
-  // Instead of reading the large markdown files, we provide a highly compressed hardcoded summary.
-  portfolioKnowledge = `
-Saha Rajan is a founding designer specializing in AI products, UX, and 0-to-1 design.
-Key Projects:
-- ChemoBuddy: An AI companion for cancer patients. Emphasize empathy and daily check-ins.
-- AIsle: An AI grocery shopping assistant using AR and spatial design.
-- Aura: A speculative VR/XR interface for emotional regulation and mindfulness.
-- TalentVault: An enterprise AI tool for recruiters.
-Saha loves experimenting with voice interfaces (like you!) and creating playful interactions.
-  `;
+  const knowledgeDir = path.join(process.cwd(), 'portfolio-knowledge');
+  const filesToLoad = ['resume.md', 'chemobuddy.md', 'aisle.md', 'aura.md', 'guardrails.md'];
+  for (const file of filesToLoad) {
+    const filePath = path.join(knowledgeDir, file);
+    if (fs.existsSync(filePath)) {
+      portfolioKnowledge += '\n\n--- ' + file + ' ---\n\n';
+      portfolioKnowledge += fs.readFileSync(filePath, 'utf-8');
+    }
+  }
 } catch (error) {
   console.error('Error loading portfolio knowledge:', error);
 }
@@ -40,10 +38,9 @@ CRITICAL RULES:
    - / for Home
 3. If asked to scroll or look at a section, use the SCROLL_TO or SCROLL tools immediately.
 4. DO NOT announce your tool uses ("Let me pull that up..."). Just answer the question normally while the tool fires.
-5. Only use the facts provided in the Portfolio Knowledge below, or facts you retrieve using the READ_PORTFOLIO_FILE tool. Do not invent details.
+5. Only use the facts provided in the Portfolio Knowledge below. Do not invent details.
 6. The ChemoBuddy case study has a special guided audio walkthrough narrated by Saha. If the user asks to play, hear, or listen to the ChemoBuddy audio, immediately use the PLAY_AUDIO tool.
-7. You ONLY have a brief summary of Saha in your starting knowledge. If a user asks for specific details (like his phone number, email, skills, deep resume details, or specific case study processes), you MUST use the READ_PORTFOLIO_FILE tool to fetch the full document before answering!
-8. Mirror the user's language. If the user speaks to you in Tamil, Hindi, Spanish, or any other language, you MUST reply in that exact same language.
+7. Mirror the user's language. If the user speaks to you in Tamil, Hindi, Spanish, or any other language, you MUST reply in that exact same language.
 
 Portfolio Knowledge:
 ${portfolioKnowledge}
@@ -72,7 +69,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: 'v1alpha' } });
-    
+
     // Tools definition for Live API
     const tools = [{
       functionDeclarations: [
@@ -151,26 +148,12 @@ export default async function handler(req: any, res: any) {
             },
             required: ["target"]
           }
-        },
-        {
-          name: "READ_PORTFOLIO_FILE",
-          description: "Read detailed information about Saha's case studies, resume (which includes phone, email, contact, skills), or guardrails to answer user questions. Use this whenever the user asks for details you don't know.",
-          parameters: {
-            type: "OBJECT",
-            properties: {
-              topic: { 
-                type: "STRING", 
-                enum: ["resume", "chemobuddy", "aisle", "aura", "guardrails"] 
-              }
-            },
-            required: ["topic"]
-          }
         }
       ]
     }];
 
     const tokenResponse = await ai.authTokens.create({
-      model: 'gemini-3.1-flash-live-preview', // The current Live API model in v1alpha
+      model: 'gemini-3.1-flash-live-preview',
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {

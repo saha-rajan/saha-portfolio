@@ -5,11 +5,6 @@ import { X, MicOff, Mic, Info } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { AudioStreamer, AudioPlayer } from '../utils/audioProcessing';
 
-import resumeMd from '../../../portfolio-knowledge/resume.md?raw';
-import chemobuddyMd from '../../../portfolio-knowledge/chemobuddy.md?raw';
-import aisleMd from '../../../portfolio-knowledge/aisle.md?raw';
-import auraMd from '../../../portfolio-knowledge/aura.md?raw';
-import guardrailsMd from '../../../portfolio-knowledge/guardrails.md?raw';
 
 
 
@@ -155,21 +150,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
               }
             }
             break;
-          case 'READ_PORTFOLIO_FILE':
-            if (args.topic === 'resume') {
-              resultData = { success: true, content: resumeMd };
-            } else if (args.topic === 'chemobuddy') {
-              resultData = { success: true, content: chemobuddyMd };
-            } else if (args.topic === 'aisle') {
-              resultData = { success: true, content: aisleMd };
-            } else if (args.topic === 'aura') {
-              resultData = { success: true, content: auraMd };
-            } else if (args.topic === 'guardrails') {
-              resultData = { success: true, content: guardrailsMd };
-            } else {
-              resultData = { success: false, error: 'File not found' };
-            }
-            break;
+          
           default:
             success = false;
         }
