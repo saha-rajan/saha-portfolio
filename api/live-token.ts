@@ -6,10 +6,15 @@ let portfolioKnowledge = '';
 try {
   const kbDir = path.join(process.cwd(), 'portfolio-knowledge');
   if (fs.existsSync(kbDir)) {
-    const files = fs.readdirSync(kbDir).filter(file => file.endsWith('.md'));
-    for (const file of files) {
-      const content = fs.readFileSync(path.join(kbDir, file), 'utf-8');
-      portfolioKnowledge += `\n\n--- FILE: ${file} ---\n${content}`;
+    // Live API v1alpha has strict system instruction limits that cause 1011 WS crashes if exceeded.
+    // Only load the most critical context files.
+    const criticalFiles = ['resume.md', 'chemobuddy.md', 'aisle.md', 'aura.md', 'guardrails.md'];
+    for (const file of criticalFiles) {
+      const filePath = path.join(kbDir, file);
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        portfolioKnowledge += `\n\n--- FILE: ${file} ---\n${content}`;
+      }
     }
   }
 } catch (error) {

@@ -220,12 +220,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
     
     // Create Audio contexts synchronously during the user gesture!
     if (!playerRef.current) {
-      playerRef.current = new AudioPlayer(() => {
-        setMode((prev) => {
-          if (prev === 'speaking') return 'listening';
-          return prev;
-        });
-      });
+      playerRef.current = new AudioPlayer();
     }
     // Also synchronously create streamer to capture user gesture
     if (!streamerRef.current) {
@@ -440,49 +435,6 @@ export function useChakku() {
   return context;
 }
 
-const ChakkuIndicator = ({ mode }: { mode: string }) => {
-  if (mode === 'error' || mode === 'idle') return null;
-
-  const dotVariants = {
-    listening: (i: number) => ({
-      scale: i === 1 ? [1, 1.3, 1] : 0,
-      opacity: i === 1 ? [0.4, 1, 0.4] : 0,
-      y: 0,
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      transition: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-    }),
-    thinking: (i: number) => ({
-      scale: 1,
-      opacity: 1,
-      y: 0,
-      backgroundColor: ["rgba(255, 255, 255, 0.2)", "#1CB4F5", "rgba(255, 255, 255, 0.2)"],
-      transition: { duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: "linear" }
-    }),
-    speaking: (i: number) => ({
-      scale: 1,
-      opacity: 1,
-      y: [0, -3, 0, 3, 0],
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      transition: { duration: 0.5, repeat: Infinity, delay: i * 0.1, ease: "linear" }
-    })
-  };
-
-  return (
-    <div className="flex items-center gap-[4px] ml-1 h-3">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          custom={i}
-          variants={dotVariants}
-          animate={mode}
-          className="w-1.5 h-1.5 rounded-full"
-          initial={false}
-        />
-      ))}
-    </div>
-  );
-};
-
 export function ChakkuOverlay() {
   const { isSessionActive, mode, stopSession, isMuted, toggleMute } = useChakku();
   const context = useChakku() as any;
@@ -514,12 +466,7 @@ export function ChakkuOverlay() {
           <div className="bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-4 md:p-6 w-fit pointer-events-auto flex flex-col gap-3">
             <div className="flex items-center gap-6">
               <span className="text-[11px] tracking-widest uppercase text-white/80 flex items-center gap-2 relative group cursor-help" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                <span className="text-white/40">✦</span> CHAKKU
-                {mode === 'error' ? (
-                  <span className="text-red-400/80">· ERROR {context.errorMsg ? `[${context.errorMsg}]` : ''}</span>
-                ) : (
-                  <ChakkuIndicator mode={mode} />
-                )}
+                <span className="text-white/40">✦</span> CHAKKU · {mode} {mode === 'error' && context.errorMsg ? ` [${context.errorMsg}]` : ''}
                 <Info size={14} className="text-white/40 group-hover:text-white/80 ml-1 transition-colors" />
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[220px] bg-[#1a1a1a] text-white/80 text-[10px] tracking-normal p-2.5 rounded-lg border border-white/10 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed font-sans normal-case z-50">
                   Conversations with Chakku are anonymously transcribed to help improve this portfolio.

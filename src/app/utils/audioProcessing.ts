@@ -72,7 +72,7 @@ export class AudioPlayer {
   private nextPlayTime: number = 0;
   private currentSources: AudioBufferSourceNode[] = [];
   
-  constructor(public onPlaybackComplete?: () => void) {
+  constructor() {
     this.audioContext = new AudioContext({ sampleRate: 24000 });
   }
   
@@ -117,9 +117,6 @@ export class AudioPlayer {
     this.currentSources.push(source);
     source.onended = () => {
       this.currentSources = this.currentSources.filter(s => s !== source);
-      if (this.currentSources.length === 0 && this.onPlaybackComplete) {
-        this.onPlaybackComplete();
-      }
     };
   }
   
