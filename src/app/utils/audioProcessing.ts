@@ -71,6 +71,7 @@ export class AudioPlayer {
   private audioContext: AudioContext;
   private nextPlayTime: number = 0;
   private currentSources: AudioBufferSourceNode[] = [];
+  public onPlaybackComplete?: () => void;
   
   constructor() {
     this.audioContext = new AudioContext({ sampleRate: 24000 });
@@ -117,6 +118,13 @@ export class AudioPlayer {
     this.currentSources.push(source);
     source.onended = () => {
       this.currentSources = this.currentSources.filter(s => s !== source);
+      if (this.currentSources.length === 0) {
+         setTimeout(() => {
+           if (this.currentSources.length === 0 && this.onPlaybackComplete) {
+             this.onPlaybackComplete();
+           }
+         }, 300);
+      }
     };
   }
   
@@ -126,5 +134,6 @@ export class AudioPlayer {
     });
     this.currentSources = [];
     this.nextPlayTime = this.audioContext.currentTime;
+    if (this.onPlaybackComplete) this.onPlaybackComplete();
   }
 }

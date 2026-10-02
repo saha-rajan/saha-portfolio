@@ -14,7 +14,7 @@ import guardrailsMd from '../../../portfolio-knowledge/guardrails.md?raw';
 
 
 
-type ChakkuMode = 'idle' | 'listening' | 'thinking' | 'speaking' | 'error';
+type ChakkuMode = 'idle' | 'connecting' | 'listening' | 'speaking' | 'error';
 
 interface ChakkuContextType {
   isSessionActive: boolean;
@@ -237,12 +237,15 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
     if (isSessionActive || isConnectingRef.current) return; // Prevent double-clicks
     isConnectingRef.current = true;
     setIsSessionActive(true);
-    setMode('thinking');
+    setMode('connecting');
     setErrorMsg('');
     
     // Create Audio contexts synchronously during the user gesture!
     if (!playerRef.current) {
       playerRef.current = new AudioPlayer();
+      playerRef.current.onPlaybackComplete = () => {
+        setMode(prev => (prev === 'speaking') ? 'listening' : prev);
+      };
     }
     // Also synchronously create streamer to capture user gesture
     if (!streamerRef.current) {
