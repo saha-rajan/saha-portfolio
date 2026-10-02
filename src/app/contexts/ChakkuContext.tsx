@@ -38,6 +38,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
   const sessionRef = useRef<any>(null);
   const streamerRef = useRef<AudioStreamer | null>(null);
   const transcriptRef = useRef<string>('');
+  const isConnectingRef = useRef<boolean>(false);
   const chakkuTextBufferRef = useRef<string>('');
   const recognitionRef = useRef<any>(null);
   const playerRef = useRef<AudioPlayer | null>(null);
@@ -214,6 +215,8 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const startSession = async () => {
+    if (isSessionActive || isConnectingRef.current) return; // Prevent double-clicks
+    isConnectingRef.current = true;
     setIsSessionActive(true);
     setMode('thinking');
     setErrorMsg('');
@@ -252,6 +255,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
         },
         callbacks: {
           onmessage: (msg: any) => {
+            isConnectingRef.current = false;
             if (msg.serverContent) {
                if (msg.serverContent.modelTurn) {
                  const modelTurn = msg.serverContent.modelTurn;
@@ -291,11 +295,13 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
             }
           },
           onclose: (e: any) => {
+            isConnectingRef.current = false;
             setMode('error');
             setErrorMsg(`WS Closed: ${e?.code} ${e?.reason}`);
             // stopSession(); // Disable auto-stop so we can see the error
           },
           onerror: (e: any) => {
+            isConnectingRef.current = false;
             console.error('[LIVE_DEBUG] Live error:', e);
             setMode('error');
             setErrorMsg('WS Error: ' + (e?.message || 'Unknown'));
@@ -352,6 +358,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
       } catch(e) { console.error("Dictation error", e); }
 
     } catch(e: any) {
+      isConnectingRef.current = false;
       console.error("[LIVE_DEBUG] Chakku session initialization exception:", e);
       setMode('error');
       setErrorMsg(e.message || 'Initialization failed');
@@ -359,6 +366,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
   };
 
   const stopSession = () => {
+    isConnectingRef.current = false;
     setIsSessionActive(false);
     setMode('idle');
     if (streamerRef.current) streamerRef.current.stop();
