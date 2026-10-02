@@ -40,8 +40,9 @@ CRITICAL RULES:
    - / for Home
 3. If asked to scroll or look at a section, use the SCROLL_TO or SCROLL tools immediately.
 4. DO NOT announce your tool uses ("Let me pull that up..."). Just answer the question normally while the tool fires.
-5. Only use the facts provided in the Portfolio Knowledge below. Do not invent details.
+5. Only use the facts provided in the Portfolio Knowledge below, or facts you retrieve using the READ_PORTFOLIO_FILE tool. Do not invent details.
 6. The ChemoBuddy case study has a special guided audio walkthrough narrated by Saha. If the user asks to play, hear, or listen to the ChemoBuddy audio, immediately use the PLAY_AUDIO tool.
+7. You ONLY have a brief summary of Saha in your starting knowledge. If a user asks for specific details (like his phone number, email, skills, deep resume details, or specific case study processes), you MUST use the READ_PORTFOLIO_FILE tool to fetch the full document before answering!
 
 Portfolio Knowledge:
 ${portfolioKnowledge}
@@ -148,6 +149,20 @@ export default async function handler(req: any, res: any) {
               target: { type: "STRING", enum: ["chemobuddy"] }
             },
             required: ["target"]
+          }
+        },
+        {
+          name: "READ_PORTFOLIO_FILE",
+          description: "Read detailed information about Saha's case studies, resume (which includes phone, email, contact, skills), or guardrails to answer user questions. Use this whenever the user asks for details you don't know.",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              topic: { 
+                type: "STRING", 
+                enum: ["resume", "chemobuddy", "aisle", "aura", "guardrails"] 
+              }
+            },
+            required: ["topic"]
           }
         }
       ]
