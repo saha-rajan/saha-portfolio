@@ -84,7 +84,7 @@ export function Hero() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<any>) => {
     const button = e.currentTarget;
     const rect = button.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
@@ -204,23 +204,31 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="group flex flex-col sm:flex-row items-start sm:items-center text-sm w-fit self-start mt-4 gap-1 sm:gap-3 cursor-pointer"
+              className="group flex flex-col sm:flex-row items-start sm:items-center text-sm w-fit self-start mt-4 gap-3 sm:gap-4 cursor-pointer"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <div className="flex items-center shrink-0">
-                <span className="text-[#1CB4F5] mr-2">✦</span>
-                <motion.span 
-                  className="bg-[linear-gradient(110deg,#1CB4F5_35%,#ffffff_50%,#1CB4F5_65%)] bg-[length:200%_100%] bg-clip-text text-transparent font-medium whitespace-nowrap"
-                  animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
-                  transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+              <div 
+                className="relative inline-flex items-center px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 shrink-0 overflow-hidden"
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setHideCursor(true)}
+                onMouseLeave={() => {
+                  setHideCursor(false);
+                  handleMouseLeave();
+                }}
+              >
+                <motion.div
+                  className="flex items-center gap-3 relative z-10"
+                  animate={{ x: textPosition.x, y: textPosition.y }}
+                  transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
                 >
-                  meet chakku AI
-                </motion.span>
-                <span className="text-[#1CB4F5] group-hover:text-[#63D2FF] transition-all duration-300 transform group-hover:-translate-y-[2px] group-hover:translate-x-[2px] ml-1.5 font-medium">
-                  ↗
-                </span>
+                  <span className="text-white/60 group-hover:text-white/80 transition-colors">✦</span>
+                  <span className="text-[11px] sm:text-xs font-medium tracking-widest uppercase text-white/90 whitespace-nowrap mt-[1px]">
+                    meet chakku AI
+                  </span>
+                  <ArrowUpRight size={15} className="text-white/60 group-hover:text-white/90 transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                </motion.div>
               </div>
-              <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300 ml-[18px] sm:ml-0 mt-1 sm:mt-0">
+              <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300 ml-4 sm:ml-0 mt-1 sm:mt-0">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={currentChakkuPhrase}

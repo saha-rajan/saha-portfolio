@@ -14,6 +14,7 @@ import video2 from "../../assets/video2.mp4";
 import video3 from "../../assets/video3.mp4";
 import video4 from "../../assets/video4.mp4";
 import video5 from "../../assets/video5.mp4";
+import vrTourVideo from "../../assets/vr_tour 1.mp4";
 
 // Studio images with rotation and closer positioning
 const studioImages = [
@@ -115,6 +116,17 @@ const studioImages = [
     initialX: -500,
     initialY: 200,
     rotation: -5,
+    backgroundColor: "#000000",
+    size: "wide",
+    isVideo: true,
+  },
+  {
+    id: 11,
+    url: vrTourVideo,
+    label: "3D MODEL · VR GAME ENVIRONMENT\nLobby Space Design",
+    initialX: 0,
+    initialY: -350,
+    rotation: 2,
     backgroundColor: "#000000",
     size: "wide",
     isVideo: true,
