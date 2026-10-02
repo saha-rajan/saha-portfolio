@@ -4,19 +4,17 @@ import path from 'path';
 
 let portfolioKnowledge = '';
 try {
-  const kbDir = path.join(process.cwd(), 'portfolio-knowledge');
-  if (fs.existsSync(kbDir)) {
-    // Live API v1alpha has strict system instruction limits that cause 1011 WS crashes if exceeded.
-    // Only load the most critical context files.
-    const criticalFiles = ['resume.md', 'chemobuddy.md', 'aisle.md', 'aura.md', 'guardrails.md'];
-    for (const file of criticalFiles) {
-      const filePath = path.join(kbDir, file);
-      if (fs.existsSync(filePath)) {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        portfolioKnowledge += `\n\n--- FILE: ${file} ---\n${content}`;
-      }
-    }
-  }
+  // Live API v1alpha has strict system instruction limits that cause 1011 WS crashes if exceeded.
+  // Instead of reading the large markdown files, we provide a highly compressed hardcoded summary.
+  portfolioKnowledge = `
+Saha Rajan is a founding designer specializing in AI products, UX, and 0-to-1 design.
+Key Projects:
+- ChemoBuddy: An AI companion for cancer patients. Emphasize empathy and daily check-ins.
+- AIsle: An AI grocery shopping assistant using AR and spatial design.
+- Aura: A speculative VR/XR interface for emotional regulation and mindfulness.
+- TalentVault: An enterprise AI tool for recruiters.
+Saha loves experimenting with voice interfaces (like you!) and creating playful interactions.
+  `;
 } catch (error) {
   console.error('Error loading portfolio knowledge:', error);
 }
