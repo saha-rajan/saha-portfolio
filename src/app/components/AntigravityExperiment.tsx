@@ -13,9 +13,18 @@ export function AntigravityExperiment({ onClose }: AntigravityExperimentProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingText, setLoadingText] = useState("Loading MediaPipe Models...");
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const frameRef = useRef<number>();
 
   useEffect(() => {
+    // Check for mobile device (User Agent or small screen width)
+    const checkMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    if (checkMobile) {
+      setIsMobile(true);
+      setIsLoading(false);
+      return;
+    }
+
     let camera: any;
     let hands: any;
     
@@ -319,30 +328,49 @@ export function AntigravityExperiment({ onClose }: AntigravityExperimentProps) {
       onClick={(e) => e.stopPropagation()} 
       ref={containerRef}
     >
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ transform: "scaleX(-1)" }}
-      />
+      {isMobile ? (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 p-8 text-center">
+            <div className="bg-[#ffaa00]/10 p-6 rounded-2xl border border-[#ffaa00]/20 max-w-sm">
+                <div className="w-16 h-16 mx-auto mb-6 bg-[#ffaa00]/20 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">💻</span>
+                </div>
+                <h3 className="text-[#ffaa00] font-mono text-lg mb-4 font-bold tracking-widest uppercase">Desktop Required</h3>
+                <p className="text-white/80 font-mono text-sm leading-relaxed mb-6">
+                    This experiment uses high-performance WebGL and MediaPipe hand tracking which requires a desktop camera and more processing power.
+                </p>
+                <p className="text-white/50 font-mono text-xs uppercase tracking-widest">
+                    Please open this page on a computer to play the effect.
+                </p>
+            </div>
+        </div>
+      ) : (
+        <>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ transform: "scaleX(-1)" }}
+          />
+          
+          <div 
+            className="absolute inset-0 z-10 pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)" }}
+          />
+          
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none"
+            style={{ 
+                transform: "scaleX(-1)", 
+                mixBlendMode: "screen", 
+                filter: "drop-shadow(0 0 10px rgba(255, 100, 0, 0.5))" 
+            }}
+          />
+        </>
+      )}
       
-      <div 
-        className="absolute inset-0 z-10 pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)" }}
-      />
-      
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover z-20 pointer-events-none"
-        style={{ 
-            transform: "scaleX(-1)", 
-            mixBlendMode: "screen", 
-            filter: "drop-shadow(0 0 10px rgba(255, 100, 0, 0.5))" 
-        }}
-      />
-      
-      {isLoading && !error && (
+      {isLoading && !error && !isMobile && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm text-[#ffaa00]">
             <Loader2 className="w-12 h-12 animate-spin mb-4" />
             <p className="font-mono text-sm tracking-widest">{loadingText}</p>
@@ -362,9 +390,11 @@ export function AntigravityExperiment({ onClose }: AntigravityExperimentProps) {
         <X size={24} />
       </button>
 
-      <div className="absolute bottom-4 left-0 right-0 text-center z-30 pointer-events-none opacity-50">
-        <p className="text-white/70 font-mono text-xs tracking-widest uppercase">Show your palm to the camera</p>
-      </div>
+      {!isMobile && (
+        <div className="absolute bottom-4 left-0 right-0 text-center z-30 pointer-events-none opacity-50">
+          <p className="text-white/70 font-mono text-xs tracking-widest uppercase">Show your palm to the camera</p>
+        </div>
+      )}
     </motion.div>
   );
 }
