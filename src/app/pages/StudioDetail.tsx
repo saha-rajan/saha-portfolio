@@ -15,6 +15,8 @@ import video3 from "../../assets/video3.mp4";
 import video4 from "../../assets/video4.mp4";
 import video5 from "../../assets/video5.mp4";
 import vrTourVideo from "../../assets/vr_tour_1.mp4";
+import { AntigravityExperiment } from "../components/AntigravityExperiment";
+
 
 // Studio images with rotation and closer positioning
 const studioImages = [
@@ -131,6 +133,17 @@ const studioImages = [
     size: "wide",
     isVideo: true,
   },
+  {
+    id: 12,
+    url: robotImg, // Placeholder for experiment cover
+    label: "MEDIAPIPE · WEBGL\nDoctor Strange Hand Effect",
+    initialX: 500,
+    initialY: -100,
+    rotation: 4,
+    backgroundColor: "#111111",
+    size: "wide",
+    isExperiment: true,
+  }
 ];
 
 interface ImageCardProps {
@@ -185,7 +198,7 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
         <motion.div
           className={`${containerClass} overflow-hidden flex items-center justify-center relative cursor-pointer`}
           style={image.backgroundColor ? { backgroundColor: image.backgroundColor } : {}}
-          onClick={() => { if (image.isVideo && onExpand) onExpand(); }}
+          onClick={() => { if ((image.isVideo || image.isExperiment) && onExpand) onExpand(); }}
         >
           {image.isVideo ? (
             <>
@@ -200,6 +213,21 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
               <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors pointer-events-none">
                 <div className="bg-black/50 text-white rounded-full p-3 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100">
                   <Play fill="white" size={20} className="ml-1" />
+                </div>
+              </div>
+            </>
+          ) : image.isExperiment ? (
+            <>
+              <ImageWithFallback
+                src={image.url}
+                alt={image.label}
+                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none opacity-50 group-hover:opacity-80 transition-opacity`}
+                draggable={false}
+                style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
+              />
+              <div className="absolute inset-0 flex items-center justify-center transition-colors pointer-events-none">
+                <div className="bg-[#ffaa00] text-black font-bold font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg opacity-90 group-hover:opacity-100 transition-opacity transform group-hover:scale-105">
+                  Launch
                 </div>
               </div>
             </>
@@ -401,7 +429,7 @@ export function StudioDetail() {
                 image={image}
                 onBringToFront={() => bringToFront(image.id)}
                 zIndex={zIndex}
-                onExpand={image.isVideo ? () => setExpandedVideoId(image.id) : undefined}
+                onExpand={(image.isVideo || image.isExperiment) ? () => setExpandedVideoId(image.id) : undefined}
                 isMobile={isMobile}
               />
             );
@@ -419,30 +447,34 @@ export function StudioDetail() {
             className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-pointer"
             onClick={() => setExpandedVideoId(null)}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black"
-              onClick={(e) => e.stopPropagation()} // Prevent clicks on video from closing modal
-            >
-              <video
-                src={expandedVideo.url}
-                autoPlay
-                controls
-                className="w-full h-full object-contain"
-              />
-              <button 
-                onClick={() => setExpandedVideoId(null)}
-                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors z-10"
+            {expandedVideo.isExperiment ? (
+              <AntigravityExperiment onClose={() => setExpandedVideoId(null)} />
+            ) : (
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black"
+                onClick={(e) => e.stopPropagation()} // Prevent clicks on video from closing modal
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </motion.div>
+                <video
+                  src={expandedVideo.url}
+                  autoPlay
+                  controls
+                  className="w-full h-full object-contain"
+                />
+                <button 
+                  onClick={() => setExpandedVideoId(null)}
+                  className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors z-10"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
