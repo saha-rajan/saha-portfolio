@@ -138,7 +138,7 @@ const studioImages = [
   {
     id: 12,
     url: drStrangeThumb, 
-    label: "MEDIAPIPE · WEBGL\nDoctor Strange Hand Effect",
+    label: "MEDIAPIPE · WEBGL\nTao Mandala - Doctor Strange",
     initialX: 500,
     initialY: -100,
     rotation: 4,
