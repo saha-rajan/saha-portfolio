@@ -90,7 +90,7 @@ export function Studio() {
             onMouseEnter={() => setIsTextCursor(true)}
             onMouseLeave={() => setIsTextCursor(false)}
           >
-            A space for storytelling, exploration and creative experimentation with new technologies.
+            A digital playground for visual design, brand exploration, cinematic storytelling, and experimental tech.
           </p>
         </div>
 
