@@ -16,6 +16,11 @@ import video4 from "../../assets/video4.mp4";
 import video5 from "../../assets/video5.mp4";
 import vrTourVideo from "../../assets/vr_tour_1.mp4";
 import { AntigravityExperiment } from "../components/AntigravityExperiment";
+import futureFabStickers1 from "../../assets/future_fab_stickers_1.jpg";
+import futureFabStickers2 from "../../assets/future_fab_stickers_2.jpg";
+import futureFabFlyer1 from "../../assets/future_fab_flyer_1.jpg";
+import futureFabFlyer2 from "../../assets/future_fab_flyer_2.jpg";
+
 import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
 
 
@@ -145,6 +150,43 @@ const studioImages = [
     backgroundColor: "#111111",
     size: "wide",
     isExperiment: true,
+  },
+  {
+    id: 13,
+    url: futureFabFlyer1,
+    label: "PRINT · MERCH\nGame Flyer Design",
+    initialX: 600,
+    initialY: 250,
+    rotation: -3,
+    backgroundColor: "#FFFFFF",
+  },
+  {
+    id: 14,
+    url: futureFabFlyer2,
+    label: "PROMO MATERIAL\nGame Flyer Layouts",
+    initialX: -800,
+    initialY: 300,
+    rotation: 5,
+    backgroundColor: "#FFFFFF",
+    size: "wide",
+  },
+  {
+    id: 15,
+    url: futureFabStickers1,
+    label: "MERCHANDISE\nChip-E Character Stickers",
+    initialX: -200,
+    initialY: -550,
+    rotation: -6,
+    backgroundColor: "#FFFFFF",
+  },
+  {
+    id: 16,
+    url: futureFabStickers2,
+    label: "MERCHANDISE\nDie-Cut Vinyl Stickers",
+    initialX: -700,
+    initialY: -250,
+    rotation: 4,
+    backgroundColor: "#FFFFFF",
   }
 ];
 
