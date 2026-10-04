@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
-import { ArrowLeft, Move, Play } from "lucide-react";
+import { ArrowLeft, Move, Play, Maximize2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import robotImg from "figma:asset/f6768dc39512e7f0508e06a264f0361158314f01.png";
 import sketchImg from "figma:asset/eb4fcc9f54db44a00e4be7b26ee721d1e3cc5cc2.png";
 import gameLogoImg from "figma:asset/0aa009169e7b91ec3d1c260c0af7f996ec0ec4a2.png";
@@ -206,7 +205,7 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
 
   const handleDragEnd = (e: any, info: any) => {
     // If it was just a tiny movement (a click), trigger expand
-    if (image.isVideo && Math.abs(info.offset.x) < 5 && Math.abs(info.offset.y) < 5) {
+    if (Math.abs(info.offset.x) < 5 && Math.abs(info.offset.y) < 5) {
       if (onExpand) onExpand();
     }
   };
@@ -242,7 +241,7 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
         <motion.div
           className={`${containerClass} overflow-hidden flex items-center justify-center relative cursor-pointer`}
           style={image.backgroundColor ? { backgroundColor: image.backgroundColor } : {}}
-          onClick={() => { if ((image.isVideo || image.isExperiment) && onExpand) onExpand(); }}
+          onClick={() => { if (onExpand) onExpand(); }}
         >
           {image.isVideo ? (
             <>
@@ -276,13 +275,20 @@ function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageC
               </div>
             </>
           ) : (
-            <ImageWithFallback
-              src={image.url}
-              alt={image.label}
-              className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none`}
-              draggable={false}
-              style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
-            />
+            <>
+              <ImageWithFallback
+                src={image.url}
+                alt={image.label}
+                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none transition-transform duration-300 group-hover:scale-105`}
+                draggable={false}
+                style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors pointer-events-none">
+                <div className="bg-black/50 text-white rounded-full p-3 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100">
+                  <Maximize2 size={20} />
+                </div>
+              </div>
+            </>
           )}
         </motion.div>
         <div className="mt-3 flex flex-col items-center text-center font-mono">
@@ -473,7 +479,7 @@ export function StudioDetail() {
                 image={image}
                 onBringToFront={() => bringToFront(image.id)}
                 zIndex={zIndex}
-                onExpand={(image.isVideo || image.isExperiment) ? () => setExpandedVideoId(image.id) : undefined}
+                onExpand={() => setExpandedVideoId(image.id)}
                 isMobile={isMobile}
               />
             );
@@ -481,7 +487,7 @@ export function StudioDetail() {
         </div>
       </motion.div>
       
-      {/* Expanded Video Modal */}
+      {/* Expanded Modal */}
       <AnimatePresence>
         {expandedVideoId !== null && expandedVideo && (
           <motion.div
@@ -499,15 +505,23 @@ export function StudioDetail() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black"
-                onClick={(e) => e.stopPropagation()} // Prevent clicks on video from closing modal
+                className="relative w-full max-w-6xl aspect-video md:aspect-auto md:h-[85vh] rounded-xl overflow-hidden shadow-2xl flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()} 
               >
-                <video
-                  src={expandedVideo.url}
-                  autoPlay
-                  controls
-                  className="w-full h-full object-contain"
-                />
+                {expandedVideo.isVideo ? (
+                  <video
+                    src={expandedVideo.url}
+                    autoPlay
+                    controls
+                    className="w-full h-full object-contain bg-black"
+                  />
+                ) : (
+                  <img
+                    src={expandedVideo.url}
+                    alt={expandedVideo.label}
+                    className="w-full h-full object-contain"
+                  />
+                )}
                 <button 
                   onClick={() => setExpandedVideoId(null)}
                   className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors z-10"
