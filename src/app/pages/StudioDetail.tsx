@@ -16,6 +16,8 @@ import video4 from "../../assets/video4.mp4";
 import video5 from "../../assets/video5.mp4";
 import vrTourVideo from "../../assets/vr_tour_1.mp4";
 import { AntigravityExperiment } from "../components/AntigravityExperiment";
+import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
+
 
 
 // Studio images with rotation and closer positioning
@@ -135,7 +137,7 @@ const studioImages = [
   },
   {
     id: 12,
-    url: robotImg, // Placeholder for experiment cover
+    url: drStrangeThumb, 
     label: "MEDIAPIPE · WEBGL\nDoctor Strange Hand Effect",
     initialX: 500,
     initialY: -100,
