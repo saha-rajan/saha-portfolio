@@ -3,21 +3,70 @@ import { useLocation } from "react-router-dom";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "motion/react";
 import { useCursor } from "../contexts/CursorContext";
 
+// Stiffer, lighter spring: same near-critical damping (no overshoot) but it
+// settles in roughly half the time of the old { damping: 30, stiffness: 400, mass: 0.5 }.
+const springConfig = { damping: 32, stiffness: 800, mass: 0.3 };
+
+type TextRects = { rects: DOMRect[]; actualLineHeight: number };
+
+type HeadingHover = { active: boolean; height: number };
+const NO_HOVER: HeadingHover = { active: false, height: 0 };
+
+const TEXT_TAGS = new Set(["H1", "H2", "H3", "H4", "H5", "H6", "P"]);
+
+// Reads layout once per element (not per mousemove) and returns the text line boxes.
+function measureTextRects(el: HTMLElement): TextRects | null {
+  const computedStyle = window.getComputedStyle(el);
+  const isVisible =
+    computedStyle.visibility !== "hidden" &&
+    computedStyle.display !== "none" &&
+    computedStyle.opacity !== "0" &&
+    !el.classList.contains("invisible");
+  if (!isVisible) return null;
+
+  const fontSize = parseFloat(computedStyle.fontSize);
+  const computedLineHeight = parseFloat(computedStyle.lineHeight);
+  const actualLineHeight = isNaN(computedLineHeight) ? fontSize * 1.3 : computedLineHeight;
+
+  const rects: DOMRect[] = [];
+  const range = document.createRange();
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.textContent?.trim()) continue;
+    range.selectNodeContents(node);
+    const nodeRects = range.getClientRects();
+    for (let i = 0; i < nodeRects.length; i++) {
+      if (nodeRects[i].width > 1 && nodeRects[i].height > 1) rects.push(nodeRects[i]);
+    }
+  }
+  return { rects, actualLineHeight };
+}
+
+function isTouchOrSmall() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0 || window.innerWidth < 1024;
+}
+
 export function CustomCursor() {
-  const [isHoveringHeading, setIsHoveringHeading] = useState(false);
-  const [headingHeight, setHeadingHeight] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  // One state object instead of two, so a hover change is a single render.
+  const [headingHover, setHeadingHover] = useState<HeadingHover>(NO_HOVER);
+  const [isMobile, setIsMobile] = useState(isTouchOrSmall);
   const location = useLocation();
   const { hideCursor, setHideCursor, isTextCursor, cursorText, cursorProgress, cursorTimeLeft, cursorMode, setCursorMode, setCursorText } = useCursor();
 
-  // Use refs to access latest state inside event listeners without re-binding
+  // Refs give listeners the latest values without re-binding. They are written
+  // synchronously (not in effects) so they are never a render behind.
   const isTextCursorRef = useRef(isTextCursor);
-  const isHoveringHeadingRef = useRef(isHoveringHeading);
-  const headingHeightRef = useRef(headingHeight);
-  
-  useEffect(() => { isTextCursorRef.current = isTextCursor; }, [isTextCursor]);
-  useEffect(() => { isHoveringHeadingRef.current = isHoveringHeading; }, [isHoveringHeading]);
-  useEffect(() => { headingHeightRef.current = headingHeight; }, [headingHeight]);
+  isTextCursorRef.current = isTextCursor;
+  const headingHoverRef = useRef(headingHover);
+
+  const updateHeadingHover = (next: HeadingHover) => {
+    const prev = headingHoverRef.current;
+    if (prev.active === next.active && prev.height === next.height) return;
+    headingHoverRef.current = next;
+    setHeadingHover(next);
+  };
+  const updateHeadingHoverRef = useRef(updateHeadingHover);
+  updateHeadingHoverRef.current = updateHeadingHover;
 
   // Reset cursor state on route change
   useEffect(() => {
@@ -25,118 +74,74 @@ export function CustomCursor() {
     setCursorText('');
   }, [location.pathname, setCursorMode, setCursorText]);
 
-  // High-performance motion values that bypass React's render cycle
+  // Motion values update the DOM directly and bypass React's render cycle
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
   const textX = useMotionValue(-100);
   const textY = useMotionValue(-100);
-  
-  const springConfig = { damping: 30, stiffness: 400, mass: 0.5 };
+
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
   const smoothTextX = useSpring(textX, springConfig);
   const smoothTextY = useSpring(textY, springConfig);
 
-  // Detect if device is mobile/touch
+  // Detect if device is mobile/touch (resize is throttled to one check per frame)
   useEffect(() => {
-    const checkIfMobile = () => {
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth < 1024;
-      setIsMobile(isTouchDevice || isSmallScreen);
+    let frame = 0;
+    const onResize = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        setIsMobile(isTouchOrSmall());
+      });
     };
-    
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
     if (isMobile) return;
-    
-    let currentTextRects: { rects: DOMRect[], actualLineHeight: number } | null = null;
+
+    let currentTextRects: TextRects | null = null;
     let currentEligibleElement: HTMLElement | null = null;
+    // Set on scroll: rects are re-measured lazily on the next mousemove,
+    // once per scroll burst, instead of being dropped until the next mouseover.
+    let rectsDirty = false;
+
+    const setHover = (next: HeadingHover) => updateHeadingHoverRef.current(next);
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target) return;
-      
+
       if (target.closest('[data-no-text-cursor="true"]')) {
         currentEligibleElement = null;
         currentTextRects = null;
-        // Don't use ref for state update to trigger re-render properly if it was previously true
-        if (isHoveringHeadingRef.current) {
-          setIsHoveringHeading(false);
-          setHeadingHeight(0);
-        }
+        setHover(NO_HOVER);
         return;
       }
-      
+
       let headingElementFound: HTMLElement | null = null;
       let currentElement: HTMLElement | null = target;
-      
       while (currentElement && currentElement !== document.body) {
-        const tagName = currentElement.tagName;
-        if (
-          tagName === 'H1' || 
-          tagName === 'H2' || 
-          tagName === 'H3' ||
-          tagName === 'H4' ||
-          tagName === 'H5' ||
-          tagName === 'H6' ||
-          tagName === 'P' ||
-          currentElement.classList.contains('cursor-line-effect')
-        ) {
+        if (TEXT_TAGS.has(currentElement.tagName) || currentElement.classList.contains('cursor-line-effect')) {
           headingElementFound = currentElement;
           break;
         }
         currentElement = currentElement.parentElement;
       }
-      
+
       if (headingElementFound !== currentEligibleElement) {
         currentEligibleElement = headingElementFound;
-        
+        rectsDirty = false;
         if (headingElementFound) {
-          const computedStyle = window.getComputedStyle(headingElementFound);
-          const isVisible = computedStyle.visibility !== 'hidden' && 
-                           computedStyle.display !== 'none' && 
-                           computedStyle.opacity !== '0' &&
-                           !headingElementFound.classList.contains('invisible');
-                           
-          if (!isVisible) {
-            currentTextRects = null;
-            return;
-          }
-
-          const fontSize = parseFloat(computedStyle.fontSize);
-          const computedLineHeight = parseFloat(computedStyle.lineHeight);
-          const actualLineHeight = isNaN(computedLineHeight) ? fontSize * 1.3 : computedLineHeight;
-          
-          const textNodes: Node[] = [];
-          const getTextNodes = (node: Node) => {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
-              textNodes.push(node);
-            } else {
-              node.childNodes.forEach(getTextNodes);
-            }
-          };
-          getTextNodes(headingElementFound);
-          
-          const allRects: DOMRect[] = [];
-          for (const textNode of textNodes) {
-            const range = document.createRange();
-            range.selectNodeContents(textNode);
-            const rects = range.getClientRects();
-            for (let i = 0; i < rects.length; i++) {
-              if (rects[i].width > 1 && rects[i].height > 1) {
-                allRects.push(rects[i]);
-              }
-            }
-          }
-          currentTextRects = { rects: allRects, actualLineHeight };
+          currentTextRects = measureTextRects(headingElementFound);
         } else {
           currentTextRects = null;
-          setIsHoveringHeading(false);
-          setHeadingHeight(0);
+          setHover(NO_HOVER);
         }
       }
     };
@@ -145,77 +150,62 @@ export function CustomCursor() {
       if (e.relatedTarget === null) {
         currentEligibleElement = null;
         currentTextRects = null;
-        setIsHoveringHeading(false);
-        setHeadingHeight(0);
+        setHover(NO_HOVER);
       }
     };
 
-    let ticking = false;
     const updateMousePosition = (e: MouseEvent) => {
-      (window as any).mouseX = e.clientX;
-      (window as any).mouseY = e.clientY;
-      
+      const x = e.clientX;
+      const y = e.clientY;
+      (window as any).mouseX = x;
+      (window as any).mouseY = y;
+
+      if (rectsDirty && currentEligibleElement) {
+        rectsDirty = false;
+        currentTextRects = currentEligibleElement.isConnected
+          ? measureTextRects(currentEligibleElement)
+          : null;
+      }
+
       let isOverText = false;
       let matchedHeight = 0;
-      
+
       if (currentTextRects) {
-        for (let i = 0; i < currentTextRects.rects.length; i++) {
-          const rect = currentTextRects.rects[i];
-          if (
-            e.clientX >= rect.left - 2 &&
-            e.clientX <= rect.right + 2 &&
-            e.clientY >= rect.top - 2 &&
-            e.clientY <= rect.bottom + 2
-          ) {
+        const { rects, actualLineHeight } = currentTextRects;
+        for (let i = 0; i < rects.length; i++) {
+          const rect = rects[i];
+          if (x >= rect.left - 2 && x <= rect.right + 2 && y >= rect.top - 2 && y <= rect.bottom + 2) {
             isOverText = true;
-            matchedHeight = Math.max(rect.height, currentTextRects.actualLineHeight);
+            matchedHeight = Math.max(rect.height, actualLineHeight);
             break;
           }
         }
-        
-        // Update React state safely if changed
-        if (isOverText !== isHoveringHeadingRef.current) {
-          setIsHoveringHeading(isOverText);
-        }
-        if (isOverText && matchedHeight !== headingHeightRef.current) {
-          setHeadingHeight(matchedHeight);
-        } else if (!isOverText && headingHeightRef.current !== 0) {
-          setHeadingHeight(0);
-        }
+        setHover(isOverText ? { active: true, height: matchedHeight } : NO_HOVER);
       }
 
-      // Update MotionValues directly to avoid React re-renders on every pixel move
       const isTextC = isTextCursorRef.current;
-      const isHovering = currentTextRects ? isOverText : false;
-      const hHeight = currentTextRects && isOverText ? matchedHeight : 0;
-      
-      const offsetX = (isHovering || isTextC) ? 1 : 16;
-      const offsetY = isHovering ? (hHeight / 2) : (isTextC ? 12 : 16);
-      
-      // Update coordinates dynamically without setState
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          mouseX.set(e.clientX - offsetX);
-          mouseY.set(e.clientY - offsetY);
-          textX.set(e.clientX - 60);
-          textY.set(e.clientY - 20);
-          ticking = false;
-        });
-        ticking = true;
-      }
+      const offsetX = (isOverText || isTextC) ? 1 : 16;
+      const offsetY = isOverText ? (matchedHeight / 2) : (isTextC ? 12 : 16);
+
+      // Motion values already batch writes into the next animation frame, so we
+      // set them straight from the latest event. The old extra requestAnimationFrame
+      // added a frame of delay and used the first event of each frame, not the latest.
+      mouseX.set(x - offsetX);
+      mouseY.set(y - offsetY);
+      textX.set(x - 60);
+      textY.set(y - 20);
     };
 
     const handleScroll = () => {
-       currentEligibleElement = null;
-       currentTextRects = null;
-       setIsHoveringHeading(false);
+      rectsDirty = true;
+      setHover(NO_HOVER);
     };
 
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("mouseout", handleMouseOut);
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    window.addEventListener("mouseout", handleMouseOut, { passive: true });
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("mouseout", handleMouseOut);
@@ -239,16 +229,20 @@ export function CustomCursor() {
         setHideCursor(false);
       }
     };
+    // Named handler so cleanup actually removes it, on the element that
+    // really fires mouseleave when the pointer exits the window.
+    const handleLeave = () => setHideCursor(false);
     window.addEventListener("mouseup", restoreCursor);
-    window.addEventListener("mouseleave", () => setHideCursor(false));
+    document.documentElement.addEventListener("mouseleave", handleLeave);
     return () => {
       window.removeEventListener("mouseup", restoreCursor);
-      window.removeEventListener("mouseleave", () => setHideCursor(false));
+      document.documentElement.removeEventListener("mouseleave", handleLeave);
     };
   }, [isMobile, setHideCursor]);
 
   const showTextCursor = cursorText.length > 0;
-  const shouldShowHeadingCursor = isHoveringHeading;
+  const shouldShowHeadingCursor = headingHover.active;
+  const headingHeight = headingHover.height;
 
   if (isMobile) {
     return null;
@@ -270,6 +264,7 @@ export function CustomCursor() {
           marginLeft: cursorMode === 'project' ? '-34px' : '0px',
           marginTop: cursorMode === 'project' ? '-34px' : '0px',
           boxShadow: 'none',
+          willChange: 'transform',
         }}
         transition={{
           width: { duration: 0.3, ease: "easeOut" },
@@ -279,7 +274,7 @@ export function CustomCursor() {
       >
         <AnimatePresence>
           {cursorMode === 'project' && (
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
@@ -301,18 +296,19 @@ export function CustomCursor() {
             x: smoothTextX,
             y: smoothTextY,
             width: 'max-content',
-            paddingRight: cursorProgress !== null ? '0.5rem' : '1.5rem'
+            paddingRight: cursorProgress !== null ? '0.5rem' : '1.5rem',
+            willChange: 'transform',
           }}
         >
           <span className="whitespace-nowrap">{cursorText}</span>
-          
+
           {cursorProgress !== null && cursorTimeLeft !== null && (
             <div className="relative w-8 h-8 flex items-center justify-center flex-shrink-0 bg-gray-100 rounded-full">
               <svg className="absolute inset-0 w-full h-full -rotate-90">
                 <circle cx="16" cy="16" r="14" fill="none" stroke="rgba(0,0,0,0.1)" strokeWidth="2" />
-                <circle cx="16" cy="16" r="14" fill="none" stroke="black" strokeWidth="2" 
-                  strokeDasharray={`${2 * Math.PI * 14}`} 
-                  strokeDashoffset={`${2 * Math.PI * 14 * (1 - cursorProgress)}`} 
+                <circle cx="16" cy="16" r="14" fill="none" stroke="black" strokeWidth="2"
+                  strokeDasharray={`${2 * Math.PI * 14}`}
+                  strokeDashoffset={`${2 * Math.PI * 14 * (1 - cursorProgress)}`}
                   strokeLinecap="round"
                 />
               </svg>

@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ArrowUpRight, ArrowRight, Trophy } from "lucide-react";
+import { useEffect, useState, useRef, memo } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
+import { ArrowUpRight, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCursor } from "../contexts/CursorContext";
 import { useChakku } from "../contexts/ChakkuContext";
@@ -9,8 +9,23 @@ import chemoVideo from '../../assets/Chemo thumbnail.mp4';
 import talentVaultVideo from '../../assets/talentVault_logo.mp4';
 import auraVideo from '../../assets/Aura thumbnail.mp4';
 import aisleVideo from '../../assets/AIsle.mp4';
+// After running scripts/compress-hero-videos.sh, import the outputs here and
+// add them to the projects below as `webm` and `poster`, e.g.:
+// import chemoWebm from '../../assets/optimized/Chemo thumbnail.webm';
+// import chemoPoster from '../../assets/optimized/Chemo thumbnail.jpg';
 
-const projects = [
+type Project = {
+  id: string;
+  title: string;
+  category: string;
+  size: string;
+  video?: string;
+  webm?: string;
+  poster?: string;
+  image?: string;
+};
+
+const projects: Project[] = [
   {
     id: "chemobuddy",
     title: "Chemotherapy education platform",
@@ -41,120 +56,382 @@ const projects = [
   },
 ];
 
-export function Hero() {
-    const [currentGreeting, setCurrentGreeting] = useState(0);
-  const [currentChakkuPhrase, setCurrentChakkuPhrase] = useState(0);
-  const chakkuPhrases = [
-    "he can talk",
-    "he can navigate",
-    "he can explain",
-    "he knows my work",
-    "he tells questionable jokes",
-    "he's still learning",
-    "try him"
-  ];
-  const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
-  const { setHideCursor, setIsTextCursor, setCursorText, setCursorMode } = useCursor();
-  const { startSession, isSessionActive } = useChakku();
+const greetings = [
+  "Hello",
+  "Hola",
+  "Bonjour",
+  "Ciao",
+  "こんにちは",
+  "안녕하세요",
+  "你好",
+  "Привет",
+  "नमस्ते",
+  "வணக்கம்"
+];
 
-  const greetings = [
-    "Hello",
-    "Hola", 
-    "Bonjour",
-    "Ciao",
-    "こんにちは",
-    "안녕하세요",
-    "你好",
-    "Привет",
-    "नमस्ते",
-    "வணக்கம்"
-  ];
-  
+const chakkuPhrases = [
+  "he can talk",
+  "he can navigate",
+  "he can explain",
+  "he knows my work",
+  "he tells questionable jokes",
+  "he's still learning",
+  "try him"
+];
+
+// Cycles through items every `interval` ms. Kept inside the small rotator
+// components so the tick re-renders only them, not the whole hero and video grid.
+function useRotatingIndex(length: number, interval = 2500) {
+  const [index, setIndex] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentGreeting((prev) => (prev + 1) % greetings.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+    const id = setInterval(() => setIndex((prev) => (prev + 1) % length), interval);
+    return () => clearInterval(id);
+  }, [length, interval]);
+  return index;
+}
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentChakkuPhrase((prev) => (prev + 1) % chakkuPhrases.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+function GreetingRotator() {
+  const currentGreeting = useRotatingIndex(greetings.length);
+  return (
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={currentGreeting}
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -50, opacity: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="block absolute top-0 left-0 whitespace-nowrap"
+      >
+        {greetings[currentGreeting]}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
 
-  const handleMouseMove = (e: React.MouseEvent<any>) => {
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
+function ChakkuPhraseRotator() {
+  const currentChakkuPhrase = useRotatingIndex(chakkuPhrases.length);
+  return (
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={currentChakkuPhrase}
+        initial={{ rotateX: -60, opacity: 0, y: 10 }}
+        animate={{ rotateX: 0, opacity: 1, y: 0 }}
+        exit={{ rotateX: 60, opacity: 0, y: -10 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="absolute left-0 text-[#A7A7A7] whitespace-nowrap"
+        style={{ transformOrigin: "center center" }}
+      >
+        {chakkuPhrases[currentChakkuPhrase]}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
+
+const magneticSpring = { stiffness: 150, damping: 15, mass: 0.1 };
+
+// Magnetic "meet chakku AI" pill. Uses motion values instead of React state, and
+// measures the pill once on enter instead of on every mousemove.
+function MagneticPill({ setHideCursor }: { setHideCursor: (hide: boolean) => void }) {
+  const rectRef = useRef<DOMRect | null>(null);
+  const textX = useMotionValue(0);
+  const textY = useMotionValue(0);
+  const springX = useSpring(textX, magneticSpring);
+  const springY = useSpring(textY, magneticSpring);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+    setHideCursor(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = rectRef.current ?? (rectRef.current = e.currentTarget.getBoundingClientRect());
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    
+
     // Enhanced magnetic effect - more responsive movement
     const maxMove = 12;
-    const clampedX = Math.max(-maxMove, Math.min(maxMove, x * 0.25));
-    const clampedY = Math.max(-maxMove, Math.min(maxMove, y * 0.25));
-    
-    setTextPosition({ x: clampedX, y: clampedY });
+    textX.set(Math.max(-maxMove, Math.min(maxMove, x * 0.25)));
+    textY.set(Math.max(-maxMove, Math.min(maxMove, y * 0.25)));
   };
 
   const handleMouseLeave = () => {
-    setTextPosition({ x: 0, y: 0 });
+    rectRef.current = null;
+    setHideCursor(false);
+    textX.set(0);
+    textY.set(0);
   };
 
+  return (
+    <div
+      className="relative inline-flex items-center px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 shrink-0 overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <motion.div
+        className="flex items-center gap-3 relative z-10"
+        style={{ x: springX, y: springY }}
+      >
+        <span className="text-white/60 group-hover:text-white/80 transition-colors">✦</span>
+        <span className="text-[11px] sm:text-xs font-medium tracking-widest uppercase text-white/90 whitespace-nowrap mt-[1px]">
+          meet chakku AI
+        </span>
+        <ArrowUpRight size={15} className="text-white/60 group-hover:text-white/90 transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+      </motion.div>
+    </div>
+  );
+}
 
+// Plays only while on screen and the tab is visible. With preload="none" and no
+// autoplay attribute, nothing is downloaded until the card is near the viewport.
+function LazyVideo({ src, webm, poster, className }: { src: string; webm?: string; poster?: string; className: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    // Set as properties too: React does not reliably write the `muted`
+    // attribute, and iOS refuses to autoplay without it.
+    video.muted = true;
+    video.defaultMuted = true;
+
+    let inView = false;
+    const sync = () => {
+      if (inView && document.visibilityState === "visible") {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      inView = true;
+      sync();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        sync();
+      },
+      { rootMargin: "200px 0px" }
+    );
+    observer.observe(video);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      loop
+      muted
+      playsInline
+      preload="none"
+      poster={poster}
+      className={className}
+    >
+      {webm && <source src={webm} type="video/webm" />}
+      <source src={src} type="video/mp4" />
+    </video>
+  );
+}
+
+const GridBackground = memo(function GridBackground() {
+  return (
+    <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+      <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
+        {/* Desktop: 7 columns - double lines for middle, single for first/last */}
+        <div className="hidden lg:flex w-full h-full justify-between">
+          {[...Array(7)].map((_, i) => (
+            <div key={i} className="flex gap-[16px]">
+              {i === 0 || i === 6 ? (
+                // First and last: single line
+                <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+              ) : (
+                // Middle: double lines
+                <>
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Tablet: 4 columns - double lines for middle, single for first/last */}
+        <div className="hidden md:flex lg:hidden w-full h-full justify-between">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex gap-[16px]">
+              {i === 0 || i === 3 ? (
+                // First and last: single line
+                <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+              ) : (
+                // Middle: double lines
+                <>
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile: 2 columns - all single lines */}
+        <div className="flex md:hidden w-full h-full justify-between">
+          {[...Array(2)].map((_, i) => (
+            <div key={i}>
+              <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+type ProjectCardProps = {
+  project: Project;
+  index: number;
+  setCursorMode: ReturnType<typeof useCursor>['setCursorMode'];
+  setCursorText: ReturnType<typeof useCursor>['setCursorText'];
+};
+
+// Memoized so cursor-context updates (which re-render Hero) skip the video cards.
+const ProjectCard = memo(function ProjectCard({ project, index, setCursorMode, setCursorText }: ProjectCardProps) {
+  const cardContent = (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
+      className={`relative group cursor-pointer overflow-hidden h-full w-full ${
+        index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'
+      } ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}
+    >
+      {project.video ? (
+        <LazyVideo
+          src={project.video}
+          webm={project.webm}
+          poster={project.poster}
+          className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
+        />
+      ) : (
+        <img
+          src={project.image}
+          alt={project.title}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
+        />
+      )}
+
+      {project.id === 'talentvault' ? (
+        <div className={`absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
+          <div className="flex flex-col items-center justify-center max-w-[95%] sm:max-w-[85%] text-center">
+            <div className="flex items-center justify-center px-4 pt-[6px] pb-[4px] mb-4 rounded-full border border-white/40 bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white font-semibold leading-none" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                Currently Under Wraps
+              </span>
+            </div>
+
+            <p className="text-[#E0E0E0] text-[11px] sm:text-xs md:text-sm leading-[1.7] sm:leading-[1.8] mb-4 sm:mb-6">
+              I’m building TalentVault from 0<span className="relative bottom-[1.5px] mx-[2px]">→</span>1 as a founding designer. The work is confidential, but I can walk through selected decisions and process privately with permission.
+            </p>
+
+            <a
+              href="mailto:trajan2@asu.edu?subject=Request for TalentVault Case Study"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-black/40 border border-[#1CB4F5]/40 text-[#1CB4F5] hover:bg-[#1CB4F5]/10 hover:border-[#1CB4F5] hover:shadow-[0_0_15px_rgba(28,180,245,0.2)] transition-all duration-300 group/link"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              <span className="text-[10px] sm:text-xs font-semibold tracking-wide">
+                Case study available upon request
+              </span>
+              <ArrowUpRight size={14} className="transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
+            </a>
+          </div>
+        </div>
+      ) : (
+        <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
+          <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
+          {index === 0 && (
+            <motion.div
+              className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
+              animate={{
+                boxShadow: [
+                  '0 0 10px rgba(250, 204, 21, 0.3)',
+                  '0 0 20px rgba(250, 204, 21, 0.5)',
+                  '0 0 10px rgba(250, 204, 21, 0.3)'
+                ]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 10, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Trophy size={16} className="text-yellow-400" />
+              </motion.div>
+              <p
+                className="text-xs font-medium relative overflow-hidden"
+                style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
+              >
+                <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
+                  Mayo Clinic Observership Awardee
+                </span>
+              </p>
+            </motion.div>
+          )}
+        </div>
+      )}
+    </motion.div>
+  );
+
+  return project.id === 'talentvault' ? (
+    <div className={`${project.size} block`} data-no-text-cursor="true">
+      {cardContent}
+    </div>
+  ) : (
+    <Link
+      to={`/works/${project.id}`}
+      className={`${project.size} block`}
+      onMouseEnter={() => {
+        setCursorMode('project');
+        setCursorText('View\nProject');
+      }}
+      onMouseLeave={() => {
+        setCursorMode('default');
+        setCursorText('');
+      }}
+    >
+      {cardContent}
+    </Link>
+  );
+});
+
+export function Hero() {
+  const { setHideCursor, setCursorText, setCursorMode } = useCursor();
+  const { startSession, isSessionActive } = useChakku();
 
   return (
     <section className="relative min-h-screen bg-black overflow-hidden pb-16">
       {/* 6-Column Grid Background - Center Aligned with Large Margins - Double Lines */}
-      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-        <div className="w-full max-w-[1200px] h-full flex justify-between px-8 md:px-16 lg:px-24">
-          {/* Desktop: 7 columns - double lines for middle, single for first/last */}
-          <div className="hidden lg:flex w-full h-full justify-between">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="flex gap-[16px]">
-                {i === 0 || i === 6 ? (
-                  // First and last: single line
-                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                ) : (
-                  // Middle: double lines
-                  <>
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Tablet: 4 columns - double lines for middle, single for first/last */}
-          <div className="hidden md:flex lg:hidden w-full h-full justify-between">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex gap-[16px]">
-                {i === 0 || i === 3 ? (
-                  // First and last: single line
-                  <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                ) : (
-                  // Middle: double lines
-                  <>
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                    <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          
-          {/* Mobile: 2 columns - all single lines */}
-          <div className="flex md:hidden w-full h-full justify-between">
-            {[...Array(2)].map((_, i) => (
-              <div key={i}>
-                <div className="h-full bg-[#1D1D1D]" style={{ width: '0.4px' }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <GridBackground />
 
       {/* Content Container - Aligned to Grid */}
       <div className="relative z-10 max-w-[1200px] mx-auto px-8 md:px-16 lg:px-24 py-8">
@@ -165,36 +442,25 @@ export function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col mt-16 sm:mt-24 mb-10 sm:mb-16"
         >
-          <h1 
+          <h1
             className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter mb-6 sm:mb-10 md:mb-12 max-w-5xl font-normal"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
             <div className="h-[1.2em] overflow-hidden relative mb-1 sm:mb-2 min-w-[300px] sm:min-w-[400px] md:min-w-[500px]">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentGreeting}
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -50, opacity: 0 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="block absolute top-0 left-0 whitespace-nowrap"
-                >
-                  {greetings[currentGreeting]}
-                </motion.span>
-              </AnimatePresence>
+              <GreetingRotator />
               {/* Invisible placeholder to maintain height/width */}
               <span className="invisible whitespace-nowrap">안녕하세요</span>
             </div>
             <span className="inline-block mb-1 sm:mb-2">i'm</span> <br />
             <span className="text-[#A7A7A7]">thiruvenkata saha.</span>
           </h1>
-          <p 
+          <p
             className="text-[#A7A7A7] text-sm sm:text-base md:text-xl max-w-[95%] lg:max-w-[90%] leading-relaxed text-left mb-8"
             style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: '1.7' }}
           >
             I’m a founding designer who loves the 0→1. I turn fuzzy ideas into products used by 100K+ users, experiment with AI from research to media production and occasionally wonder, “What if we tried it this way?”
           </p>
-          
+
           {/* Say Hi Button */}
           {!isSessionActive && (
             <motion.button
@@ -205,41 +471,9 @@ export function Hero() {
               className="group flex flex-col sm:flex-row items-start sm:items-center text-sm w-fit self-start mt-4 gap-3 sm:gap-4 cursor-pointer"
               style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
             >
-              <div 
-                className="relative inline-flex items-center px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 shrink-0 overflow-hidden"
-                onMouseMove={handleMouseMove}
-                onMouseEnter={() => setHideCursor(true)}
-                onMouseLeave={() => {
-                  setHideCursor(false);
-                  handleMouseLeave();
-                }}
-              >
-                <motion.div
-                  className="flex items-center gap-3 relative z-10"
-                  animate={{ x: textPosition.x, y: textPosition.y }}
-                  transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-                >
-                  <span className="text-white/60 group-hover:text-white/80 transition-colors">✦</span>
-                  <span className="text-[11px] sm:text-xs font-medium tracking-widest uppercase text-white/90 whitespace-nowrap mt-[1px]">
-                    meet chakku AI
-                  </span>
-                  <ArrowUpRight size={15} className="text-white/60 group-hover:text-white/90 transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                </motion.div>
-              </div>
+              <MagneticPill setHideCursor={setHideCursor} />
               <div className="relative h-[1.2em] w-[280px] overflow-hidden text-left flex items-center opacity-70 group-hover:opacity-100 transition-opacity duration-300 ml-4 sm:ml-0 mt-1 sm:mt-0">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={currentChakkuPhrase}
-                    initial={{ rotateX: -60, opacity: 0, y: 10 }}
-                    animate={{ rotateX: 0, opacity: 1, y: 0 }}
-                    exit={{ rotateX: 60, opacity: 0, y: -10 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="absolute left-0 text-[#A7A7A7] whitespace-nowrap"
-                    style={{ transformOrigin: "center center" }}
-                  >
-                    {chakkuPhrases[currentChakkuPhrase]}
-                  </motion.span>
-                </AnimatePresence>
+                <ChakkuPhraseRotator />
               </div>
             </motion.button>
           )}
@@ -247,129 +481,15 @@ export function Hero() {
 
         {/* Works Grid */}
         <div id="works" className="grid grid-cols-2 md:grid-cols-4 gap-1 sm:gap-2 auto-rows-[200px] sm:auto-rows-[400px] w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-          {projects.map((project, index) => {
-            const cardContent = (
-                <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 + index * 0.1, duration: 0.6 }}
-                className={`relative group cursor-pointer overflow-hidden h-full w-full ${
-                  index === 2 ? 'bg-gradient-to-b from-[#0A0A0A] to-black' : 'bg-[#111]'
-                } ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}
-              >
-                {project.video ? (
-                  <video
-                    src={project.video}
-                    autoPlay
-                    loop
-                    muted
-                    defaultMuted
-                    playsInline
-                    className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
-                  />
-                ) : (
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full transition-transform duration-700 object-cover group-hover:scale-105"
-                  />
-                )}
-                
-                {project.id === 'talentvault' ? (
-                  <div className={`absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
-                    <div className="flex flex-col items-center justify-center max-w-[95%] sm:max-w-[85%] text-center">
-                      <div className="flex items-center justify-center px-4 pt-[6px] pb-[4px] mb-4 rounded-full border border-white/40 bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-                        <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white font-semibold leading-none" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                          Currently Under Wraps
-                        </span>
-                      </div>
-                      
-                      <p className="text-[#E0E0E0] text-[11px] sm:text-xs md:text-sm leading-[1.7] sm:leading-[1.8] mb-4 sm:mb-6">
-                        I’m building TalentVault from 0<span className="relative bottom-[1.5px] mx-[2px]">→</span>1 as a founding designer. The work is confidential, but I can walk through selected decisions and process privately with permission.
-                      </p>
-
-                      <a 
-                        href="mailto:trajan2@asu.edu?subject=Request for TalentVault Case Study" 
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-black/40 border border-[#1CB4F5]/40 text-[#1CB4F5] hover:bg-[#1CB4F5]/10 hover:border-[#1CB4F5] hover:shadow-[0_0_15px_rgba(28,180,245,0.2)] transition-all duration-300 group/link"
-                        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-                      >
-                        <span className="text-[10px] sm:text-xs font-semibold tracking-wide">
-                          Case study available upon request
-                        </span>
-                        <ArrowUpRight size={14} className="transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
-                      </a>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={`absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-xl bg-black/60 ${index === 0 ? 'md:rounded-tl-lg md:rounded-bl-lg' : index === 3 ? 'md:rounded-tr-lg md:rounded-br-lg' : ''}`}>
-                    <h3 className="text-xl font-medium mb-1 text-white text-center">{project.title}</h3>
-                    {index === 0 && (
-                      <motion.div 
-                        className="flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-500/20 via-yellow-400/20 to-yellow-500/20 border border-yellow-400/30"
-                        animate={{ 
-                          boxShadow: [
-                            '0 0 10px rgba(250, 204, 21, 0.3)',
-                            '0 0 20px rgba(250, 204, 21, 0.5)',
-                            '0 0 10px rgba(250, 204, 21, 0.3)'
-                          ]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        <motion.div
-                          animate={{ 
-                            rotate: [0, 10, -10, 10, 0],
-                            scale: [1, 1.1, 1]
-                          }}
-                          transition={{ 
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                          }}
-                        >
-                          <Trophy size={16} className="text-yellow-400" />
-                        </motion.div>
-                        <p 
-                          className="text-xs font-medium relative overflow-hidden"
-                          style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.02em' }}
-                        >
-                          <span className="relative inline-block bg-gradient-to-r from-yellow-200 via-yellow-100 to-yellow-200 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-                            Mayo Clinic Observership Awardee
-                          </span>
-                        </p>
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-              </motion.div>
-            );
-
-            return project.id === 'talentvault' ? (
-              <div key={index} className={`${project.size} block`} data-no-text-cursor="true">
-                {cardContent}
-              </div>
-            ) : (
-              <Link 
-                to={`/works/${project.id}`} 
-                key={index} 
-                className={`${project.size} block`}
-                onMouseEnter={() => {
-                  setCursorMode('project');
-                  setCursorText('View\nProject');
-                }}
-                onMouseLeave={() => {
-                  setCursorMode('default');
-                  setCursorText('');
-                }}
-              >
-                {cardContent}
-              </Link>
-            );
-          })}
+          {projects.map((project, index) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              index={index}
+              setCursorMode={setCursorMode}
+              setCursorText={setCursorText}
+            />
+          ))}
         </div>
       </div>
     </section>

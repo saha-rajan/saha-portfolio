@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "motion/react";
-import { useCursor } from "../contexts/CursorContext";
-import { ArrowLeft, Move, Play, Maximize2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowLeft, Play, Maximize2 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 import { Link } from "react-router-dom";
@@ -23,402 +22,198 @@ import futureFabFlyer1 from "../../assets/future_fab_flyer_1.jpg";
 import futureFabFlyer2 from "../../assets/future_fab_flyer_2.jpg";
 
 import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
+import { TrifoldViewer, SheetViewer, StackViewer, type SheetPage } from "../components/TrifoldViewer";
+import trifoldOutside from "../../assets/swap_trifold_outside.jpg";
+import trifoldInside from "../../assets/swap_trifold_inside.jpg";
+import trifoldOutsideThumb from "../../assets/swap_trifold_outside_thumb.jpg";
+import trifoldInsideThumb from "../../assets/swap_trifold_inside_thumb.jpg";
+import ffhInfographicFront from "../../assets/ffh_infographic_front.jpg";
+import ffhInfographicBack from "../../assets/ffh_infographic_back.jpg";
+import ffhInfographicFrontThumb from "../../assets/ffh_infographic_front_thumb.jpg";
+import ffhInfographicBackThumb from "../../assets/ffh_infographic_back_thumb.jpg";
+import directionsIstb12 from "../../assets/directions_istb12.jpg";
+import directionsAcic from "../../assets/directions_acic.jpg";
+import directionsCooley from "../../assets/directions_cooley.jpg";
+import directionsIstb12Thumb from "../../assets/directions_istb12_thumb.jpg";
+import directionsAcicThumb from "../../assets/directions_acic_thumb.jpg";
+import directionsCooleyThumb from "../../assets/directions_cooley_thumb.jpg";
 
-
-
-// Studio images with rotation and closer positioning
-const studioImages = [
-  {
-    id: 1,
-    url: robotImg,
-    label: "Spline 3D\nInteractive 3D Model",
-    initialX: 400,
-    initialY: 400,
-    rotation: 3,
-  },
-  {
-    id: 2,
-    url: sketchImg,
-    label: "After Effects\nLogo Animation",
-    initialX: 950,
-    initialY: -500,
-    rotation: -6,
-  },
-  {
-    id: 3,
-    url: gameLogoImg,
-    label: "Adobe Illustrator\nThumbnail Design",
-    initialX: 700,
-    initialY: -100,
-    rotation: -5,
-    backgroundColor: "#E5E5E5",
-    size: "wide",
-  },
-  {
-    id: 4,
-    url: futureFabLogo,
-    label: "Adobe Illustrator\nLogo Design",
-    initialX: -1000,
-    initialY: 500,
-    rotation: 6,
-    backgroundColor: "#000000",
-    size: "wide",
-  },
-  {
-    id: 5,
-    url: trailerVideo,
-    label: "HIGGSFIELD · GEMINI · ELEVENLABS · CHATGPT · AFTER EFFECTS\nAI-Crafted Game Trailer",
-    initialX: 200,
-    initialY: -700,
-    rotation: -3,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 6,
-    url: video1,
-    label: "🎬 VIDEO · VISUAL DIARY\nBoston, in Passing",
-    initialX: -900,
-    initialY: -600,
-    rotation: -4,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 7,
-    url: video2,
-    label: "🎬 VIDEO · CINEMATIC STUDY\nSomewhere Above Earth",
-    initialX: 1000,
-    initialY: 600,
-    rotation: 5,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 8,
-    url: video3,
-    label: "🎬 VIDEO · SOUND + COLOR STUDY\nDinner Rush",
-    initialX: -400,
-    initialY: 700,
-    rotation: -2,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 9,
-    url: video4,
-    label: "🎬 VIDEO · OBSERVATIONAL SHORT\nThe Seat Ahead",
-    initialX: -1100,
-    initialY: -50,
-    rotation: 6,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 10,
-    url: video5,
-    label: "Google Antigravity + BLENDER EXPERIMENT\nGame Design · 3D Environment",
-    initialX: -500,
-    initialY: 200,
-    rotation: -5,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 11,
-    url: vrTourVideo,
-    label: "3D MODEL · VR GAME ENVIRONMENT\nLobby Space Design",
-    initialX: 0,
-    initialY: -350,
-    rotation: 2,
-    backgroundColor: "#000000",
-    size: "wide",
-    isVideo: true,
-  },
-  {
-    id: 12,
-    url: drStrangeThumb, 
-    label: "MEDIAPIPE · WEBGL\nTao Mandala - Doctor Strange",
-    initialX: 500,
-    initialY: -100,
-    rotation: 4,
-    backgroundColor: "#111111",
-    size: "wide",
-    isExperiment: true,
-  },
-  {
-    id: 13,
-    url: futureFabFlyer1,
-    label: "PRINT · MERCH\nGame Flyer Design",
-    initialX: 600,
-    initialY: 250,
-    rotation: -3,
-    backgroundColor: "#FFFFFF",
-  },
-  {
-    id: 14,
-    url: futureFabFlyer2,
-    label: "PROMO MATERIAL\nGame Flyer Layouts",
-    initialX: -800,
-    initialY: 300,
-    rotation: 5,
-    backgroundColor: "#FFFFFF",
-    size: "wide",
-  },
-  {
-    id: 15,
-    url: futureFabStickers1,
-    label: "MERCHANDISE\nChip-E Character Stickers",
-    initialX: -200,
-    initialY: -550,
-    rotation: -6,
-    backgroundColor: "#FFFFFF",
-  },
-  {
-    id: 16,
-    url: futureFabStickers2,
-    label: "MERCHANDISE\nDie-Cut Vinyl Stickers",
-    initialX: -700,
-    initialY: -250,
-    rotation: 4,
-    backgroundColor: "#FFFFFF",
-  }
-];
-
-interface ImageCardProps {
-  image: typeof studioImages[0];
-  onBringToFront: () => void;
-  zIndex: number;
-  onExpand?: () => void;
-  isMobile?: boolean;
+interface StudioItem {
+  id: number;
+  url: string;
+  meta: string;
+  title: string;
+  backgroundColor?: string;
+  isVideo?: boolean;
+  isExperiment?: boolean;
+  // Brochure spreads: thumbs stack in the tile, full-res pair drives the 3D viewer
+  trifold?: { outside: string; inside: string; insideThumb: string };
+  // Flip-through sheets (2-sided flyer or a set): thumbs sit side by side in the tile, full-res pages flip in the viewer
+  // mode "flip" = one sheet turning over (front/back), "stack" = separate sheets in a pile
+  sheets?: { pages: SheetPage[]; thumbs: string[]; aspect: number; mode: "flip" | "stack" };
+  category: "graphic" | "3d" | "video";
 }
 
-function ImageCard({ image, onBringToFront, zIndex, onExpand, isMobile }: ImageCardProps) {
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent canvas drag from starting
-    onBringToFront();
-  };
+const sections: { key: StudioItem["category"]; label: string }[] = [
+  { key: "graphic", label: "Graphic & Print" },
+  { key: "3d", label: "3D & Interactive" },
+  { key: "video", label: "Motion & Film" },
+];
 
-  const handleDragEnd = (e: any, info: any) => {
-    // If it was just a tiny movement (a click), trigger expand
-    if (Math.abs(info.offset.x) < 5 && Math.abs(info.offset.y) < 5) {
-      if (onExpand) onExpand();
-    }
-  };
+// Order within each section is the display order
+const studioItems: StudioItem[] = [
+  // Graphic & Print
+  { id: 17, category: "graphic", url: trifoldOutsideThumb, meta: "Print · Trifold Brochure · ASU SWAP Hub", title: "Workforce Development Trifold", backgroundColor: "#FFFFFF", trifold: { outside: trifoldOutside, inside: trifoldInside, insideThumb: trifoldInsideThumb } },
+  { id: 18, category: "graphic", url: ffhInfographicFrontThumb, meta: "Print · Double-Sided Infographic", title: "Future Fab Heroes Infographic", backgroundColor: "#272A7A", sheets: { pages: [{ src: ffhInfographicFront, label: "Front" }, { src: ffhInfographicBack, label: "Back" }], thumbs: [ffhInfographicFrontThumb, ffhInfographicBackThumb], aspect: 2200 / 2847, mode: "flip" } },
+  { id: 19, category: "graphic", url: directionsIstb12Thumb, meta: "Wayfinding · Event Signage · ASU SWAP Hub", title: "Campus Direction Sheets", backgroundColor: "#FFFFFF", sheets: { pages: [{ src: directionsIstb12, label: "ISTB 12" }, { src: directionsAcic, label: "ACIC" }, { src: directionsCooley, label: "Cooley Ballroom" }], thumbs: [directionsIstb12Thumb, directionsAcicThumb, directionsCooleyThumb], aspect: 2000 / 2588, mode: "stack" } },
+  { id: 13, category: "graphic", url: futureFabFlyer1, meta: "Print · Merch", title: "Game Flyer Design", backgroundColor: "#FFFFFF" },
+  { id: 4, category: "graphic", url: futureFabLogo, meta: "Adobe Illustrator", title: "Logo Design", backgroundColor: "#000000" },
+  { id: 15, category: "graphic", url: futureFabStickers1, meta: "Merchandise", title: "Chip-E Character Stickers", backgroundColor: "#FFFFFF" },
+  { id: 14, category: "graphic", url: futureFabFlyer2, meta: "Promo Material", title: "Game Flyer Layouts", backgroundColor: "#FFFFFF" },
+  { id: 3, category: "graphic", url: gameLogoImg, meta: "Adobe Illustrator", title: "Thumbnail Design", backgroundColor: "#E5E5E5" },
+  { id: 16, category: "graphic", url: futureFabStickers2, meta: "Merchandise", title: "Die-Cut Vinyl Stickers", backgroundColor: "#FFFFFF" },
+  { id: 2, category: "graphic", url: sketchImg, meta: "After Effects", title: "Logo Animation" },
 
-  // Determine size based on image.size property
-  const isWide = image.size === "wide";
-  const containerClass = isWide ? "w-64 md:w-80 h-40 md:h-48" : "w-36 md:w-48 h-36 md:h-48";
+  // 3D & Interactive
+  { id: 12, category: "3d", url: drStrangeThumb, meta: "MediaPipe · WebGL", title: "Tao Mandala - Doctor Strange", backgroundColor: "#111111", isExperiment: true },
+  { id: 1, category: "3d", url: robotImg, meta: "Spline 3D", title: "Interactive 3D Model" },
+  { id: 11, category: "3d", url: vrTourVideo, meta: "3D Model · VR Game Environment", title: "Lobby Space Design", backgroundColor: "#000000", isVideo: true },
+  { id: 10, category: "3d", url: video5, meta: "Google Antigravity + Blender Experiment", title: "Game Design · 3D Environment", backgroundColor: "#000000", isVideo: true },
+
+  // Motion & Film
+  { id: 5, category: "video", url: trailerVideo, meta: "Higgsfield · Gemini · ElevenLabs · ChatGPT · After Effects", title: "AI-Crafted Game Trailer", backgroundColor: "#000000", isVideo: true },
+  { id: 6, category: "video", url: video1, meta: "Video · Visual Diary", title: "Boston, in Passing", backgroundColor: "#000000", isVideo: true },
+  { id: 7, category: "video", url: video2, meta: "Video · Cinematic Study", title: "Somewhere Above Earth", backgroundColor: "#000000", isVideo: true },
+  { id: 8, category: "video", url: video3, meta: "Video · Sound + Color Study", title: "Dinner Rush", backgroundColor: "#000000", isVideo: true },
+  { id: 9, category: "video", url: video4, meta: "Video · Observational Short", title: "The Seat Ahead", backgroundColor: "#000000", isVideo: true },
+];
+
+const mono = { fontFamily: "'IBM Plex Mono', monospace" };
+
+// Only plays while on screen so a page full of videos doesn't decode all at once
+function GalleryVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <motion.div
-      drag
-      dragMomentum={false}
-      dragElastic={0}
-      initial={{ 
-        x: isMobile ? image.initialX * 0.5 : image.initialX, 
-        y: isMobile ? image.initialY * 0.5 : image.initialY, 
-        rotate: image.rotation 
-      }}
-      whileHover={{ rotate: image.rotation + 3, scale: 1.05 }}
-      whileDrag={{ scale: 1.05, cursor: "none" }}
-      onMouseDown={handleMouseDown}
-      onDragEnd={handleDragEnd}
-      style={{
-        position: "absolute",
-        zIndex: zIndex,
-        cursor: "none",
-        touchAction: "none", // Prevent touch scrolling on mobile
-      }}
-      className="group draggable-image"
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    <video
+      ref={ref}
+      src={src}
+      loop
+      muted
+      playsInline
+      preload="metadata"
+      className="block w-full h-auto pointer-events-none select-none"
+    />
+  );
+}
+
+function GalleryTile({ item, index, onExpand }: { item: StudioItem; index: number; onExpand: () => void }) {
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 4) * 0.05 }}
+      className="group mb-3 md:mb-4 break-inside-avoid"
     >
-      <div className="bg-white p-3 shadow-2xl rounded-sm hover:shadow-lg transition-shadow duration-200">
-        <motion.div
-          className={`${containerClass} overflow-hidden flex items-center justify-center relative cursor-pointer`}
-          style={image.backgroundColor ? { backgroundColor: image.backgroundColor } : {}}
-          onClick={() => { if (onExpand) onExpand(); }}
+      <button
+        type="button"
+        onClick={onExpand}
+        aria-label={`Open ${item.title}`}
+        className="relative block w-full overflow-hidden rounded-sm text-left"
+        style={item.backgroundColor ? { backgroundColor: item.backgroundColor } : {}}
+      >
+        {item.isVideo ? (
+          <GalleryVideo src={item.url} />
+        ) : item.trifold ? (
+          <div className="flex flex-col gap-px bg-black/10">
+            <ImageWithFallback src={item.url} alt={`${item.title} — outside`} loading="lazy" draggable={false} className="block w-full h-auto select-none" />
+            <ImageWithFallback src={item.trifold.insideThumb} alt={`${item.title} — inside`} loading="lazy" draggable={false} className="block w-full h-auto select-none" />
+          </div>
+        ) : item.sheets ? (
+          <div className="grid gap-px bg-black/10" style={{ gridTemplateColumns: `repeat(${item.sheets.thumbs.length}, minmax(0, 1fr))` }}>
+            {item.sheets.thumbs.map((thumb, i) => (
+              <ImageWithFallback key={thumb} src={thumb} alt={`${item.title} — ${item.sheets!.pages[i].label}`} loading="lazy" draggable={false} className="block w-full h-auto select-none" />
+            ))}
+          </div>
+        ) : (
+          <ImageWithFallback
+            src={item.url}
+            alt={item.title}
+            loading="lazy"
+            draggable={false}
+            className={`block w-full h-auto select-none transition-opacity duration-300 ${item.isExperiment ? "opacity-60 group-hover:opacity-90" : ""}`}
+          />
+        )}
+
+        {/* Hover vignette with caption — always visible on touch devices that can't hover */}
+        <figcaption
+          className="absolute inset-0 flex flex-col justify-end p-4 md:p-5 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.45)_100%),linear-gradient(to_top,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.35)_35%,transparent_65%)] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity duration-300 pointer-events-none"
+          style={mono}
         >
-          {image.isVideo ? (
-            <>
-              <video
-                src={image.url}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none opacity-80 group-hover:opacity-100 transition-opacity`}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors pointer-events-none">
-                <div className="bg-black/50 text-white rounded-full p-3 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100">
-                  <Play fill="white" size={20} className="ml-1" />
-                </div>
-              </div>
-            </>
-          ) : image.isExperiment ? (
-            <>
-              <ImageWithFallback
-                src={image.url}
-                alt={image.label}
-                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none opacity-50 group-hover:opacity-80 transition-opacity`}
-                draggable={false}
-                style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
-              />
-              <div className="absolute inset-0 flex items-center justify-center transition-colors pointer-events-none">
-                <div className="bg-[#ffaa00] text-black font-bold font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg opacity-90 group-hover:opacity-100 transition-opacity transform group-hover:scale-105">
-                  Launch
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <ImageWithFallback
-                src={image.url}
-                alt={image.label}
-                className={`w-full h-full ${isWide ? 'object-contain' : 'object-cover'} pointer-events-none select-none transition-transform duration-300 group-hover:scale-105`}
-                draggable={false}
-                style={image.objectPosition ? { objectPosition: image.objectPosition } : {}}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors pointer-events-none">
-                <div className="bg-black/50 text-white rounded-full p-3 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100">
-                  <Maximize2 size={20} />
-                </div>
-              </div>
-            </>
-          )}
-        </motion.div>
-        <div className="mt-3 flex flex-col items-center text-center font-mono">
-          <span className="text-black/50 text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-medium leading-relaxed max-w-[90%]">{image.label.split('\n')[0]}</span>
-          <span className="text-black text-[10px] md:text-xs font-bold tracking-wider leading-relaxed mt-2">{image.label.split('\n')[1] || ''}</span>
-        </div>
-      </div>
-    </motion.div>
+          <div className="flex flex-col gap-1 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+            <span className="text-white text-xs md:text-sm font-medium tracking-wide">{item.title}</span>
+            <span className="text-white/60 text-[10px] uppercase tracking-[0.18em] leading-relaxed">{item.meta}</span>
+          </div>
+        </figcaption>
+
+        {item.isExperiment ? (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <span className="bg-[#ffaa00] text-black font-bold font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-sm shadow-lg transition-transform group-hover:scale-105">
+              Launch
+            </span>
+          </div>
+        ) : (
+          <div className="absolute top-3 right-3 bg-black/60 text-white rounded-full p-2 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {item.isVideo ? <Play fill="white" size={14} /> : <Maximize2 size={14} />}
+          </div>
+        )}
+      </button>
+    </motion.figure>
   );
 }
 
 export function StudioDetail() {
-  const [imageOrder, setImageOrder] = useState(
-    studioImages.map((img) => img.id)
-  );
-  const [isMobile, setIsMobile] = useState(false);
-  const [expandedVideoId, setExpandedVideoId] = useState<number | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const expandedItem = studioItems.find((item) => item.id === expandedId);
 
-  const [dragConstraints, setDragConstraints] = useState({ top: 0, left: 0, right: 0, bottom: 0 });
-  const [initialPos, setInitialPos] = useState({ x: 0, y: 0 });
-  const [isReady, setIsReady] = useState(false);
-
-  const { setHideCursor } = useCursor();
-  
-  // Custom local cursor
-  const cursorX = useMotionValue(0);
-  const cursorY = useMotionValue(0);
-  const scale = useMotionValue(1);
-  const springScale = useSpring(scale, { stiffness: 300, damping: 20 });
-  
   useEffect(() => {
-    // Hide the global cursor on this page
-    setHideCursor(true);
-    
-    // Fallback cursor style for the body just in case
-    document.body.style.cursor = 'none';
-    
+    if (expandedId === null) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setExpandedId(null);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
     return () => {
-      setHideCursor(false);
-      document.body.style.cursor = '';
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKey);
     };
-  }, [setHideCursor]);
-  
-  useEffect(() => {
-    if (isMobile) return;
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorX.set(e.clientX - 16); // Center the 32x32 icon
-      cursorY.set(e.clientY - 16);
-    };
-    const handleMouseDown = () => scale.set(0.7);
-    const handleMouseUp = () => scale.set(1);
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isMobile, cursorX, cursorY, scale]);
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth < 1024;
-      setIsMobile(isTouchDevice || isSmallScreen);
-
-      const canvasWidth = 3000;
-      const canvasHeight = 2500;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      setDragConstraints({
-        top: -(canvasHeight - viewportHeight),
-        left: -(canvasWidth - viewportWidth),
-        right: 0,
-        bottom: 0,
-      });
-      
-      if (!isReady) {
-        setInitialPos({
-          x: -(1500 - viewportWidth / 2),
-          y: -(1250 - viewportHeight / 2)
-        });
-        setIsReady(true);
-      }
-    };
-    
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, [isReady]);
-
-  const bringToFront = (id: number) => {
-    setImageOrder((prevOrder) => {
-      const filtered = prevOrder.filter((imgId) => imgId !== id);
-      return [...filtered, id];
-    });
-  };
-  
-  const expandedVideo = studioImages.find(img => img.id === expandedVideoId);
-
-  if (!isReady) return null;
+  }, [expandedId]);
 
   return (
-    <div 
-      data-cursor-hide="true"
-      className="relative w-full h-screen bg-[#000000] overflow-hidden overscroll-none touch-none cursor-none"
-    >
-      {!isMobile && (
-        <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9999] text-gray-400 opacity-80"
-          style={{ x: cursorX, y: cursorY, scale: springScale }}
-        >
-          <Move size={32} />
-        </motion.div>
-      )}
-      {/* Header with Back Button - Fixed position outside canvas */}
+    <div className="min-h-screen w-full bg-[#000000] text-white">
+      {/* Header with Back Button */}
       <div className="fixed top-0 left-0 z-[1001] p-4 md:p-8 pointer-events-none">
         <Link to="/" className="pointer-events-auto">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-300 text-sm md:text-base"
-            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            style={mono}
           >
             <ArrowLeft size={20} />
             <span className="hidden sm:inline">Back to Home</span>
@@ -426,81 +221,68 @@ export function StudioDetail() {
         </Link>
       </div>
 
-      {/* Large scrollable/draggable canvas */}
-      <motion.div 
-        className="relative w-[3000px] h-[2500px]"
-        drag
-        dragMomentum={true}
-        dragElastic={0.1}
-        dragConstraints={dragConstraints}
-        initial={{ x: initialPos.x, y: initialPos.y }}
-        style={{ cursor: 'none' }}
-        whileDrag={{ cursor: 'none' }}
-      >
-        {/* Dot Pattern Background */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px)`,
-            backgroundSize: "32px 32px",
-          }}
-        />
+      <main className="mx-auto max-w-[1800px] px-4 md:px-8 pt-4 md:pt-8 pb-24">
+        {/* Top bar — sits level with the fixed Back button */}
+        <header className="flex items-center justify-end h-10 md:h-[50px] mb-6 md:mb-8">
+          <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-[0.2em] text-right" style={mono}>
+            Studio · {String(studioItems.length).padStart(2, "0")} works
+            <br />
+            Print · 3D · Motion
+          </p>
+        </header>
 
-        {/* Title - centered in viewport initially */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[0] text-center pointer-events-none">
-          <h1
-            className="text-xl md:text-3xl font-light tracking-tight text-white italic mb-2"
-            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-          >
-            Keep chasing
-          </h1>
-          <h1
-            className="text-xl md:text-3xl font-light tracking-tight text-white italic mb-6"
-            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-          >
-            curiosity through play
-          </h1>
-          <div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
-            <Move size={16} className="opacity-60" />
-            <p
-              className="uppercase tracking-widest"
-              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-            >
-              Drag to move
-            </p>
-          </div>
-        </div>
-
-        {/* Draggable Images Canvas */}
-        <div className="absolute top-1/2 left-1/2">
-          {studioImages.map((image) => {
-            const zIndex = imageOrder.indexOf(image.id);
+        {/* One masonry block per discipline — each piece keeps its native aspect ratio */}
+        <div className="flex flex-col gap-16 md:gap-24">
+          {sections.map((section, sectionIndex) => {
+            const items = studioItems.filter((item) => item.category === section.key);
             return (
-              <ImageCard
-                key={image.id}
-                image={image}
-                onBringToFront={() => bringToFront(image.id)}
-                zIndex={zIndex}
-                onExpand={() => setExpandedVideoId(image.id)}
-                isMobile={isMobile}
-              />
+              <section key={section.key}>
+                <div className="flex items-baseline gap-4 mb-4 md:mb-6 border-b border-white/10 pb-3" style={mono}>
+                  <span className="text-white/30 text-[10px] md:text-xs tracking-[0.2em]">{String(sectionIndex + 1).padStart(2, "0")}</span>
+                  <h2 className="text-white text-xs md:text-sm uppercase tracking-[0.2em]">{section.label}</h2>
+                  <span className="ml-auto text-white/30 text-[10px] md:text-xs tracking-[0.2em]">{String(items.length).padStart(2, "0")}</span>
+                </div>
+                <div className="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-3 md:gap-4">
+                  {items.map((item, index) => (
+                    <GalleryTile key={item.id} item={item} index={index} onExpand={() => setExpandedId(item.id)} />
+                  ))}
+                </div>
+              </section>
             );
           })}
         </div>
-      </motion.div>
-      
+      </main>
+
       {/* Expanded Modal */}
       <AnimatePresence>
-        {expandedVideoId !== null && expandedVideo && (
+        {expandedId !== null && expandedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-pointer"
-            onClick={() => setExpandedVideoId(null)}
+            onClick={() => setExpandedId(null)}
           >
-            {expandedVideo.isExperiment ? (
-              <AntigravityExperiment onClose={() => setExpandedVideoId(null)} />
+            {expandedItem.isExperiment ? (
+              <AntigravityExperiment onClose={() => setExpandedId(null)} />
+            ) : expandedItem.sheets?.mode === "stack" ? (
+              <StackViewer
+                pages={expandedItem.sheets.pages}
+                aspect={expandedItem.sheets.aspect}
+                onClose={() => setExpandedId(null)}
+              />
+            ) : expandedItem.sheets ? (
+              <SheetViewer
+                pages={expandedItem.sheets.pages}
+                aspect={expandedItem.sheets.aspect}
+                onClose={() => setExpandedId(null)}
+              />
+            ) : expandedItem.trifold ? (
+              <TrifoldViewer
+                outside={expandedItem.trifold.outside}
+                inside={expandedItem.trifold.inside}
+                onClose={() => setExpandedId(null)}
+              />
             ) : (
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
@@ -508,24 +290,24 @@ export function StudioDetail() {
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
                 className="relative w-full max-w-6xl aspect-video md:aspect-auto md:h-[85vh] rounded-xl overflow-hidden shadow-2xl flex items-center justify-center"
-                onClick={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
               >
-                {expandedVideo.isVideo ? (
+                {expandedItem.isVideo ? (
                   <video
-                    src={expandedVideo.url}
+                    src={expandedItem.url}
                     autoPlay
                     controls
                     className="w-full h-full object-contain bg-black"
                   />
                 ) : (
                   <img
-                    src={expandedVideo.url}
-                    alt={expandedVideo.label}
+                    src={expandedItem.url}
+                    alt={expandedItem.title}
                     className="w-full h-full object-contain"
                   />
                 )}
-                <button 
-                  onClick={() => setExpandedVideoId(null)}
+                <button
+                  onClick={() => setExpandedId(null)}
                   className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors z-10"
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
