@@ -379,10 +379,14 @@ function ThirdFace({ src, third, back = false }: { src: string; third: 0 | 1 | 2
   );
 }
 
-// Closed (cover showing) → cover swings open → flap unfolds. Fills a box the size of the open spread.
+// Closed (cover showing) → unfolds to the inside spread → folds back up → turns over to the back panel.
+// Fills a box the size of the open spread.
 export function ScrollTrifold({ outside, inside, progress }: { outside: string; inside: string; progress: MotionValue<number> }) {
-  const cover = useTransform(progress, (p) => phase(p, 0.08, 0.36));
-  const flap = useTransform(progress, (p) => phase(p, 0.5, 0.36));
+  // opens (cover, then flap), holds open, folds back up (flap, then cover), then turns over to show the back
+  const cover = useTransform(progress, (p) => phase(p, 0.04, 0.16) - phase(p, 0.62, 0.14));
+  const flap = useTransform(progress, (p) => phase(p, 0.2, 0.16) - phase(p, 0.48, 0.14));
+  const flip = useTransform(progress, (p) => 180 * phase(p, 0.78, 0.18));
+  const lift = useTransform(flip, (a) => 1 - 0.07 * Math.sin((a * Math.PI) / 180));
   const coverAngle = useTransform(cover, (v) => 180 * (1 - v));
   const coverZ = useTransform(cover, (v) => 4 * (1 - v));
   const flapAngle = useTransform(flap, (v) => -180 * (1 - v));
@@ -392,6 +396,7 @@ export function ScrollTrifold({ outside, inside, progress }: { outside: string; 
 
   return (
     <div className="absolute inset-0" style={{ perspective: "2200px" }}>
+      <motion.div className="absolute inset-0" style={{ transformStyle: "preserve-3d", rotateY: flip, scale: lift }}>
       <motion.div
         className="absolute top-0 h-full shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
         style={{ left: "33.333%", width: "33.334%", transformStyle: "preserve-3d", x: shift }}
@@ -414,6 +419,7 @@ export function ScrollTrifold({ outside, inside, progress }: { outside: string; 
           <ThirdFace src={inside} third={0} />
           <ThirdFace src={outside} third={2} back />
         </motion.div>
+      </motion.div>
       </motion.div>
     </div>
   );

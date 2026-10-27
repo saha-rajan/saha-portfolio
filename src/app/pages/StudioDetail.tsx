@@ -18,7 +18,6 @@ import vrTourVideo from "../../assets/vr_tour_1.mp4";
 import { AntigravityExperiment } from "../components/AntigravityExperiment";
 import futureFabStickers2 from "../../assets/future_fab_stickers_2.jpg";
 import futureFabFlyer1 from "../../assets/future_fab_flyer_1.jpg";
-import futureFabFlyer2 from "../../assets/future_fab_flyer_2.jpg";
 
 import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
 import { TrifoldViewer, SheetViewer, StackViewer, ScrollTrifold, ScrollFlip, ScrollStack, type SheetPage } from "../components/TrifoldViewer";
@@ -44,6 +43,7 @@ import directionsCooley from "../../assets/directions_cooley.jpg";
 import directionsIstb12Thumb from "../../assets/directions_istb12_thumb.jpg";
 import directionsAcicThumb from "../../assets/directions_acic_thumb.jpg";
 import directionsCooleyThumb from "../../assets/directions_cooley_thumb.jpg";
+import wasimCampaign from "../../assets/wasim_campaign.jpg";
 
 interface StudioItem {
   id: number;
@@ -84,20 +84,20 @@ const studioItems: StudioItem[] = [
   { id: 18, category: "graphic", url: ffhInfographicFrontThumb, meta: "Print Design · Information Design", title: "Future Fab Heroes Infographic", backgroundColor: "#272A7A", aspect: (2 * 900) / 1164, logoAt: { x: 0.198, y: 0.143, w: 0.62, h: 0.4767 }, // on the front page
     sheets: { pages: [{ src: ffhInfographicFront, label: "Front" }, { src: ffhInfographicBack, label: "Back" }], thumbs: [ffhInfographicFrontThumb, ffhInfographicBackThumb], aspect: 2200 / 2847, mode: "flip" },
     blurb: "Designed a two-sided infographic that introduces the game, its Learn · Build · Defend framework, target audiences, and Steam access." },
-  { id: 13, category: "graphic", url: futureFabFlyer1, meta: "Print Design · Collateral", title: "Future Fab Heroes Print Flyer", backgroundColor: "#FFFFFF", aspect: 752 / 1024,
-    blurb: "Took the digital game identity into print, creating a physical flyer for outreach, events, and student engagement." },
-  { id: 14, category: "graphic", url: futureFabFlyer2, meta: "Print Design · Mockup", title: "Flyer Layout & Mockup", backgroundColor: "#FFFFFF", aspect: 1024 / 571,
-    blurb: "Built the front-and-back flyer as one cohesive print system and visualized how the final piece works as a physical handout." },
-  { id: 16, category: "graphic", url: futureFabStickers2, meta: "Merchandise · Brand Application", title: "Sticker in the Wild", backgroundColor: "#FFFFFF", aspect: 768 / 1024,
-    blurb: "Tested the identity beyond screens through physical vinyl applications, bringing the Future Fab Heroes brand into everyday objects." },
-  { id: 2, category: "graphic", url: sketchImg, meta: "After Effects · Motion Design", title: "TalentVault Logo Animation", aspect: 800 / 450,
-    blurb: "Brought the TalentVault mark to life through a short motion study exploring how the identity can form, move, and resolve." },
   { id: 17, category: "graphic", url: trifoldOutsideThumb, meta: "Print Design · Information Design · ASU SWAP Hub", title: "Workforce Development Trifold", backgroundColor: "#FFFFFF", aspect: 1200 / (2 * 927),
     trifold: { outside: trifoldOutside, inside: trifoldInside, insideThumb: trifoldInsideThumb },
     blurb: "Designed a workforce development brochure for ASU SWAP Hub, organizing academic pathways, micro-credentials, digital learning, and industry opportunities into a clear print system." },
   { id: 19, category: "graphic", url: directionsIstb12Thumb, meta: "Wayfinding · Information Design · Event Collateral", title: "Campus Wayfinding Sheets", backgroundColor: "#FFFFFF", aspect: (3 * 700) / 905,
     sheets: { pages: [{ src: directionsIstb12, label: "ISTB 12" }, { src: directionsAcic, label: "ACIC" }, { src: directionsCooley, label: "Cooley Ballroom" }], thumbs: [directionsIstb12Thumb, directionsAcicThumb, directionsCooleyThumb], aspect: 2000 / 2588, mode: "stack" },
     blurb: "Created event wayfinding sheets for multiple ASU venues, combining parking, entrances, landmarks, and 3D location visuals to make arrival easier for attendees." },
+  { id: 13, category: "graphic", url: futureFabFlyer1, meta: "Print Design · Collateral", title: "Future Fab Heroes Print Flyer", backgroundColor: "#FFFFFF", aspect: 752 / 1024,
+    blurb: "Took the digital game identity into print, creating a physical flyer for outreach, events, and student engagement." },
+  { id: 16, category: "graphic", url: futureFabStickers2, meta: "Merchandise · Brand Application", title: "Sticker in the Wild", backgroundColor: "#FFFFFF", aspect: 768 / 1024,
+    blurb: "Tested the identity beyond screens through physical vinyl applications, bringing the Future Fab Heroes brand into everyday objects." },
+  { id: 2, category: "graphic", url: sketchImg, meta: "After Effects · Motion Design", title: "TalentVault Logo Animation", aspect: 800 / 450,
+    blurb: "Brought the TalentVault mark to life through a short motion study exploring how the identity can form, move, and resolve." },
+  { id: 20, category: "graphic", url: wasimCampaign, meta: "Prompt Engineering · Art Direction · Social Campaign", title: "AI-Art Directed Campaign", backgroundColor: "#F2F0EC", aspect: 1004 / 1800,
+    blurb: "Social campaign visuals created for independent music artist Wasim R, built entirely through prompt-driven image generation rather than traditional Photoshop or Illustrator workflows. Precise art direction, prompt engineering, and iterative refinement were used to control composition, typography, styling, and visual consistency." },
 
   // 3D & Interactive
   { id: 12, category: "3d", url: drStrangeThumb, meta: "MediaPipe · WebGL · Creative Coding", title: "Gesture-Controlled Mandala", backgroundColor: "#111111", isExperiment: true, aspect: 1024 / 576,
@@ -135,7 +135,7 @@ function ctaFor(item: StudioItem) {
 const scrollPieces: Record<number, { aspect: number; scrollHint: string; render: (state: { progress: MotionValue<number>; side: 1 | -1 }) => ReactNode }> = {
   17: {
     aspect: 1800 / 1391, // the open spread
-    scrollHint: "Keep scrolling to unfold it",
+    scrollHint: "Keep scrolling to unfold it, fold it back and turn it over",
     render: ({ progress }) => <ScrollTrifold outside={trifoldOutsideMid} inside={trifoldInsideMid} progress={progress} />,
   },
   18: {

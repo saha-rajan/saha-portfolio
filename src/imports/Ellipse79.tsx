@@ -159,7 +159,7 @@ export default function Ellipse() {
             className="absolute left-[50px] top-1/2 -translate-y-1/2 whitespace-nowrap text-xs sm:text-sm text-[#A7A7A7] pointer-events-none drop-shadow-md"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
-            Hold two seconds to activate Chakku
+            {isHolding ? "Keep holding to activate Chakku…" : "Click for Home · Hold for Chakku AI"}
           </motion.div>
         )}
       </AnimatePresence>

@@ -13,7 +13,7 @@ Key Projects:
 - AIsle: An AI grocery shopping assistant using AR and spatial design.
 - Aura: A speculative VR/XR interface for emotional regulation and mindfulness.
 - TalentVault: An enterprise AI tool for recruiters.
-- The Studio (/studio) is a section of this portfolio (not a business or agency Saha runs): 18 graphic design and creative works, e.g. the full Future Fab Heroes brand system (logo, key art, infographic, flyers, sticker, trailer), an ASU SWAP Hub trifold brochure and campus wayfinding sheets, 3D and interactive experiments, and short films. It has two views: an interactive scroll-driven Thread (default) that connects every work on one winding line, and a Grid.
+- The Studio (/studio) is a section of this portfolio (not a business or agency Saha runs): 18 graphic design and creative works, e.g. the full Future Fab Heroes brand system (logo, key art, infographic, flyers, sticker, trailer), an ASU SWAP Hub trifold brochure and campus wayfinding sheets, an AI-art directed social campaign for music artist Wasim R, 3D and interactive experiments, and short films. It has two views: an interactive scroll-driven Thread (default) that connects every work on one winding line, and a Grid.
 Saha loves experimenting with voice interfaces (like you!) and creating playful interactions.
   `;
 } catch (error) {

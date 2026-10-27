@@ -21,12 +21,12 @@ Brand identities, illustrations, print, merchandise, and visual systems built ac
 1. **Future Fab Heroes Logo** (Adobe Illustrator · Brand Identity) — Designed the visual identity for Future Fab Heroes, turning Chip-E and semiconductor circuitry into a recognizable game mark.
 2. **Future Fab Heroes Key Art** (Adobe Illustrator · Key Art) — Extended the game identity into illustrated key art, building a Mars-inspired world around Chip-E for promotional use.
 3. **Future Fab Heroes Infographic** (Print Design · Information Design) — Designed a two-sided infographic that introduces the game, its Learn · Build · Defend framework, target audiences, and Steam access.
-4. **Future Fab Heroes Print Flyer** (Print Design · Collateral) — Took the digital game identity into print, creating a physical flyer for outreach, events, and student engagement.
-5. **Flyer Layout & Mockup** (Print Design · Mockup) — Built the front-and-back flyer as one cohesive print system and visualized how the final piece works as a physical handout.
-6. **Sticker in the Wild** (Merchandise · Brand Application) — Tested the identity beyond screens through physical vinyl applications, bringing the Future Fab Heroes brand into everyday objects.
-7. **TalentVault Logo Animation** (After Effects · Motion Design) — Brought the TalentVault mark to life through a short motion study exploring how the identity can form, move, and resolve.
-8. **Workforce Development Trifold** (Print Design · Information Design · ASU SWAP Hub) — Designed a workforce development brochure for ASU SWAP Hub, organizing academic pathways, micro-credentials, digital learning, and industry opportunities into a clear print system.
-9. **Campus Wayfinding Sheets** (Wayfinding · Information Design · Event Collateral) — Created event wayfinding sheets for multiple ASU venues (ISTB 12, ASU Chandler Innovation Center, Cooley Ballroom), combining parking, entrances, landmarks, and 3D location visuals to make arrival easier for attendees.
+4. **Workforce Development Trifold** (Print Design · Information Design · ASU SWAP Hub) — Designed a workforce development brochure for ASU SWAP Hub, organizing academic pathways, micro-credentials, digital learning, and industry opportunities into a clear print system.
+5. **Campus Wayfinding Sheets** (Wayfinding · Information Design · Event Collateral) — Created event wayfinding sheets for multiple ASU venues (ISTB 12, ASU Chandler Innovation Center, Cooley Ballroom), combining parking, entrances, landmarks, and 3D location visuals to make arrival easier for attendees.
+6. **Future Fab Heroes Print Flyer** (Print Design · Collateral) — Took the digital game identity into print, creating a physical flyer for outreach, events, and student engagement.
+7. **Sticker in the Wild** (Merchandise · Brand Application) — Tested the identity beyond screens through physical vinyl applications, bringing the Future Fab Heroes brand into everyday objects.
+8. **TalentVault Logo Animation** (After Effects · Motion Design) — Brought the TalentVault mark to life through a short motion study exploring how the identity can form, move, and resolve.
+9. **AI-Art Directed Campaign** (Prompt Engineering · Art Direction · Social Campaign) — Social campaign visuals created for independent music artist Wasim R, built entirely through prompt-driven image generation rather than traditional Photoshop or Illustrator workflows. Precise art direction, prompt engineering, and iterative refinement were used to control composition, typography, styling, and visual consistency. The poster shows the artist in a red puffer vest in front of huge red "ON THE BEAT BABY" lettering.
 
 ## Chapter 02 — 3D & Interactive
 10. **Gesture-Controlled Mandala** (MediaPipe · WebGL · Creative Coding) — Built a webcam-based interaction where hand movement controls a Doctor Strange-inspired generative mandala in real time. Visitors can launch and try it in the Studio.
@@ -44,5 +44,5 @@ Brand identities, illustrations, print, merchandise, and visual systems built ac
 For works 15–18, only the title and format above are confirmed. Do not invent what the films show.
 
 ## Context
-* Works 1–6 and 14 form one brand system for Future Fab Heroes, an educational game and digital semiconductor training experience produced at ASU SWAP Hub.
-* Works 8–9 are print and wayfinding for ASU SWAP Hub.
+* Works 1–3, 6–7 and 14 form one brand system for Future Fab Heroes, an educational game and digital semiconductor training experience produced at ASU SWAP Hub.
+* Works 4–5 are print and wayfinding for ASU SWAP Hub.
