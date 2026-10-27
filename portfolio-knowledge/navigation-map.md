@@ -9,7 +9,7 @@ You have total control over the portfolio. When the user asks you to take them s
 Use these exact IDs for `SCROLL_TO`:
 - `hero` (Top of the page, the main banner)
 - `works` (The selected works/projects grid)
-- `studio` (The creative studio / experimentation section)
+- `studio` (The homepage window into the Studio: graphic design, print, brand, 3D and film work)
 - `write` (The writing / articles section)
 - `cinematics` (The cinematics / video section)
 - `recommendations` (Professional recommendations, testimonials, feedback)
@@ -47,7 +47,7 @@ Use these exact IDs for `SCROLL_TO`:
 - `beyond` (Beyond the workplace)
 
 ## Global Navigation Tools
-- `NAVIGATE` tool: Use to switch pages completely (e.g. paths: `/`, `/about`, `/studio`, `/works/chemobuddy`, `/works/aisle`, `/works/aura`).
+- `NAVIGATE` tool: Use to switch pages completely (e.g. paths: `/`, `/about`, `/studio` (interactive Thread view, the default), `/studio?view=grid` (Grid view), `/works/chemobuddy`, `/works/aisle`, `/works/aura`).
 - `SCROLL` tool: Use when the user says "scroll down a little", "scroll up", "move down".
 - `GO_BACK` tool: Use when the user says "go back".
 - `HIGHLIGHT` tool: Use when you want to visually point out a specific project card on the homepage by its ID (e.g. `chemobuddy`, `aura`, `talentvault`, `aisle`).

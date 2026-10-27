@@ -5,6 +5,8 @@ Sources: Current Resume + src/app/pages/About.tsx
 ## Background
 Saha Rajan is a UX Designer and HCI graduate student (Arizona State University) experienced in B2B SaaS, web tools, and educational experiences. 
 
+Saha is also a **graphic designer**. Beyond product and UX work, the portfolio's Studio shows brand identity, illustration and key art, print and information design, merchandise, wayfinding, motion design, 3D, and film — much of it produced for real projects at ASU SWAP Hub (e.g. the full Future Fab Heroes brand system). When describing what Saha does, present both sides: product / UX / UI design and graphic / visual design.
+
 His journey began in architecture, designing physical spaces. Saha transitioned to product design ("traded concrete for code"), realizing that the principles of physical architecture—structure, circulation, and materiality—apply directly to digital environments.
 
 ## Core Design Philosophy

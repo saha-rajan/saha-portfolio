@@ -10,6 +10,7 @@ import chemobuddyMd from '../../../portfolio-knowledge/chemobuddy.md?raw';
 import aisleMd from '../../../portfolio-knowledge/aisle.md?raw';
 import auraMd from '../../../portfolio-knowledge/aura.md?raw';
 import guardrailsMd from '../../../portfolio-knowledge/guardrails.md?raw';
+import studioMd from '../../../portfolio-knowledge/studio.md?raw';
 
 
 
@@ -104,7 +105,11 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
                 targetPath = '/about';
               } else if (rawPath === '/reach-out' || rawPath === '/email') {
                 targetPath = '/contact';
-              } else if (rawPath === '/experiments' || rawPath === '/lab') {
+              } else if (rawPath === '/thread' || rawPath === '/studio/thread' || rawPath === '/studio?view=thread') {
+                targetPath = '/studio';
+              } else if (rawPath === '/grid' || rawPath === '/studio/grid') {
+                targetPath = '/studio?view=grid';
+              } else if (rawPath === '/experiments' || rawPath === '/lab' || rawPath === '/graphic-design' || rawPath === '/gallery') {
                 targetPath = '/studio';
               } else if (rawPath === '/home' || rawPath === '/work' || rawPath === '/works') {
                 targetPath = '/';
@@ -116,7 +121,7 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
               }
 
               // Validate against known routes
-              const validRoutes = ['/', '/about', '/contact', '/studio', '/works/chemobuddy', '/works/aisle', '/works/aura', '/works/arizona-yoga-studio', '/works/art-gallery', '/works/e-commerce'];
+              const validRoutes = ['/', '/about', '/contact', '/studio', '/studio?view=grid', '/works/chemobuddy', '/works/aisle', '/works/aura', '/works/arizona-yoga-studio', '/works/art-gallery', '/works/e-commerce'];
               
               if (validRoutes.includes(targetPath)) {
                 navigate(targetPath);
@@ -190,6 +195,8 @@ export function ChakkuProvider({ children }: { children: ReactNode }) {
               resultData = { success: true, content: aisleMd };
             } else if (args.topic === 'aura') {
               resultData = { success: true, content: auraMd };
+            } else if (args.topic === 'studio') {
+              resultData = { success: true, content: studioMd };
             } else if (args.topic === 'guardrails') {
               resultData = { success: true, content: guardrailsMd };
             } else {

@@ -7,12 +7,13 @@ try {
   // Live API v1alpha has strict system instruction limits that cause 1011 WS crashes if exceeded.
   // Instead of reading the large markdown files, we provide a highly compressed hardcoded summary.
   portfolioKnowledge = `
-Saha Rajan is a founding designer specializing in AI products, UX, and 0-to-1 design.
+Saha Rajan is a founding designer specializing in AI products, UX, and 0-to-1 design — and also a graphic designer (brand identity, illustration, print, wayfinding, merchandise, motion, 3D and film).
 Key Projects:
 - ChemoBuddy: An AI companion for cancer patients. Emphasize empathy and daily check-ins.
 - AIsle: An AI grocery shopping assistant using AR and spatial design.
 - Aura: A speculative VR/XR interface for emotional regulation and mindfulness.
 - TalentVault: An enterprise AI tool for recruiters.
+- The Studio (/studio) is a section of this portfolio (not a business or agency Saha runs): 18 graphic design and creative works, e.g. the full Future Fab Heroes brand system (logo, key art, infographic, flyers, sticker, trailer), an ASU SWAP Hub trifold brochure and campus wayfinding sheets, 3D and interactive experiments, and short films. It has two views: an interactive scroll-driven Thread (default) that connects every work on one winding line, and a Grid.
 Saha loves experimenting with voice interfaces (like you!) and creating playful interactions.
   `;
 } catch (error) {
@@ -36,14 +37,16 @@ CRITICAL RULES:
    - /works/aura for Aura
    - /about for About / Resume / Experience / Education
    - /contact for Contact
-   - /studio for Studio / Experiments
+   - /studio for Studio / graphic design work / Experiments (opens the interactive Thread view)
+   - /studio?view=grid for the Studio's Grid view
    - / for Home
 3. If asked to scroll or look at a section, use the SCROLL_TO or SCROLL tools immediately.
 4. DO NOT announce your tool uses ("Let me pull that up..."). Just answer the question normally while the tool fires.
 5. Only use the facts provided in the Portfolio Knowledge below, or facts you retrieve using the READ_PORTFOLIO_FILE tool. Do not invent details.
 6. The ChemoBuddy case study has a special guided audio walkthrough narrated by Saha. If the user asks to play, hear, or listen to the ChemoBuddy audio, immediately use the PLAY_AUDIO tool.
 7. You ONLY have a brief summary of Saha in your starting knowledge. If a user asks for specific details (like his phone number, email, skills, deep resume details, or specific case study processes), you MUST use the READ_PORTFOLIO_FILE tool to fetch the full document before answering!
-8. Mirror the user's language. If the user speaks to you in Tamil, Hindi, Spanish, or any other language, you MUST reply in that exact same language.
+8. Saha is both a product/UX designer AND a graphic designer. When asked what Saha does or about graphic, brand, print, visual, motion or 3D work, say so and point to the Studio. Use READ_PORTFOLIO_FILE with topic "studio" for details of the Studio works and its Grid / Thread views. /studio opens the Thread view; to open the Grid view directly, NAVIGATE to /studio?view=grid.
+9. Mirror the user's language. If the user speaks to you in Tamil, Hindi, Spanish, or any other language, you MUST reply in that exact same language.
 
 Portfolio Knowledge:
 ${portfolioKnowledge}
@@ -89,6 +92,7 @@ export default async function handler(req: any, res: any) {
                   "/about", 
                   "/contact", 
                   "/studio", 
+                  "/studio?view=grid", 
                   "/works/chemobuddy", 
                   "/works/aisle", 
                   "/works/aura"
@@ -154,13 +158,13 @@ export default async function handler(req: any, res: any) {
         },
         {
           name: "READ_PORTFOLIO_FILE",
-          description: "Read detailed information about Saha's case studies, resume (which includes phone, email, contact, skills), or guardrails to answer user questions. Use this whenever the user asks for details you don't know.",
+          description: "Read detailed information about Saha's case studies, resume (which includes phone, email, contact, skills), the Studio (graphic design, print, brand, 3D and film works, and its Grid / Thread views), or guardrails to answer user questions. Use this whenever the user asks for details you don't know.",
           parameters: {
             type: "OBJECT",
             properties: {
               topic: { 
                 type: "STRING", 
-                enum: ["resume", "chemobuddy", "aisle", "aura", "guardrails"] 
+                enum: ["resume", "chemobuddy", "aisle", "aura", "studio", "guardrails"] 
               }
             },
             required: ["topic"]
