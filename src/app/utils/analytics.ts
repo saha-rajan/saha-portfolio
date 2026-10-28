@@ -1,7 +1,13 @@
 
-export const isAnalyticsEnabled = () => {
+// Only the live site is tracked: localhost, LAN/IP addresses and Vercel preview links are not
+export const isLiveSite = () => {
   if (typeof window === "undefined") return false;
-  if (window.location.hostname === "localhost") return false;
+  const host = window.location.hostname;
+  return host === "saharajan.me" || host === "www.saharajan.me";
+};
+
+export const isAnalyticsEnabled = () => {
+  if (!isLiveSite()) return false;
   if (localStorage.getItem("ignore_analytics") === "true") return false;
   return true;
 };

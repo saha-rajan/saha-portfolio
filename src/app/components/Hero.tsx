@@ -5,14 +5,17 @@ import { Link } from "react-router-dom";
 import { useCursor } from "../contexts/CursorContext";
 import { useChakku } from "../contexts/ChakkuContext";
 
-import chemoVideo from '../../assets/Chemo thumbnail.mp4';
-import talentVaultVideo from '../../assets/talentVault_logo.mp4';
-import auraVideo from '../../assets/Aura thumbnail.mp4';
+// 720p re-encodes (AIsle's original is already smaller) plus a still poster for each card.
+// The poster shows straight away and stays if a browser won't autoplay (iOS Low Power Mode,
+// data saver) or the video is slow to load, so a card is never an empty box.
+import chemoVideo from '../../assets/optimized/Chemo thumbnail.mp4';
+import talentVaultVideo from '../../assets/optimized/talentVault_logo.mp4';
+import auraVideo from '../../assets/optimized/Aura thumbnail.mp4';
 import aisleVideo from '../../assets/AIsle.mp4';
-// After running scripts/compress-hero-videos.sh, import the outputs here and
-// add them to the projects below as `webm` and `poster`, e.g.:
-// import chemoWebm from '../../assets/optimized/Chemo thumbnail.webm';
-// import chemoPoster from '../../assets/optimized/Chemo thumbnail.jpg';
+import chemoPoster from '../../assets/optimized/Chemo thumbnail.jpg';
+import talentVaultPoster from '../../assets/optimized/talentVault_logo.jpg';
+import auraPoster from '../../assets/optimized/Aura thumbnail.jpg';
+import aislePoster from '../../assets/optimized/AIsle.jpg';
 
 type Project = {
   id: string;
@@ -31,6 +34,7 @@ const projects: Project[] = [
     title: "Chemotherapy education platform",
     category: "UX Case Study",
     video: chemoVideo,
+    poster: chemoPoster,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
@@ -38,6 +42,7 @@ const projects: Project[] = [
     title: "Aura - Feel the room",
     category: "UX Case Study",
     video: auraVideo,
+    poster: auraPoster,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
@@ -45,6 +50,7 @@ const projects: Project[] = [
     title: "Aisle",
     category: "Product Design",
     video: aisleVideo,
+    poster: aislePoster,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
   {
@@ -52,6 +58,7 @@ const projects: Project[] = [
     title: "TalentVault",
     category: "Coming Soon",
     video: talentVaultVideo,
+    poster: talentVaultPoster,
     size: "col-span-1 md:col-span-1 md:row-span-1",
   },
 ];

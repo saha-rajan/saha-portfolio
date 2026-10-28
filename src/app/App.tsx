@@ -15,6 +15,7 @@ import { Contact } from "./pages/Contact";
 import { StudioDetail } from "./pages/StudioDetail";
 import { AIsleCaseStudy } from "./pages/AIsleCaseStudy";
 import Grid from "../imports/Grid";
+import { isAnalyticsEnabled } from "./utils/analytics";
 
 // Google Analytics
 declare global {
@@ -64,7 +65,7 @@ function Layout() {
     document.title = newTitle;
 
     // 2. Send to GA4
-    if (window.gtag && window.location.hostname !== 'localhost' && localStorage.getItem('ignore_analytics') !== 'true') {
+    if (window.gtag && isAnalyticsEnabled()) {
       window.gtag('config', 'G-9ZHMPW32L4', {
         page_path: location.pathname + location.search,
         page_title: newTitle
@@ -187,11 +188,23 @@ function App() {
       alert('Analytics tracking successfully disabled for your browser!');
     }
 
-    // Don't inject analytics if on localhost or if ignored
-    if (window.location.hostname === 'localhost' || localStorage.getItem('ignore_analytics') === 'true') {
+    // Don't inject analytics (GA or Clarity) anywhere but the live site, or if ignored
+    if (!isAnalyticsEnabled()) {
       console.log('Analytics disabled for this session.');
       return;
     }
+
+    // Microsoft Clarity
+    const clarityScript = document.createElement('script');
+    clarityScript.innerHTML = `
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "yu1vjuk8wn");
+    `;
+    document.head.appendChild(clarityScript);
+
     // Load gtag.js script
     const script1 = document.createElement('script');
     script1.async = true;
@@ -212,6 +225,7 @@ function App() {
       // Cleanup scripts on unmount
       document.head.removeChild(script1);
       document.head.removeChild(script2);
+      document.head.removeChild(clarityScript);
     };
   }, []);
 
