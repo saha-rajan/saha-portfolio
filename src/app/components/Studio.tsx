@@ -119,7 +119,7 @@ function StudioWindow() {
   // Slowly follow the thread through the first few works and back, like someone scrolling inside
   useEffect(() => {
     if (entering) return;
-    const controls = animate(drift, [0, 1], { duration: 22, ease: "easeInOut", repeat: Infinity, repeatType: "reverse", delay: 1.2 });
+    const controls = animate(drift, [0, 1], { duration: 22, ease: [0.25, 0.1, 0.5, 1], repeat: Infinity, repeatType: "reverse" });
     return () => controls.stop();
   }, [drift, entering]);
 

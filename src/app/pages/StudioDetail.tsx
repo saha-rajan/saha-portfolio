@@ -22,6 +22,7 @@ import futureFabFlyer1 from "../../assets/future_fab_flyer_1.jpg";
 import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
 import { TrifoldViewer, SheetViewer, StackViewer, ScrollTrifold, ScrollFlip, ScrollStack, type SheetPage } from "../components/TrifoldViewer";
 import { ThreadView, type Rect, type MediaState } from "../components/ThreadView";
+import { ScrollDuo, DuoViewer, DUO_STAGES, useDuoStage, type DuoArt } from "../components/ScrollDuo";
 import trifoldOutsideMid from "../../assets/swap_trifold_outside_mid.jpg";
 import trifoldInsideMid from "../../assets/swap_trifold_inside_mid.jpg";
 import ffhInfographicFrontMid from "../../assets/ffh_infographic_front_mid.jpg";
@@ -44,6 +45,10 @@ import directionsIstb12Thumb from "../../assets/directions_istb12_thumb.jpg";
 import directionsAcicThumb from "../../assets/directions_acic_thumb.jpg";
 import directionsCooleyThumb from "../../assets/directions_cooley_thumb.jpg";
 import wasimCampaign from "../../assets/wasim_campaign.jpg";
+import duoOwl from "../../assets/duo_owl.png";
+import duoMask from "../../assets/duo_mask.png";
+import duoIcon from "../../assets/duo_icon.jpg";
+import duoPhone from "../../assets/duo_phone.jpg";
 
 interface StudioItem {
   id: number;
@@ -59,6 +64,7 @@ interface StudioItem {
   // mode "flip" = one sheet turning over (front/back), "stack" = separate sheets in a pile
   sheets?: { pages: SheetPage[]; thumbs: string[]; aspect: number; mode: "flip" | "stack" };
   category: "graphic" | "3d" | "video";
+  duo?: DuoArt; // the Duolingo piece: an animated stage you can step through
   blurb: string; // what the piece is, shown beside it in the thread view
   aspect: number; // width / height of the tile media (composite tiles included)
   logoAt?: Rect; // where the Future Fab Heroes logo sits in the tile — the thread view flies the logo between these
@@ -77,6 +83,9 @@ const sections: { key: StudioItem["category"]; label: string; intro: string }[] 
 // the thread view flies the shared logo from one to the next.
 const studioItems: StudioItem[] = [
   // Graphic & Print
+  { id: 21, category: "graphic", url: duoPhone, meta: "Adobe Illustrator · Figma · Illustration", title: "Duolingo Halloween Concept", backgroundColor: "#000000", aspect: 1,
+    duo: { owl: duoOwl, mask: duoMask, icon: duoIcon, phone: duoPhone },
+    blurb: "A Halloween reimagining of Duo inspired by Hannibal Lecter. I illustrated the character, mask, restraints, costume, and supporting details from scratch in Adobe Illustrator, then developed the artwork into an app icon and mobile UI concept in Figma." },
   { id: 4, category: "graphic", url: futureFabLogo, meta: "Adobe Illustrator · Brand Identity", title: "Future Fab Heroes Logo", backgroundColor: "#000000", aspect: 1024 / 724, logoAt: LOGO_CROP,
     blurb: "Designed the visual identity for Future Fab Heroes, turning Chip-E and semiconductor circuitry into a recognizable game mark." },
   { id: 3, category: "graphic", url: gameLogoImg, meta: "Adobe Illustrator · Key Art", title: "Future Fab Heroes Key Art", backgroundColor: "#E5E5E5", aspect: 5334 / 3000, logoAt: { x: 0.27, y: 0.0893, w: 0.46, h: 0.8125 },
@@ -125,6 +134,7 @@ const studioItems: StudioItem[] = [
 // Button label for opening each piece full screen
 function ctaFor(item: StudioItem) {
   if (item.isExperiment) return "Launch experiment";
+  if (item.duo) return "Step through it";
   if (item.trifold) return "Fold it open";
   if (item.sheets?.mode === "stack") return "Shuffle the sheets";
   if (item.sheets) return "Flip it over";
@@ -133,6 +143,11 @@ function ctaFor(item: StudioItem) {
 }
 // In the thread view these print pieces animate in place as you scroll, sized to the real object
 const scrollPieces: Record<number, { aspect: number; scrollHint: string; render: (state: { progress: MotionValue<number>; side: 1 | -1 }) => ReactNode }> = {
+  21: {
+    aspect: 1,
+    scrollHint: "Keep scrolling: mask on → icon → home screen",
+    render: ({ progress }) => <ScrollDuo owl={duoOwl} mask={duoMask} icon={duoIcon} phone={duoPhone} progress={progress} />,
+  },
   17: {
     aspect: 1800 / 1391, // the open spread
     scrollHint: "Keep scrolling to unfold it, fold it back and turn it over",
@@ -228,7 +243,57 @@ function TileMedia({ item, playing }: { item: StudioItem; playing?: boolean }) {
   );
 }
 
+// The Duolingo tile: the animated stage, with buttons to play it to each step (outside the open button,
+// since buttons can't nest)
+function DuoTile({ item, art, onExpand }: { item: StudioItem; art: DuoArt; onExpand: () => void }) {
+  const { progress, stage, go } = useDuoStage(1);
+  return (
+    <div className="relative">
+      <button type="button" onClick={onExpand} aria-label={`Open ${item.title}`} className="relative block w-full aspect-square overflow-hidden rounded-sm bg-black">
+        <ScrollDuo {...art} progress={progress} />
+        <div className="absolute top-3 right-3 bg-black/60 text-white rounded-full p-2 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <Maximize2 size={14} />
+        </div>
+      </button>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-3 md:p-4 bg-[linear-gradient(to_top,rgba(0,0,0,0.85)_0%,rgba(0,0,0,0.4)_60%,transparent_100%)] pointer-events-none" style={mono}>
+        <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity duration-300">
+          <span className="text-white text-xs md:text-sm font-medium tracking-wide">{item.title}</span>
+          <span className="text-white/60 text-[10px] uppercase tracking-[0.18em]">{item.meta}</span>
+        </div>
+        <div className="flex flex-wrap gap-1 pointer-events-auto" role="group" aria-label="Steps">
+          {DUO_STAGES.map((s, i) => (
+            <button
+              key={s.label}
+              type="button"
+              onClick={() => go(i)}
+              aria-pressed={i === stage}
+              className={`px-2.5 py-1 rounded-full text-[9px] md:text-[10px] uppercase tracking-[0.14em] backdrop-blur-sm transition-colors ${
+                i === stage ? "bg-white text-black" : "bg-black/50 text-white/70 hover:text-white hover:bg-black/70"
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function GalleryTile({ item, index, onExpand, animateIn = true }: { item: StudioItem; index: number; onExpand: () => void; animateIn?: boolean }) {
+  if (item.duo) {
+    return (
+      <motion.figure
+        initial={animateIn ? { opacity: 0, y: 24 } : false}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 4) * 0.05 }}
+        className="group mb-3 md:mb-4 break-inside-avoid"
+      >
+        <DuoTile item={item} art={item.duo} onExpand={onExpand} />
+      </motion.figure>
+    );
+  }
   return (
     <motion.figure
       initial={animateIn ? { opacity: 0, y: 24 } : false}
@@ -503,6 +568,8 @@ export function StudioDetail() {
           >
             {expandedItem.isExperiment ? (
               <AntigravityExperiment onClose={() => setExpandedId(null)} />
+            ) : expandedItem.duo ? (
+              <DuoViewer art={expandedItem.duo} onClose={() => setExpandedId(null)} />
             ) : expandedItem.sheets?.mode === "stack" ? (
               <StackViewer
                 pages={expandedItem.sheets.pages}

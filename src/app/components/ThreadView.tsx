@@ -485,7 +485,9 @@ export function ThreadView<T extends ThreadItem>({ items, sections, renderMedia,
         // follow the preview's own animation exactly (no smoothing), so entering ends on the landing frame
         const placed = layoutRef.current.placed;
         const end = placed[Math.min(PREVIEW_DRIFT_STOPS, placed.length - 1)].sOut;
-        cur.current = lerp(placed[0].sIn, end, previewDrift?.get() ?? 0);
+        // starts where the camera leaves the first stop: its resting range looks the same throughout,
+        // so the window is moving from the first frame instead of sitting still
+        cur.current = lerp(placed[0].sOut, end, previewDrift?.get() ?? 0);
         drawRef.current(cur.current);
       } else {
         const target = window.scrollY / layoutRef.current.unitPx;

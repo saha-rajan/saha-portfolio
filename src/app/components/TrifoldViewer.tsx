@@ -37,7 +37,7 @@ function Face({ src, third, back = false }: { src: string; third: 0 | 1 | 2; bac
   return <div className="absolute inset-0 bg-white" style={style} />;
 }
 
-function ViewerControls({ steps, step, go }: { steps: { label: string; hint: string }[]; step: number; go: (n: number) => void }) {
+export function ViewerControls({ steps, step, go }: { steps: { label: string; hint: string }[]; step: number; go: (n: number) => void }) {
   return (
     <div className="flex flex-col items-center gap-3" style={mono}>
       <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2">
@@ -72,7 +72,7 @@ function ViewerControls({ steps, step, go }: { steps: { label: string; hint: str
   );
 }
 
-function CloseButton({ onClose }: { onClose: () => void }) {
+export function CloseButton({ onClose }: { onClose: () => void }) {
   return (
     <button
       onClick={onClose}
