@@ -17,6 +17,7 @@ export interface ThreadItem {
   // Pieces that animate as you scroll (unfold, flip, shuffle): no frame behind them, a longer stop
   // on the thread, and this hint in place of the open button
   scrollHint?: string;
+  dwell?: number; // how long (in screen heights) the camera rests on this piece, when it needs more than the default
 }
 
 export interface MediaState {
@@ -177,7 +178,7 @@ function buildLayout(stops: Stop[], vw: number, vh: number): Layout {
     p.len = cum[knotSample[stopKnot[i]]];
     if (i > 0) s += placed[i - 1].stop.kind === "section" || p.stop.kind === "section" ? TRAVEL_SECTION : TRAVEL;
     p.sIn = s;
-    s += p.stop.kind === "section" ? DWELL_SECTION : p.stop.item.scrollHint ? DWELL_SCROLL_PIECE : DWELL;
+    s += p.stop.kind === "section" ? DWELL_SECTION : p.stop.item.dwell ?? (p.stop.item.scrollHint ? DWELL_SCROLL_PIECE : DWELL);
     p.sOut = s;
   });
 

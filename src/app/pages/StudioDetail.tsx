@@ -17,12 +17,12 @@ import video5 from "../../assets/video5.mp4";
 import vrTourVideo from "../../assets/vr_tour_1.mp4";
 import { AntigravityExperiment } from "../components/AntigravityExperiment";
 import futureFabStickers2 from "../../assets/future_fab_stickers_2.jpg";
-import futureFabFlyer1 from "../../assets/future_fab_flyer_1.jpg";
 
 import drStrangeThumb from "../../assets/dr_strange_thumbnail.png";
 import { TrifoldViewer, SheetViewer, StackViewer, ScrollTrifold, ScrollFlip, ScrollStack, type SheetPage } from "../components/TrifoldViewer";
 import { ThreadView, type Rect, type MediaState } from "../components/ThreadView";
 import { ScrollDuo, DuoViewer, DUO_STAGES, useDuoStage, type DuoArt } from "../components/ScrollDuo";
+import { EngineThreadCard, EngineTile, EngineViewer } from "../components/EngineStudio";
 import trifoldOutsideMid from "../../assets/swap_trifold_outside_mid.jpg";
 import trifoldInsideMid from "../../assets/swap_trifold_inside_mid.jpg";
 import ffhInfographicFrontMid from "../../assets/ffh_infographic_front_mid.jpg";
@@ -49,6 +49,7 @@ import duoOwl from "../../assets/duo_owl.png";
 import duoMask from "../../assets/duo_mask.png";
 import duoIcon from "../../assets/duo_icon.jpg";
 import duoPhone from "../../assets/duo_phone.jpg";
+import turbofanPoster from "../../assets/turbofan_poster.jpg";
 
 interface StudioItem {
   id: number;
@@ -65,6 +66,7 @@ interface StudioItem {
   sheets?: { pages: SheetPage[]; thumbs: string[]; aspect: number; mode: "flip" | "stack" };
   category: "graphic" | "3d" | "video";
   duo?: DuoArt; // the Duolingo piece: an animated stage you can step through
+  engine?: boolean; // the 3D turbofan: live three.js viewer
   blurb: string; // what the piece is, shown beside it in the thread view
   aspect: number; // width / height of the tile media (composite tiles included)
   logoAt?: Rect; // where the Future Fab Heroes logo sits in the tile — the thread view flies the logo between these
@@ -75,7 +77,7 @@ const LOGO_CROP: Rect = { x: 0.1525, y: 0.0106, w: 0.695, h: 0.9787 };
 
 const sections: { key: StudioItem["category"]; label: string; intro: string }[] = [
   { key: "graphic", label: "Graphic & Print", intro: "Brand identities, illustrations, print, merchandise, and visual systems built across real projects." },
-  { key: "3d", label: "3D & Interactive", intro: "Pieces you can play with: hand tracking in the browser, Spline models and game spaces." },
+  { key: "3d", label: "3D & Interactive", intro: "Pieces you can play with: a jet engine you can take apart, hand tracking in the browser, Spline models and game spaces." },
   { key: "video", label: "Motion & Film", intro: "An AI-assisted game trailer, then short films about ordinary moments." },
 ];
 
@@ -99,8 +101,6 @@ const studioItems: StudioItem[] = [
   { id: 19, category: "graphic", url: directionsIstb12Thumb, meta: "Wayfinding · Information Design · Event Collateral", title: "Campus Wayfinding Sheets", backgroundColor: "#FFFFFF", aspect: (3 * 700) / 905,
     sheets: { pages: [{ src: directionsIstb12, label: "ISTB 12" }, { src: directionsAcic, label: "ACIC" }, { src: directionsCooley, label: "Cooley Ballroom" }], thumbs: [directionsIstb12Thumb, directionsAcicThumb, directionsCooleyThumb], aspect: 2000 / 2588, mode: "stack" },
     blurb: "Created event wayfinding sheets for multiple ASU venues, combining parking, entrances, landmarks, and 3D location visuals to make arrival easier for attendees." },
-  { id: 13, category: "graphic", url: futureFabFlyer1, meta: "Print Design · Collateral", title: "Future Fab Heroes Print Flyer", backgroundColor: "#FFFFFF", aspect: 752 / 1024,
-    blurb: "Took the digital game identity into print, creating a physical flyer for outreach, events, and student engagement." },
   { id: 16, category: "graphic", url: futureFabStickers2, meta: "Merchandise · Brand Application", title: "Sticker in the Wild", backgroundColor: "#FFFFFF", aspect: 768 / 1024,
     blurb: "Tested the identity beyond screens through physical vinyl applications, bringing the Future Fab Heroes brand into everyday objects." },
   { id: 2, category: "graphic", url: sketchImg, meta: "After Effects · Motion Design", title: "TalentVault Logo Animation", aspect: 800 / 450,
@@ -109,6 +109,8 @@ const studioItems: StudioItem[] = [
     blurb: "Social campaign visuals created for independent music artist Wasim R, built entirely through prompt-driven image generation rather than traditional Photoshop or Illustrator workflows. Precise art direction, prompt engineering, and iterative refinement were used to control composition, typography, styling, and visual consistency." },
 
   // 3D & Interactive
+  { id: 22, category: "3d", url: turbofanPoster, meta: "Blender · Python · Three.js · AI-assisted", title: "LEAP-Class Turbofan Engine", backgroundColor: "#050505", aspect: 1.6, engine: true,
+    blurb: "An interactive 3D study of a modern turbofan engine, built through a code-driven Blender workflow with AI and brought to the web with Three.js. Scroll to explode the engine layer by layer, then switch between technical wireframe and rendered views." },
   { id: 12, category: "3d", url: drStrangeThumb, meta: "MediaPipe · WebGL · Creative Coding", title: "Gesture-Controlled Mandala", backgroundColor: "#111111", isExperiment: true, aspect: 1024 / 576,
     blurb: "Built a webcam-based interaction where hand movement controls a Doctor Strange-inspired generative mandala in real time." },
   { id: 1, category: "3d", url: robotImg, meta: "Spline · 3D · Interactive", title: "Interactive 3D Character", aspect: 800 / 502,
@@ -142,11 +144,17 @@ function ctaFor(item: StudioItem) {
   return "View full size";
 }
 // In the thread view these print pieces animate in place as you scroll, sized to the real object
-const scrollPieces: Record<number, { aspect: number; scrollHint: string; render: (state: { progress: MotionValue<number>; side: 1 | -1 }) => ReactNode }> = {
+const scrollPieces: Record<number, { aspect: number; scrollHint: string; dwell?: number; render: (state: { progress: MotionValue<number>; side: 1 | -1; preview: boolean }) => ReactNode }> = {
   21: {
     aspect: 1,
     scrollHint: "Keep scrolling: mask on → icon → home screen",
     render: ({ progress }) => <ScrollDuo owl={duoOwl} mask={duoMask} icon={duoIcon} phone={duoPhone} progress={progress} />,
+  },
+  22: {
+    aspect: 1.6,
+    scrollHint: "Keep scrolling to take it apart, layer by layer",
+    dwell: 9, // 15 parts to fly through
+    render: ({ progress, preview }) => <EngineThreadCard poster={turbofanPoster} progress={progress} preview={preview} />,
   },
   17: {
     aspect: 1800 / 1391, // the open spread
@@ -170,6 +178,7 @@ const threadItems = studioItems.map((item) => ({
   cta: ctaFor(item),
   aspect: scrollPieces[item.id]?.aspect ?? item.aspect,
   scrollHint: scrollPieces[item.id]?.scrollHint,
+  dwell: scrollPieces[item.id]?.dwell,
 }));
 
 const mono = { fontFamily: "'IBM Plex Mono', monospace" };
@@ -281,6 +290,19 @@ function DuoTile({ item, art, onExpand }: { item: StudioItem; art: DuoArt; onExp
 }
 
 function GalleryTile({ item, index, onExpand, animateIn = true }: { item: StudioItem; index: number; onExpand: () => void; animateIn?: boolean }) {
+  if (item.engine) {
+    return (
+      <motion.figure
+        initial={animateIn ? { opacity: 0, y: 24 } : false}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: (index % 4) * 0.05 }}
+        className="group mb-3 md:mb-4 break-inside-avoid"
+      >
+        <EngineTile poster={item.url} title={item.title} meta={item.meta} onExpand={onExpand} />
+      </motion.figure>
+    );
+  }
   if (item.duo) {
     return (
       <motion.figure
@@ -407,16 +429,17 @@ function StudioChrome({ view, onChange, showBack = true, fadeInBack = false }: {
         transition={{ duration: 0.4, delay: 0.1 }}
         className="fixed top-0 left-0 z-[1001] p-4 md:p-8 pointer-events-none"
       >
-        <Link to="/" className="pointer-events-auto">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-300 text-sm md:text-base"
-            style={mono}
-          >
-            <ArrowLeft size={20} />
+        {/* same shell, padding and type as the Thread / Grid switch, so the two read as one row */}
+        <Link
+          to="/"
+          aria-label="Back to Home"
+          className="pointer-events-auto flex items-center p-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-colors"
+          style={mono}
+        >
+          <span className="flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-[11px] md:text-xs uppercase tracking-[0.15em]">
+            <ArrowLeft size={14} />
             <span className="hidden sm:inline">Back to Home</span>
-          </motion.button>
+          </span>
         </Link>
       </motion.div>}
 
@@ -463,7 +486,7 @@ function StudioGrid({ onExpand, animateIn, limitSections, style }: {
 // Thread-view media for one work. In the homepage preview, videos are dark placeholders (they're
 // far off-screen there) so the homepage doesn't download them.
 function threadMedia(item: (typeof threadItems)[number], { playing, progress, side }: MediaState, preview = false) {
-  if (scrollPieces[item.id]) return scrollPieces[item.id].render({ progress, side });
+  if (scrollPieces[item.id]) return scrollPieces[item.id].render({ progress, side, preview });
   return (
     <div className="w-full h-full" style={item.backgroundColor ? { backgroundColor: item.backgroundColor } : {}}>
       {preview && item.isVideo ? null : <TileMedia item={item} playing={playing} />}
@@ -568,6 +591,8 @@ export function StudioDetail() {
           >
             {expandedItem.isExperiment ? (
               <AntigravityExperiment onClose={() => setExpandedId(null)} />
+            ) : expandedItem.engine ? (
+              <EngineViewer poster={expandedItem.url} onClose={() => setExpandedId(null)} />
             ) : expandedItem.duo ? (
               <DuoViewer art={expandedItem.duo} onClose={() => setExpandedId(null)} />
             ) : expandedItem.sheets?.mode === "stack" ? (
